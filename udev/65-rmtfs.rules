@@ -1,0 +1,4 @@
+# Trigger rmtfs when the Qualcomm remote-filesystem shared memory appears.
+# The modem remoteproc depends on this service before WLAN firmware services
+# become visible over QRTR.
+ACTION=="add", KERNEL=="qcom_rmtfs_mem*", TAG+="systemd", ENV{SYSTEMD_WANTS}+="rmtfs.service"

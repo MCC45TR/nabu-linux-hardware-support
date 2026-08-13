@@ -1,0 +1,14 @@
+Nabu Linux hardware support includes work derived from the Nabu Fedora
+configuration packages published at:
+
+    https://github.com/jhuang6451/nabu_fedora_packages
+
+The ALSA UCM profile retains its original author attribution to map220v and was
+distributed as part of the MIT-licensed nabu-fedora-configs-core package. Local
+changes add conservative direct-ASP speaker settings and four-channel playback
+metadata for ongoing Linux hardware validation.
+
+The Plasma output profiles and Nabu boot integration files were validated and
+adapted for this project. Generated identifiers in the profile examples are
+not credentials.
+

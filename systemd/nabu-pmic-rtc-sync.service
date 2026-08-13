@@ -1,0 +1,14 @@
+[Unit]
+Description=Synchronize the system clock from the Nabu PMIC RTC
+Documentation=man:hwclock(8)
+DefaultDependencies=no
+After=systemd-udev-trigger.service
+Before=systemd-timesyncd.service NetworkManager.service firewalld.service sddm.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/nabu-pmic-rtc-sync
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target

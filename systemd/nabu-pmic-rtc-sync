@@ -1,0 +1,16 @@
+#!/bin/bash
+# The EFI RTC registers as rtc0 but cannot be read on Nabu. The PM8150 RTC is
+# rtc1 and may appear late while the PMIC probes. Never fail boot if it does not
+# appear; NTP can still recover the clock after networking works.
+
+set -u
+
+for attempt in {1..30}; do
+    if [[ -c /dev/rtc1 ]]; then
+        exec /usr/sbin/hwclock --hctosys --utc --rtc=/dev/rtc1
+    fi
+    sleep 1
+done
+
+echo "Nabu PMIC RTC /dev/rtc1 did not appear within 30 seconds" >&2
+exit 0

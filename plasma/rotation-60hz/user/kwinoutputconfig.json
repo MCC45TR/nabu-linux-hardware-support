@@ -1,0 +1,75 @@
+[
+  {
+    "data": [
+      {
+        "abmLevel": 0,
+        "allowDdcCi": true,
+        "allowSdrSoftwareBrightness": false,
+        "autoBrightnessCurve": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "autoRotation": "Always",
+        "automaticBrightness": false,
+        "brightness": 0.27051786783263854,
+        "colorPowerTradeoff": "PreferEfficiency",
+        "colorProfileSource": "sRGB",
+        "connectorName": "DSI-1",
+        "customModes": [],
+        "detectedDdcCi": false,
+        "edrPolicy": "always",
+        "hdrColorProfileSource": "EDID",
+        "hdrIccProfilePath": "",
+        "highDynamicRange": false,
+        "iccProfilePath": "",
+        "maxBitsPerColor": 0,
+        "mode": {
+          "flags": 1,
+          "height": 2560,
+          "refreshRate": 60000,
+          "width": 1600
+        },
+        "overscan": 0,
+        "rgbRange": "Automatic",
+        "scale": 2,
+        "sdrBrightness": 200,
+        "sdrGamutWideness": 0,
+        "sharpness": 0,
+        "transform": "Rotated90",
+        "uuid": "ca75b958-3307-4e06-86e1-1ebf6d42582c",
+        "vrrPolicy": "Never",
+        "wideColorGamut": false
+      }
+    ],
+    "name": "outputs"
+  },
+  {
+    "data": [
+      {
+        "lidClosed": false,
+        "outputs": [
+          {
+            "enabled": true,
+            "outputIndex": 0,
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "priority": 1,
+            "replicationSource": ""
+          }
+        ]
+      }
+    ],
+    "name": "setups"
+  }
+]
