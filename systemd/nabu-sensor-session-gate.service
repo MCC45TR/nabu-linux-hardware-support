@@ -1,0 +1,14 @@
+[Unit]
+Description=Wait for Nabu accelerometer enumeration before the graphical session
+After=mnt-vendor-persist.mount hexagonrpcd-sdsp.service iio-sensor-proxy.service
+Wants=hexagonrpcd-sdsp.service iio-sensor-proxy.service
+Before=display-manager.service plasmalogin.service
+ConditionPathExists=/dev/fastrpc-sdsp
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/senemos-nabu/nabu-sensor-session-gate
+TimeoutStartSec=30
+
+[Install]
+WantedBy=graphical.target

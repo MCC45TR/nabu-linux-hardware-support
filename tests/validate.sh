@@ -27,6 +27,12 @@ jq -e '
 ' "$repo_root/plasma/experimental/auto-brightness/kwinoutputconfig.json" >/dev/null
 
 bash -n "$repo_root/systemd/nabu-pmic-rtc-sync"
+bash -n "$repo_root/systemd/nabu-sensor-session-gate"
+bash "$repo_root/tests/test-sensor-session-gate.sh"
+grep -Fxq 'Before=display-manager.service plasmalogin.service' \
+    "$repo_root/systemd/nabu-sensor-session-gate.service"
+grep -Fxq 'wifi.wake-on-wlan=12' \
+    "$repo_root/networkmanager/20-nabu-wifi-wowlan.conf"
 test -s "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
 test -s "$repo_root/udev/65-rmtfs.rules"
 

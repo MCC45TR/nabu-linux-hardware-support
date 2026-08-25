@@ -17,6 +17,8 @@ consumed by
 | Internal audio | Experimental | Four channels are exposed, but routing, balance, and high-volume distortion remain unresolved. |
 | PMIC RTC | Validated | Early boot clock synchronization uses `/dev/rtc1`. |
 | RMTFS activation | Validated | The udev rule starts `rmtfs.service` when shared memory appears. |
+| Wi-Fi WoWLAN policy | Static candidate | Requests only disconnect and magic-packet wake triggers; suspend retention and wake frequency require Nabu hardware testing. |
+| Sensor session gate | Static candidate | Waits for SSC accelerometer enumeration and performs at most one bounded iio-sensor-proxy restart without blocking graphical fallback. |
 
 The default Plasma profile keeps automatic brightness disabled. The measured
 curve is retained under `plasma/experimental/` for continued calibration.
@@ -27,6 +29,7 @@ curve is retained under `plasma/experimental/` for continued calibration.
 - `plasma/rotation-60hz/`: validated 60 Hz and always-on rotation profiles.
 - `plasma/experimental/auto-brightness/`: current calibration experiment.
 - `systemd/`: PMIC RTC synchronization service and helper.
+- `networkmanager/`: Nabu-specific WCN3990 WoWLAN defaults.
 - `udev/`: Qualcomm RMTFS activation rule.
 - `tests/`: static validation for profiles and scripts.
 
@@ -59,4 +62,3 @@ password databases, credentials, generated kernels, modules, or disk images.
 The project is distributed under the MIT License. Existing authorship and
 source attribution for derived files is preserved in `NOTICE` and in the file
 headers.
-
