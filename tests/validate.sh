@@ -33,6 +33,9 @@ grep -Fxq 'Before=display-manager.service plasmalogin.service' \
     "$repo_root/systemd/nabu-sensor-session-gate.service"
 grep -Fxq 'wifi.wake-on-wlan=12' \
     "$repo_root/networkmanager/20-nabu-wifi-wowlan.conf"
+grep -Fq '%meson_test' \
+    "$repo_root/packaging/hexagonrpc-nabu/hexagonrpc.spec"
+(cd "$repo_root/packaging/hexagonrpc-nabu" && sha256sum -c SOURCES.sha256)
 test -s "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
 test -s "$repo_root/udev/65-rmtfs.rules"
 

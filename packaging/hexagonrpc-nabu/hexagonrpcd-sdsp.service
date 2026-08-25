@@ -1,0 +1,14 @@
+[Unit]
+Description=Qualcomm Hexagon SDSP virtual filesystem
+ConditionPathExists=/dev/fastrpc-sdsp
+
+[Service]
+ExecStart=/usr/bin/hexagonrpcd -f /dev/fastrpc-sdsp -d sdsp -s -R /usr/lib/firmware/qcom/sm8150/xiaomi/nabu/hexagonfs
+Restart=always
+RestartSec=3
+User=fastrpc
+Group=fastrpc
+
+[Install]
+WantedBy=multi-user.target
+

@@ -30,8 +30,13 @@ curve is retained under `plasma/experimental/` for continued calibration.
 - `plasma/experimental/auto-brightness/`: current calibration experiment.
 - `systemd/`: PMIC RTC synchronization service and helper.
 - `networkmanager/`: Nabu-specific WCN3990 WoWLAN defaults.
+- `packaging/hexagonrpc-nabu/`: pinned Hotdog-derived FastRPC extensions and
+  the Fedora package recipe that runs upstream tests.
 - `udev/`: Qualcomm RMTFS activation rule.
 - `tests/`: static validation for profiles and scripts.
+
+Physical qualification for the current candidate is documented in
+[`docs/NABU-V1.4.0.7-HARDWARE-TESTS.md`](docs/NABU-V1.4.0.7-HARDWARE-TESTS.md).
 
 ## Integration
 
