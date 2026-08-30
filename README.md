@@ -34,6 +34,8 @@ curve is retained under `plasma/experimental/` for continued calibration.
   checksummed Hotdog/Nabu FastRPC merge layer.
 - `packaging/libssc-nabu/`: current upstream libssc plus the Nabu SLPI failure
   recovery patch and compatibility package names.
+- `packaging/iio-sensor-proxy-nabu/`: stable upstream SensorProxy plus the
+  checksum-locked Nabu SSC discovery, hotplug and accelerometer merge layer.
 - `packaging/update-upstreams.sh`: checks new stable upstream tags and prepares
   an update only when every Nabu patch still applies in sequence.
 - `packaging/build-srpms.sh`: verifies source locks and produces reproducible

@@ -9,6 +9,7 @@ srpm:
 	case "$$(basename "$$package_dir")" in \
 		libssc-nabu) package=libssc-nabu; spec_file=libssc.spec ;; \
 		hexagonrpc-nabu) package=hexagonrpc-nabu; spec_file=hexagonrpc.spec ;; \
+		iio-sensor-proxy-nabu) package=iio-sensor-proxy-nabu; spec_file=iio-sensor-proxy.spec ;; \
 		*) printf 'Unsupported COPR package directory: %s\n' "$$package_dir" >&2; exit 2 ;; \
 	esac; \
 	if [[ -n "$(spec)" ]]; then spec_file="$(spec)"; fi; \
@@ -16,6 +17,7 @@ srpm:
 	case "$$package" in \
 		libssc-nabu) url="https://codeberg.org/DylanVanAssche/libssc/archive/v$$version.tar.gz"; archive="libssc-$$version.tar.gz" ;; \
 		hexagonrpc-nabu) url="https://github.com/linux-msm/hexagonrpc/archive/refs/tags/v$$version.tar.gz"; archive="hexagonrpc-$$version.tar.gz" ;; \
+		iio-sensor-proxy-nabu) url="https://gitlab.freedesktop.org/hadess/iio-sensor-proxy/-/archive/$$version/iio-sensor-proxy-$$version.tar.gz"; archive="iio-sensor-proxy-$$version.tar.gz" ;; \
 	esac; \
 	command -v curl >/dev/null || dnf install -y curl; \
 	command -v rpmbuild >/dev/null || dnf install -y rpm-build; \

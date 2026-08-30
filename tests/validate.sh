@@ -53,6 +53,15 @@ grep -Fq 'BuildRequires:  /usr/bin/protoc-c' \
     "$repo_root/packaging/libssc-nabu/libssc.spec"
 grep -Fq 'BuildRequires:  python3-gobject-base' \
     "$repo_root/packaging/libssc-nabu/libssc.spec"
+(cd "$repo_root/packaging/iio-sensor-proxy-nabu" && sha256sum -c SOURCES.sha256)
+grep -Eq '^Version:[[:space:]]+[0-9]+\.[0-9]+(\.[0-9]+)?$' \
+    "$repo_root/packaging/iio-sensor-proxy-nabu/iio-sensor-proxy.spec"
+grep -Fq 'BuildRequires:  pkgconfig(libssc)' \
+    "$repo_root/packaging/iio-sensor-proxy-nabu/iio-sensor-proxy.spec"
+grep -Fq 'Requires:       libssc-nabu' \
+    "$repo_root/packaging/iio-sensor-proxy-nabu/iio-sensor-proxy.spec"
+grep -Fq '%meson_test' \
+    "$repo_root/packaging/iio-sensor-proxy-nabu/iio-sensor-proxy.spec"
 "$repo_root/packaging/update-upstreams.sh" --check
 test -s "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
 grep -Eq '^[[:space:]]*PlaybackChannels[[:space:]]+4$' \

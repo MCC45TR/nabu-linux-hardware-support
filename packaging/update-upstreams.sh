@@ -10,7 +10,7 @@ if [[ ${1:-} == --check || ${1:-} == --update ]]; then
     shift
 fi
 
-known_packages=(hexagonrpc-nabu libssc-nabu)
+known_packages=(hexagonrpc-nabu libssc-nabu iio-sensor-proxy-nabu)
 packages=("${@:-}")
 if (( ${#packages[@]} == 0 )) || [[ -z ${packages[0]} ]]; then
     packages=("${known_packages[@]}")
@@ -23,20 +23,29 @@ for command_name in curl git patch sha256sum sort tar; do
     }
 done
 
-declare -A upstream_repo source_url archive_name source_root release_value
+declare -A upstream_repo tag_prefix source_url archive_name source_root release_value
 declare -A target_version target_sha current_version
 
 upstream_repo[hexagonrpc-nabu]=https://github.com/linux-msm/hexagonrpc.git
+tag_prefix[hexagonrpc-nabu]=v
 source_url[hexagonrpc-nabu]=https://github.com/linux-msm/hexagonrpc/archive/refs/tags/vVERSION.tar.gz
 archive_name[hexagonrpc-nabu]=hexagonrpc-VERSION.tar.gz
 source_root[hexagonrpc-nabu]=hexagonrpc-VERSION
 release_value[hexagonrpc-nabu]='1.nabu1.test%{?dist}'
 
 upstream_repo[libssc-nabu]=https://codeberg.org/DylanVanAssche/libssc.git
+tag_prefix[libssc-nabu]=v
 source_url[libssc-nabu]=https://codeberg.org/DylanVanAssche/libssc/archive/vVERSION.tar.gz
 archive_name[libssc-nabu]=libssc-VERSION.tar.gz
 source_root[libssc-nabu]=libssc
 release_value[libssc-nabu]='1.nabu1.test%{?dist}'
+
+upstream_repo[iio-sensor-proxy-nabu]=https://gitlab.freedesktop.org/hadess/iio-sensor-proxy.git
+tag_prefix[iio-sensor-proxy-nabu]=''
+source_url[iio-sensor-proxy-nabu]=https://gitlab.freedesktop.org/hadess/iio-sensor-proxy/-/archive/VERSION/iio-sensor-proxy-VERSION.tar.gz
+archive_name[iio-sensor-proxy-nabu]=iio-sensor-proxy-VERSION.tar.gz
+source_root[iio-sensor-proxy-nabu]=iio-sensor-proxy-VERSION
+release_value[iio-sensor-proxy-nabu]='1.nabu1.test%{?dist}'
 
 is_known_package() {
     local candidate=$1 known
@@ -48,9 +57,10 @@ is_known_package() {
 
 latest_stable_version() {
     local repository=$1
-    git ls-remote --tags --refs "$repository" 'refs/tags/v*' \
-        | sed -n 's|.*refs/tags/v||p' \
-        | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
+    local prefix=$2
+    git ls-remote --tags --refs "$repository" "refs/tags/${prefix}*" \
+        | sed -n "s|.*refs/tags/${prefix}||p" \
+        | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' \
         | sort -V \
         | tail -n 1
 }
@@ -74,7 +84,7 @@ for package in "${packages[@]}"; do
     current_version[$package]=$current
 
     if [[ $mode == update ]]; then
-        target=$(latest_stable_version "${upstream_repo[$package]}")
+        target=$(latest_stable_version "${upstream_repo[$package]}" "${tag_prefix[$package]}")
     else
         target=$current
     fi
@@ -111,6 +121,13 @@ for package in "${packages[@]}"; do
             ;;
         libssc-nabu)
             patches=(0001-libssc-avoid-use-after-free-in-sensor-error-logging.patch)
+            ;;
+        iio-sensor-proxy-nabu)
+            patches=(
+                0001-WIP-iio-sensor-proxy.c-Do-not-exit-based-on-sensor-e.patch
+                0002-start-initial-sensors-claimed-during-discovery.patch
+                0003-udev-enable-libssc-accelerometer.patch
+            )
             ;;
     esac
 

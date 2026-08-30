@@ -41,7 +41,8 @@ jobs:
           commit-message: 'packaging: refresh Nabu userspace upstreams'
           title: 'packaging: refresh Nabu userspace upstreams'
           body: |
-            Automated upstream refresh for HexagonRPC and libssc.
+            Automated upstream refresh for HexagonRPC, libssc and
+            iio-sensor-proxy.
 
             The source checksums were regenerated only after the complete
             SENEMOS/Nabu patch series applied cleanly. Static validation and

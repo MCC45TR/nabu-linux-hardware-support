@@ -1,0 +1,40 @@
+From 49f9ee80fd8568741a82b6ef731a871d22dc4e36 Mon Sep 17 00:00:00 2001
+From: SENEMOS Nabu maintainers <nabu@senemos.local>
+Date: Fri, 14 Aug 2026 19:10:00 +0300
+Subject: [PATCH] iio-sensor-proxy: start clients claimed during initial discovery
+
+The D-Bus name is visible after bus_acquired_handler(), before
+name_acquired_handler() finishes synchronous SSC discovery. Desktop clients
+can therefore claim a sensor while driver_type_exists() is still false. The
+claim is recorded and returned, but the initial discovery path never starts
+polling for those clients. This leaves SensorProxy at 0 lux and undefined
+orientation even though direct libssc clients receive measurements.
+
+Mirror the existing hotplug path: when initial discovery opens a sensor that
+already has clients, start polling and delay the first aggregate property
+event until a real measurement arrives.
+---
+ src/iio-sensor-proxy.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/src/iio-sensor-proxy.c b/src/iio-sensor-proxy.c
+index aed7cb4..a40aa11 100644
+--- a/src/iio-sensor-proxy.c
++++ b/src/iio-sensor-proxy.c
+@@ -779,6 +779,14 @@ name_acquired_handler (GDBusConnection *connection,
+ 		}
+ 
+ 		DEVICE_FOR_TYPE(i) = sensor_device;
++
++		if (g_hash_table_size (data->clients[i]) > 0) {
++			/* The D-Bus name is visible before initial sensor discovery
++			 * completes. Start polling when a client claimed the sensor
++			 * during that window, just as the hotplug path does. */
++			data->sensor_startup_dbus_event_delayed[i] = TRUE;
++			driver_set_polling (sensor_device, TRUE);
++		}
+ 	}
+ 
+ 	if (!any_sensors_left (data))
+-- 
+2.52.0

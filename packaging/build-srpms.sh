@@ -19,7 +19,7 @@ done
 work_dir=$(mktemp -d /tmp/nabu-userspace-srpm.XXXXXX)
 trap 'rm -rf -- "$work_dir"' EXIT
 
-for package in hexagonrpc-nabu libssc-nabu; do
+for package in libssc-nabu hexagonrpc-nabu iio-sensor-proxy-nabu; do
     package_dir="$repo_root/packaging/$package"
     spec="$package_dir/${package%-nabu}.spec"
     version=$(sed -n 's/^Version:[[:space:]]*//p' "$spec" | head -n 1)
@@ -36,6 +36,10 @@ for package in hexagonrpc-nabu libssc-nabu; do
         libssc-nabu)
             url="https://codeberg.org/DylanVanAssche/libssc/archive/v$version.tar.gz"
             filename="libssc-$version.tar.gz"
+            ;;
+        iio-sensor-proxy-nabu)
+            url="https://gitlab.freedesktop.org/hadess/iio-sensor-proxy/-/archive/$version/iio-sensor-proxy-$version.tar.gz"
+            filename="iio-sensor-proxy-$version.tar.gz"
             ;;
     esac
 
