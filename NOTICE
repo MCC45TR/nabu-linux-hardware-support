@@ -12,3 +12,7 @@ The Plasma output profiles and Nabu boot integration files were validated and
 adapted for this project. Generated identifiers in the profile examples are
 not credentials.
 
+HexagonRPC is sourced from linux-msm and combined with the checksummed FastRPC
+file-operation patch series derived from the pinned Hotdog bring-up commit
+recorded in the RPM spec. libssc is sourced from Dylan Van Assche's Codeberg
+project and carries a SENEMOS fix for GError ownership during SLPI failures.

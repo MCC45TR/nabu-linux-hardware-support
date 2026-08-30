@@ -30,8 +30,14 @@ curve is retained under `plasma/experimental/` for continued calibration.
 - `plasma/experimental/auto-brightness/`: current calibration experiment.
 - `systemd/`: PMIC RTC synchronization service and helper.
 - `networkmanager/`: Nabu-specific WCN3990 WoWLAN defaults.
-- `packaging/hexagonrpc-nabu/`: pinned Hotdog-derived FastRPC extensions and
-  the Fedora package recipe that runs upstream tests.
+- `packaging/hexagonrpc-nabu/`: current upstream HexagonRPC plus the pinned,
+  checksummed Hotdog/Nabu FastRPC merge layer.
+- `packaging/libssc-nabu/`: current upstream libssc plus the Nabu SLPI failure
+  recovery patch and compatibility package names.
+- `packaging/update-upstreams.sh`: checks new stable upstream tags and prepares
+  an update only when every Nabu patch still applies in sequence.
+- `packaging/build-srpms.sh`: verifies source locks and produces reproducible
+  SRPM inputs for COPR.
 - `udev/`: Qualcomm RMTFS activation rule.
 - `tests/`: static validation for profiles and scripts.
 
@@ -55,6 +61,23 @@ Run the static checks with:
 ```sh
 ./tests/validate.sh
 ```
+
+Check the pinned upstream sources and merge patches without changing files:
+
+```sh
+./packaging/update-upstreams.sh --check
+```
+
+Prepare updates to the newest stable tags, then build SRPMs:
+
+```sh
+./packaging/update-upstreams.sh --update
+./packaging/build-srpms.sh
+```
+
+The scheduled GitHub workflow runs the same merge gate and opens a reviewable
+update pull request. Merging it triggers SRPM construction; COPR submission is
+also automatic when the repository has a `COPR_CONFIG` Actions secret.
 
 ## Safety and contribution policy
 

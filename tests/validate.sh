@@ -36,7 +36,37 @@ grep -Fxq 'wifi.wake-on-wlan=12' \
 grep -Fq '%meson_test' \
     "$repo_root/packaging/hexagonrpc-nabu/hexagonrpc.spec"
 (cd "$repo_root/packaging/hexagonrpc-nabu" && sha256sum -c SOURCES.sha256)
+grep -Eq '^Version:[[:space:]]+[0-9]+\.[0-9]+\.[0-9]+$' \
+    "$repo_root/packaging/hexagonrpc-nabu/hexagonrpc.spec"
+grep -Fq 'rm -rf %{buildroot}%{_libdir}/systemd' \
+    "$repo_root/packaging/hexagonrpc-nabu/hexagonrpc.spec"
+(cd "$repo_root/packaging/libssc-nabu" && sha256sum -c SOURCES.sha256)
+grep -Eq '^Version:[[:space:]]+[0-9]+\.[0-9]+\.[0-9]+$' \
+    "$repo_root/packaging/libssc-nabu/libssc.spec"
+grep -Fq 'Provides:       libssc = %{version}-%{release}' \
+    "$repo_root/packaging/libssc-nabu/libssc.spec"
+grep -Fq 'Provides:       python3-ssc = %{version}-%{release}' \
+    "$repo_root/packaging/libssc-nabu/libssc.spec"
+grep -Fq '%meson_test' \
+    "$repo_root/packaging/libssc-nabu/libssc.spec"
+grep -Fq 'BuildRequires:  /usr/bin/protoc-c' \
+    "$repo_root/packaging/libssc-nabu/libssc.spec"
+grep -Fq 'BuildRequires:  python3-gobject-base' \
+    "$repo_root/packaging/libssc-nabu/libssc.spec"
+"$repo_root/packaging/update-upstreams.sh" --check
 test -s "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
+grep -Eq '^[[:space:]]*PlaybackChannels[[:space:]]+4$' \
+    "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
+for amplifier in BR TR BL TL; do
+    grep -Fq "name='$amplifier Analog PCM Volume' 0" \
+        "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
+    grep -Fq "name='$amplifier PCM Source' ASP" \
+        "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
+    grep -Fq "name='$amplifier DSP1 Preload Switch' 0" \
+        "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
+    grep -Fq "name='$amplifier DRE Switch' off" \
+        "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
+done
 test -s "$repo_root/udev/65-rmtfs.rules"
 
 printf '%s\n' "Hardware support validation passed."

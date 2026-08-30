@@ -1,0 +1,48 @@
+From: SENEMOS Kernel Team <kernel@senemos.local>
+Subject: [PATCH] libssc: avoid use-after-free in sensor error logging
+
+g_task_return_error() takes ownership of GError. Logging error->message after
+that call dereferences memory no longer owned by the callback and crashes
+iio-sensor-proxy when SLPI disappears. Log the message before completing the
+task. If the QMI client unexpectedly omits GError, synthesize one before task
+completion so the failure path still honours the GTask API contract.
+---
+ src/libssc-sensor.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/src/libssc-sensor.c b/src/libssc-sensor.c
+index 906e609..40e74bd 100644
+--- a/src/libssc-sensor.c
++++ b/src/libssc-sensor.c
+@@ -106,9 +106,13 @@ sensor_close_ready (SSCClient *self, GAsyncResult *result, gpointer user_data)
+ 	GError *error = NULL;
+ 
+ 	if (!ssc_client_send_finish (self, result, &error)) {
++		if (!error)
++			g_set_error_literal (&error, ssc_sensor_error_quark (),
++					     SSC_SENSOR_ERROR_NO_SERVICE,
++					     "Sensor disable request failed without an error");
++		g_debug ("Sensor disable request failed: %s", error->message);
+ 		g_task_return_error (task, error);
+ 		g_clear_object (&task);
+-		g_debug ("Sensor disable request failed: %s", error->message);
+ 		return;
+ 	}
+ 
+@@ -168,9 +172,13 @@ sensor_open_ready (SSCClient *self, GAsyncResult *result, gpointer user_data)
+ 	GError *error = NULL;
+ 
+ 	if (!ssc_client_send_finish (self, result, &error)) {
++		if (!error)
++			g_set_error_literal (&error, ssc_sensor_error_quark (),
++					     SSC_SENSOR_ERROR_NO_SERVICE,
++					     "Sensor enable request failed without an error");
++		g_debug ("Sensor enable request failed: %s", error->message);
+ 		g_task_return_error (task, error);
+ 		g_clear_object (&task);
+-		g_debug ("Sensor enable request failed: %s", error->message);
+ 		return;
+ 	}
+ 
+-- 
+2.51.0

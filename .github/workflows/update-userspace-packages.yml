@@ -1,0 +1,48 @@
+name: Refresh Nabu userspace upstreams
+
+on:
+  schedule:
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    container: fedora:rawhide
+
+    steps:
+      - name: Install update and packaging tools
+        run: >-
+          dnf install -y
+          curl findutils git jq patch rpm-build rpmdevtools
+          python3-rpm-macros
+
+      - name: Check out sources
+        uses: actions/checkout@v4
+
+      - name: Merge newest stable upstreams with Nabu patches
+        run: ./packaging/update-upstreams.sh --update
+
+      - name: Validate merged sources
+        run: ./tests/validate.sh
+
+      - name: Build merged source packages
+        run: ./packaging/build-srpms.sh
+
+      - name: Create reviewed upstream refresh
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: automation/refresh-userspace-upstreams
+          delete-branch: true
+          commit-message: 'packaging: refresh Nabu userspace upstreams'
+          title: 'packaging: refresh Nabu userspace upstreams'
+          body: |
+            Automated upstream refresh for HexagonRPC and libssc.
+
+            The source checksums were regenerated only after the complete
+            SENEMOS/Nabu patch series applied cleanly. Static validation and
+            SRPM construction passed before this pull request was created.

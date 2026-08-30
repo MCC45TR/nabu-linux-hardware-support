@@ -3,8 +3,8 @@
 %global hotdog_commit 8ab7a510eec3614fb3021bf2595c0f9e475009bb
 
 Name:           hexagonrpc-nabu
-Version:        0.4.0
-Release:        103.nabu3.test%{?dist}
+Version:        0.5.0
+Release:        1.nabu1.test%{?dist}
 Summary:        Qualcomm FastRPC userspace bridge for Xiaomi Pad 5
 License:        GPL-3.0-or-later
 URL:            https://github.com/linux-msm/hexagonrpc
@@ -16,10 +16,12 @@ Source4:        sysusers.conf
 Source5:        10-fastrpc.rules
 
 # Adapted directly from the OnePlus 7 Pro hotdog bring-up at the pinned commit.
-Patch0:         https://raw.githubusercontent.com/Sr-0w/hotdog-linux-bringup/%{hotdog_commit}/aports/main/hexagonrpcd/0001-serve-writable-files.patch
-Patch1:         https://raw.githubusercontent.com/Sr-0w/hotdog-linux-bringup/%{hotdog_commit}/aports/main/hexagonrpcd/0002-implement-fremove.patch
-Patch2:         https://raw.githubusercontent.com/Sr-0w/hotdog-linux-bringup/%{hotdog_commit}/aports/main/hexagonrpcd/0003-raise-listener-input-limit.patch
-Patch3:         https://raw.githubusercontent.com/Sr-0w/hotdog-linux-bringup/%{hotdog_commit}/aports/main/hexagonrpcd/0004-support-extended-frename.patch
+# Keep local, checksummed copies so an upstream update cannot silently replace
+# the Nabu merge layer.
+Patch0:         0001-serve-writable-files.patch
+Patch1:         0002-implement-fremove.patch
+Patch2:         0003-raise-listener-input-limit.patch
+Patch3:         0004-support-extended-frename.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -56,6 +58,10 @@ userspace bridge.
 
 %install
 %meson_install
+
+# Since 0.5.0 upstream also installs generic units below %%{_libdir}, discard
+# those copies and install the Nabu-specific units in Fedora's unit directory.
+rm -rf %{buildroot}%{_libdir}/systemd
 
 install -d %{buildroot}%{_includedir}
 cp -a include/libhexagonrpc %{buildroot}%{_includedir}/
@@ -97,10 +103,14 @@ install -Dm0644 %{SOURCE5} %{buildroot}%{_udevrulesdir}/10-fastrpc.rules
 %{_libdir}/libhexagonrpc.so
 
 %changelog
-* Tue Aug 25 2026 SENEMOS Project <senemos@localhost> - 0.4.0-103.nabu3.test
+* Mon Aug 31 2026 mcc45tr <mcc45tr@gmail.com> - 0.5.0-1.nabu1.test
+- Rebase on upstream 0.5.0 while retaining all four Nabu FastRPC merge patches.
+- Keep the Nabu service topology, unprivileged account and SDSP registry root.
+- Remove duplicate upstream units installed below libdir.
+
+* Tue Aug 25 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.0-103.nabu3.test
 - Add DSP-served file write, remove and extended rename operations from the
   pinned Hotdog bring-up patch set.
 - Increase the listener input buffer from 256 bytes to 64 KiB and run the
   upstream Meson tests during the RPM build.
 - Preserve the unprivileged fastrpc service and Nabu-specific SDSP root.
-

@@ -1,0 +1,66 @@
+name: Build Nabu userspace packages
+
+on:
+  pull_request:
+    paths:
+      - '.copr/**'
+      - 'packaging/**'
+      - 'tests/**'
+      - '.github/workflows/build-userspace-packages.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '.copr/**'
+      - 'packaging/**'
+      - 'tests/**'
+      - '.github/workflows/build-userspace-packages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  srpm:
+    runs-on: ubuntu-latest
+    container: fedora:rawhide
+
+    steps:
+      - name: Install packaging tools
+        run: >-
+          dnf install -y
+          curl findutils git jq patch rpm-build rpmdevtools
+          python3-rpm-macros
+
+      - name: Check out sources
+        uses: actions/checkout@v4
+
+      - name: Validate Nabu merge layers
+        run: ./tests/validate.sh
+
+      - name: Build source packages
+        run: ./packaging/build-srpms.sh
+
+      - name: Upload source packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: nabu-userspace-srpms
+          path: dist/srpms/*.src.rpm
+          if-no-files-found: error
+
+      - name: Publish source packages to COPR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          COPR_CONFIG: ${{ secrets.COPR_CONFIG }}
+        run: |
+          if [[ -z ${COPR_CONFIG:-} ]]; then
+              echo 'COPR_CONFIG is not configured; SRPM build completed without publication.'
+              exit 0
+          fi
+          dnf install -y copr-cli
+          install -d -m0700 "$HOME/.config"
+          printf '%s\n' "$COPR_CONFIG" >"$HOME/.config/copr"
+          chmod 0600 "$HOME/.config/copr"
+          for srpm in dist/srpms/*.src.rpm; do
+              copr-cli build mcc45tr/nabu-linux "$srpm"
+          done
