@@ -1,5 +1,8 @@
 [Unit]
 Description=Xiaomi Pad 5 TCS3701 colour temperature IIO bridge
+ConditionPathExists=/usr/lib/modules/%v/kernel/drivers/iio/light/qcom-ssc-cct.ko.zst
+StartLimitIntervalSec=30
+StartLimitBurst=5
 Requires=sys-kernel-config.mount
 After=sys-kernel-config.mount hexagonrpcd-sdsp.service
 Wants=hexagonrpcd-sdsp.service

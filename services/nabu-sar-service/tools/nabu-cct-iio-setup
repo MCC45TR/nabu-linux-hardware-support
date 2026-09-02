@@ -18,6 +18,7 @@ mkdir -p "$endpoint"
 for device in /sys/bus/iio/devices/iio:device*; do
     [[ -r $device/name ]] || continue
     [[ $(<"$device/name") == nabu-cct ]] || continue
+    printf '0\n' >"$device/in_colortemp_raw"
     exit 0
 done
 
