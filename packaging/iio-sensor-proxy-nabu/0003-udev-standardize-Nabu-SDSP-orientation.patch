@@ -1,29 +1,33 @@
 From: mcc45tr <mcc45tr@gmail.com>
-Subject: [PATCH] udev: use SDSP and the kernel mount matrix on Nabu
+Subject: [PATCH] udev: standardize Nabu SDSP orientation
 
 Nabu exposes its physical SSC sensors through SDSP. Advertising ADSP as a
 second source can register duplicate accelerometers and make desktop
 orientation depend on probe order.
 
-Select SDSP as the sole SSC owner and publish its kernel/Device Tree
-mount_matrix through ACCEL_MOUNT_MATRIX, the standard udev property consumed
-by iio-sensor-proxy. This keeps the board transform in firmware description
-instead of duplicating it in a GNOME- or user-specific workaround.
+Select SDSP as the sole SSC owner, enable the accelerometer there, and publish
+the kernel/Device Tree mount_matrix through ACCEL_MOUNT_MATRIX. This is the
+standard udev property consumed by iio-sensor-proxy, so GNOME, KDE and other
+SensorProxy clients share one board-defined transform.
 
 ---
  data/80-iio-sensor-proxy.rules | 14 +++++++++-----
  1 file changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/data/80-iio-sensor-proxy.rules b/data/80-iio-sensor-proxy.rules
-index 9245181..b45f124 100644
+index 59e056d..b45f124 100644
 --- a/data/80-iio-sensor-proxy.rules
 +++ b/data/80-iio-sensor-proxy.rules
-@@ -21,5 +21,9 @@ SUBSYSTEM=="input", ENV{ID_INPUT_ACCELEROMETER}=="1", ENV{IIO_SENSOR_PROXY_TYPE}
+@@ -18,12 +18,16 @@ SUBSYSTEM=="iio", TEST=="scan_elements/in_intensity_both_en", ENV{IIO_SENSOR_PRO
+ SUBSYSTEM=="iio", TEST=="in_proximity_raw", ENV{IIO_SENSOR_PROXY_TYPE}+="iio-poll-proximity"
+ SUBSYSTEM=="iio", TEST=="in_proximity0_raw", ENV{IIO_SENSOR_PROXY_TYPE}+="iio-poll-proximity"
+ SUBSYSTEM=="input", ENV{ID_INPUT_ACCELEROMETER}=="1", ENV{IIO_SENSOR_PROXY_TYPE}+="input-accel"
+ 
 -# Set the sensor type for all the types we recognise for SDSP/ADSP with libssc.
 -# Some devices expose the sensors via a separate SDSP while others re-use ADSP.
 -# These DSPs expose itself as /dev/fastrpc-* in the misc subsystem.
--SUBSYSTEM=="misc", KERNEL=="fastrpc-adsp*", ENV{IIO_SENSOR_PROXY_TYPE}+="ssc-accel ssc-light ssc-compass"
--SUBSYSTEM=="misc", KERNEL=="fastrpc-sdsp*", ENV{IIO_SENSOR_PROXY_TYPE}+="ssc-accel ssc-light ssc-compass"
+-SUBSYSTEM=="misc", KERNEL=="fastrpc-adsp*", ENV{IIO_SENSOR_PROXY_TYPE}+="ssc-light ssc-compass"
+-SUBSYSTEM=="misc", KERNEL=="fastrpc-sdsp*", ENV{IIO_SENSOR_PROXY_TYPE}+="ssc-light ssc-compass"
 +# Nabu exposes its physical SSC sensors through SDSP. Do not advertise ADSP as
 +# a second source, otherwise two accelerometers can race for SensorProxy.
 +SUBSYSTEM=="misc", KERNEL=="fastrpc-adsp*", ENV{IIO_SENSOR_PROXY_TYPE}=""
@@ -33,5 +37,8 @@ index 9245181..b45f124 100644
 +# consumed by iio-sensor-proxy. The parser remains responsible for validating
 +# the matrix and falls back safely if the sysfs value is malformed.
 +SUBSYSTEM=="misc", KERNEL=="fastrpc-sdsp*", TEST=="mount_matrix", ENV{ACCEL_MOUNT_MATRIX}="$attr{mount_matrix}"
+ 
+ ENV{IIO_SENSOR_PROXY_TYPE}=="", GOTO="iio_sensor_proxy_end"
+ 
 -- 
 2.52.0

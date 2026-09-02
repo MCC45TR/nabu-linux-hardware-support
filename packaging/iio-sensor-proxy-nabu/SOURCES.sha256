@@ -1,4 +1,3 @@
 5499f6fa249b0da01dda716d44c7492452411fb671d9bd77fa73451ea8f7fbad  0001-WIP-iio-sensor-proxy.c-Do-not-exit-based-on-sensor-e.patch
 2183e2903661d4ca0031e259ba5c0afafab381b4d8dfd2710aa8928c1298d601  0002-start-initial-sensors-claimed-during-discovery.patch
-620c8e582afae1da3f816c2f88fc6c56df33a79b37257e3e4d79dbc0484dbc08  0003-udev-enable-libssc-accelerometer.patch
-bb9c6dd332fdc7f39fd2221cb9ef99637f5e6a06cea402ca84d96e19035fc3b9  0004-udev-use-SDSP-and-the-kernel-mount-matrix-on-Nabu.patch
+52a1bf754c5ef4df91263136a8df92f4532d4091044e3acde02b8120e07301df  0003-udev-standardize-Nabu-SDSP-orientation.patch

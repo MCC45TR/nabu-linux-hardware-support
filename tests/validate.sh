@@ -74,12 +74,12 @@ grep -Fq 'Requires:       libssc-nabu' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/iio-sensor-proxy.spec"
 grep -Fq '%meson_test' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/iio-sensor-proxy.spec"
-grep -Fq '0004-udev-use-SDSP-and-the-kernel-mount-matrix-on-Nabu.patch' \
+grep -Fq '0003-udev-standardize-Nabu-SDSP-orientation.patch' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/iio-sensor-proxy.spec"
 grep -Fq 'KERNEL=="fastrpc-adsp*", ENV{IIO_SENSOR_PROXY_TYPE}=""' \
-    "$repo_root/packaging/iio-sensor-proxy-nabu/0004-udev-use-SDSP-and-the-kernel-mount-matrix-on-Nabu.patch"
+    "$repo_root/packaging/iio-sensor-proxy-nabu/0003-udev-standardize-Nabu-SDSP-orientation.patch"
 grep -Fq 'ENV{ACCEL_MOUNT_MATRIX}="$attr{mount_matrix}"' \
-    "$repo_root/packaging/iio-sensor-proxy-nabu/0004-udev-use-SDSP-and-the-kernel-mount-matrix-on-Nabu.patch"
+    "$repo_root/packaging/iio-sensor-proxy-nabu/0003-udev-standardize-Nabu-SDSP-orientation.patch"
 "$repo_root/packaging/update-upstreams.sh" --check
 test -s "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
 grep -Eq '^[[:space:]]*PlaybackChannels[[:space:]]+4$' \

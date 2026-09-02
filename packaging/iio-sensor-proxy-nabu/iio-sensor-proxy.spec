@@ -3,7 +3,7 @@
 
 Name:           iio-sensor-proxy-nabu
 Version:        3.9
-Release:        109.nabu7.test%{?dist}
+Release:        110.nabu8.test%{?dist}
 Summary:        Nabu IIO sensor service for orientation-aware desktops
 
 # tests/unittest_inspector.py is LGPL-2.1-or-later but it is not packaged
@@ -13,8 +13,7 @@ Source0:        %{url}/-/archive/%{version}/%{upstream_name}-%{version}.tar.gz
 
 Patch0001:      0001-WIP-iio-sensor-proxy.c-Do-not-exit-based-on-sensor-e.patch
 Patch0002:      0002-start-initial-sensors-claimed-during-discovery.patch
-Patch0003:      0003-udev-enable-libssc-accelerometer.patch
-Patch0004:      0004-udev-use-SDSP-and-the-kernel-mount-matrix-on-Nabu.patch
+Patch0003:      0003-udev-standardize-Nabu-SDSP-orientation.patch
 
 BuildRequires:  meson
 BuildRequires:  gcc
@@ -122,6 +121,10 @@ fi
 %{_datadir}/gtk-doc/html/%{upstream_name}/
 
 %changelog
+* Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-110.nabu8.test
+- Consolidate Nabu SSC ownership and mount-matrix rules into one contextual patch.
+- Make the RPM git-am preparation path match the validated update path.
+
 * Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-109.nabu7.test
 - Repair the ordered udev patch context after the SSC accelerometer patch.
 - Keep Nabu SDSP as the sole SSC source and export the DT mount matrix.

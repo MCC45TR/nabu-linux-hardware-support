@@ -130,8 +130,7 @@ for package in "${packages[@]}"; do
             patches=(
                 0001-WIP-iio-sensor-proxy.c-Do-not-exit-based-on-sensor-e.patch
                 0002-start-initial-sensors-claimed-during-discovery.patch
-                0003-udev-enable-libssc-accelerometer.patch
-                0004-udev-use-SDSP-and-the-kernel-mount-matrix-on-Nabu.patch
+                0003-udev-standardize-Nabu-SDSP-orientation.patch
             )
             ;;
     esac
