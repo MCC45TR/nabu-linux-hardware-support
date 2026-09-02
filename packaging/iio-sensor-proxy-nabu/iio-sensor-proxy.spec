@@ -3,7 +3,7 @@
 
 Name:           iio-sensor-proxy-nabu
 Version:        3.9
-Release:        108.nabu6.test%{?dist}
+Release:        109.nabu7.test%{?dist}
 Summary:        Nabu IIO sensor service for orientation-aware desktops
 
 # tests/unittest_inspector.py is LGPL-2.1-or-later but it is not packaged
@@ -122,6 +122,10 @@ fi
 %{_datadir}/gtk-doc/html/%{upstream_name}/
 
 %changelog
+* Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-109.nabu7.test
+- Repair the ordered udev patch context after the SSC accelerometer patch.
+- Keep Nabu SDSP as the sole SSC source and export the DT mount matrix.
+
 * Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-108.nabu6.test
 - Select Nabu SDSP as the sole SSC desktop sensor source.
 - Publish the kernel/Device Tree transform through ACCEL_MOUNT_MATRIX.

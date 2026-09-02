@@ -15,7 +15,7 @@ instead of duplicating it in a GNOME- or user-specific workaround.
  1 file changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/data/80-iio-sensor-proxy.rules b/data/80-iio-sensor-proxy.rules
-index dd2fc2c..b45f124 100644
+index 9245181..b45f124 100644
 --- a/data/80-iio-sensor-proxy.rules
 +++ b/data/80-iio-sensor-proxy.rules
 @@ -21,5 +21,9 @@ SUBSYSTEM=="input", ENV{ID_INPUT_ACCELEROMETER}=="1", ENV{IIO_SENSOR_PROXY_TYPE}
