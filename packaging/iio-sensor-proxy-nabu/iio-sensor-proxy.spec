@@ -3,7 +3,7 @@
 
 Name:           iio-sensor-proxy-nabu
 Version:        3.9
-Release:        112.nabu10.test%{?dist}
+Release:        113.nabu11.test%{?dist}
 Summary:        Nabu IIO sensor service for orientation-aware desktops
 
 # tests/unittest_inspector.py is LGPL-2.1-or-later but it is not packaged
@@ -74,13 +74,16 @@ grep -F 'CompassHeading' tests/ssc-test.py
 grep -F 'get_compass_dbus_property' tests/ssc-test.py
 
 # Keep desktop orientation board-defined and desktop-agnostic. Nabu must use
-# SDSP once, and iio-sensor-proxy must consume the standard udev mount matrix.
+# SDSP once, and iio-sensor-proxy must consume the kernel sysfs mount matrix.
 grep -F 'KERNEL=="fastrpc-adsp*", ENV{IIO_SENSOR_PROXY_TYPE}=""' \
     data/80-iio-sensor-proxy.rules
 grep -F 'KERNEL=="fastrpc-sdsp*", ENV{IIO_SENSOR_PROXY_TYPE}="ssc-accel ssc-light ssc-compass"' \
     data/80-iio-sensor-proxy.rules
-grep -F 'ENV{ACCEL_MOUNT_MATRIX}="$attr{mount_matrix}"' \
+grep -F 'drv-ssc-accel reads mount_matrix directly' \
     data/80-iio-sensor-proxy.rules
+! grep -Fq 'ENV{ACCEL_MOUNT_MATRIX}' data/80-iio-sensor-proxy.rules
+grep -F 'g_udev_device_get_sysfs_attr (device, "mount_matrix")' \
+    src/accel-mount-matrix.c
 udevadm verify data/80-iio-sensor-proxy.rules
 
 # The well-known D-Bus name must not become visible until initial discovery is
@@ -128,6 +131,10 @@ fi
 %{_datadir}/gtk-doc/html/%{upstream_name}/
 
 %changelog
+* Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-113.nabu11.test
+- Read the Nabu mount matrix directly from the FastRPC kernel sysfs attribute.
+- Remove the lossy udev environment copy that escaped matrix separators.
+
 * Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-112.nabu10.test
 - Complete initial sensor discovery before publishing the D-Bus name
 - Prevent desktops from caching a false accelerometer state at boot

@@ -1,25 +1,17 @@
+From a73811e7f614b0f10a47fc604b97c1c6e9a1bf55 Mon Sep 17 00:00:00 2001
 From: mcc45tr <mcc45tr@gmail.com>
-Subject: [PATCH] udev: standardize Nabu SDSP orientation
-
-Nabu exposes its physical SSC sensors through SDSP. Advertising ADSP as a
-second source can register duplicate accelerometers and make desktop
-orientation depend on probe order.
-
-Select SDSP as the sole SSC owner, enable the accelerometer there, and publish
-the kernel/Device Tree mount_matrix through ACCEL_MOUNT_MATRIX. This is the
-standard udev property consumed by iio-sensor-proxy, so GNOME, KDE and other
-SensorProxy clients share one board-defined transform.
+Date: Wed, 2 Sep 2026 21:28:50 +0300
+Subject: [PATCH] udev: select Nabu SDSP sensor ownership
 
 ---
- data/80-iio-sensor-proxy.rules | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ data/80-iio-sensor-proxy.rules | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/data/80-iio-sensor-proxy.rules b/data/80-iio-sensor-proxy.rules
-index 59e056d..b45f124 100644
+index fa8a4b3..fd5db71 100644
 --- a/data/80-iio-sensor-proxy.rules
 +++ b/data/80-iio-sensor-proxy.rules
-@@ -18,12 +18,16 @@ SUBSYSTEM=="iio", TEST=="scan_elements/in_intensity_both_en", ENV{IIO_SENSOR_PRO
- SUBSYSTEM=="iio", TEST=="in_proximity_raw", ENV{IIO_SENSOR_PROXY_TYPE}+="iio-poll-proximity"
+@@ -18,11 +18,13 @@ SUBSYSTEM=="iio", TEST=="in_proximity_raw", ENV{IIO_SENSOR_PROXY_TYPE}+="iio-pol
  SUBSYSTEM=="iio", TEST=="in_proximity0_raw", ENV{IIO_SENSOR_PROXY_TYPE}+="iio-poll-proximity"
  SUBSYSTEM=="input", ENV{ID_INPUT_ACCELEROMETER}=="1", ENV{IIO_SENSOR_PROXY_TYPE}+="input-accel"
  
@@ -33,12 +25,10 @@ index 59e056d..b45f124 100644
 +SUBSYSTEM=="misc", KERNEL=="fastrpc-adsp*", ENV{IIO_SENSOR_PROXY_TYPE}=""
 +SUBSYSTEM=="misc", KERNEL=="fastrpc-sdsp*", ENV{IIO_SENSOR_PROXY_TYPE}="ssc-accel ssc-light ssc-compass"
 +
-+# Publish the kernel/Device Tree orientation through the standard udev property
-+# consumed by iio-sensor-proxy. The parser remains responsible for validating
-+# the matrix and falls back safely if the sysfs value is malformed.
-+SUBSYSTEM=="misc", KERNEL=="fastrpc-sdsp*", TEST=="mount_matrix", ENV{ACCEL_MOUNT_MATRIX}="$attr{mount_matrix}"
++# drv-ssc-accel reads mount_matrix directly from this FastRPC sysfs device.
++# Keep the Device Tree value in the kernel instead of copying it through udev.
  
  ENV{IIO_SENSOR_PROXY_TYPE}=="", GOTO="iio_sensor_proxy_end"
  
 -- 
-2.52.0
+2.55.0
