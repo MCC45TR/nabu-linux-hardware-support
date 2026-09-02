@@ -1,0 +1,73 @@
+From: mcc45tr <mcc45tr@gmail.com>
+Subject: [PATCH] libssc: accept fractional and integer mount matrices
+
+SSC implementations are allowed to describe the mount matrix with floating
+point values.  Checking whether such a matrix is empty by accumulating its
+entries in an integer truncates every fractional coefficient.  A valid matrix
+can therefore be mistaken for an all-zero matrix and silently replaced by the
+identity matrix.  Some firmware also represents the usual -1/0/1 values as
+integer attributes.
+
+Parse both protobuf numeric variants, track whether every parsed coefficient
+is actually zero, and require all nine coefficients before using the matrix.
+This keeps the fallback for missing or malformed firmware data without
+discarding valid rotations.
+
+---
+ src/libssc-sensor.c | 34 +++++++++++++++++++++++-----------
+ 1 file changed, 23 insertions(+), 11 deletions(-)
+
+diff --git a/src/libssc-sensor.c b/src/libssc-sensor.c
+index 6afad83..c83463b 100644
+--- a/src/libssc-sensor.c
++++ b/src/libssc-sensor.c
+@@ -406,25 +406,37 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid
+ 						priv->stream_type = attr_msg->attr[i]->value_array->v[0]->i;
+ 					break;
+ 				case SSC_ATTRIBUTE_MOUNT_MATRIX:
++				{
++					gboolean all_zero = TRUE;
++					gsize parsed_values = 0;
++
+ 					mount_matrix_attribute_populated = TRUE;
+ 					/* 3x3 mount matrix has max 9 values but a 3x4 matrix is provided, use the first 9 values */
++					memset (priv->mount_matrix, 0, sizeof (priv->mount_matrix));
+ 					for (gsize j = 0; j < MIN(attr_msg->attr[i]->value_array->n_v, 9); j++) {
+-						if (attr_msg->attr[i]->value_array->v[j]->has_f) {
+-							priv->mount_matrix[j/3][j%3] = attr_msg->attr[i]->value_array->v[j]->f;
+-						}
++						SscAttrValue *value = attr_msg->attr[i]->value_array->v[j];
++						gfloat coefficient;
++
++						if (value->has_f)
++							coefficient = value->f;
++						else if (value->has_i)
++							coefficient = value->i;
++						else
++							continue;
++
++						priv->mount_matrix[j/3][j%3] = coefficient;
++						all_zero = all_zero && coefficient == 0.0f;
++						parsed_values++;
+ 					}
+ 
+-					/* Fallback to identity matrix in case matrix is all 0 */
+-					gint sum = 0;
+-					for (gsize k = 0; k < 9; k++)
+-						sum += priv->mount_matrix[k/3][k%3];
+-
+-					if (sum == 0) {
++					if (parsed_values != 9 || all_zero) {
++						memset (priv->mount_matrix, 0, sizeof (priv->mount_matrix));
+ 						priv->mount_matrix[0][0] = 1.0;
+ 						priv->mount_matrix[1][1] = 1.0;
+ 						priv->mount_matrix[2][2] = 1.0;
+-						g_warning ("Mount matrix provided by firmware is all 0, falling back to identity matrix!");
++						g_warning ("Mount matrix provided by firmware is incomplete or all 0, falling back to identity matrix!");
+ 					}
+ 					break;
++				}
+ 		       }
+ 		}
+-- 
+2.51.0

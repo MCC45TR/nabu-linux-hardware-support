@@ -1,1 +1,2 @@
 5d6a23a2ac3c0b40be2a946ba3d741d75a0a2b35179df5d2a511faae4bd95f57  0001-libssc-avoid-use-after-free-in-sensor-error-logging.patch
+62a01af07ac41682afc0e9a268a53c78fa743520a5e345310abde5ae2dfdc802  0002-libssc-accept-fractional-and-integer-mount-matrices.patch

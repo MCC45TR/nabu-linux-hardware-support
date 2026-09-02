@@ -49,6 +49,12 @@ grep -Fq 'Provides:       python3-ssc = %{version}-%{release}' \
     "$repo_root/packaging/libssc-nabu/libssc.spec"
 grep -Fq '%meson_test' \
     "$repo_root/packaging/libssc-nabu/libssc.spec"
+grep -Fq '0002-libssc-accept-fractional-and-integer-mount-matrices.patch' \
+    "$repo_root/packaging/libssc-nabu/libssc.spec"
+grep -Fq 'parsed_values != 9 || all_zero' \
+    "$repo_root/packaging/libssc-nabu/0002-libssc-accept-fractional-and-integer-mount-matrices.patch"
+grep -Fq 'else if (value->has_i)' \
+    "$repo_root/packaging/libssc-nabu/0002-libssc-accept-fractional-and-integer-mount-matrices.patch"
 grep -Fq 'BuildRequires:  /usr/bin/protoc-c' \
     "$repo_root/packaging/libssc-nabu/libssc.spec"
 grep -Fq 'BuildRequires:  python3-gobject-base' \

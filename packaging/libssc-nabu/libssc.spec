@@ -3,13 +3,14 @@
 
 Name:           libssc-nabu
 Version:        0.4.4
-Release:        1.nabu1.test%{?dist}
+Release:        2.nabu1.test%{?dist}
 Summary:        Qualcomm Sensor Core client library for Nabu sensor services
 
 License:        GPL-3.0-or-later
 URL:            https://codeberg.org/DylanVanAssche/libssc
 Source0:        %{url}/archive/v%{version}.tar.gz#/%{upstream_name}-%{version}.tar.gz
 Patch0:         0001-libssc-avoid-use-after-free-in-sensor-error-logging.patch
+Patch1:         0002-libssc-accept-fractional-and-integer-mount-matrices.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -85,6 +86,11 @@ Sensor Core client library.
 %{_libexecdir}/installed-tests/%{upstream_name}/ssc-server
 
 %changelog
+* Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-2.nabu1.test
+- Preserve valid fractional SSC mount matrices instead of truncating them.
+- Accept both floating-point and integer firmware matrix coefficients.
+- Fall back to identity only for incomplete or genuinely all-zero matrices.
+
 * Mon Aug 31 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-1.nabu1.test
 - Rebase on upstream 0.4.4 and its corrected Python installed-test layout.
 - Retain the Nabu GError ownership fix used during SLPI failure recovery.

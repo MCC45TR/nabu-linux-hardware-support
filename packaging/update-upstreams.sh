@@ -119,8 +119,11 @@ for package in "${packages[@]}"; do
                 0004-support-extended-frename.patch
             )
             ;;
-        libssc-nabu)
-            patches=(0001-libssc-avoid-use-after-free-in-sensor-error-logging.patch)
+		libssc-nabu)
+			patches=(
+				0001-libssc-avoid-use-after-free-in-sensor-error-logging.patch
+				0002-libssc-accept-fractional-and-integer-mount-matrices.patch
+			)
             ;;
         iio-sensor-proxy-nabu)
             patches=(
