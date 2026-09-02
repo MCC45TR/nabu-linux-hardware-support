@@ -3,7 +3,7 @@
 
 Name:           iio-sensor-proxy-nabu
 Version:        3.9
-Release:        110.nabu8.test%{?dist}
+Release:        111.nabu9.test%{?dist}
 Summary:        Nabu IIO sensor service for orientation-aware desktops
 
 # tests/unittest_inspector.py is LGPL-2.1-or-later but it is not packaged
@@ -26,6 +26,7 @@ BuildRequires:  pkgconfig(gio-2.0)
 BuildRequires:  pkgconfig(gudev-1.0)
 BuildRequires:  pkgconfig(polkit-gobject-1)
 BuildRequires:  systemd
+BuildRequires:  systemd-udev
 BuildRequires:  umockdev
 BuildRequires:  python3-dbusmock
 %{?systemd_requires}
@@ -121,6 +122,9 @@ fi
 %{_datadir}/gtk-doc/html/%{upstream_name}/
 
 %changelog
+* Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-111.nabu9.test
+- Require udevadm for the packaged rule validation gate
+
 * Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-110.nabu8.test
 - Consolidate Nabu SSC ownership and mount-matrix rules into one contextual patch.
 - Make the RPM git-am preparation path match the validated update path.
