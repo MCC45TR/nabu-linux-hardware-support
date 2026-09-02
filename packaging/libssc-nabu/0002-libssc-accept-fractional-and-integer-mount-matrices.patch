@@ -18,21 +18,17 @@ discarding valid rotations.
  1 file changed, 23 insertions(+), 11 deletions(-)
 
 diff --git a/src/libssc-sensor.c b/src/libssc-sensor.c
-index 6afad83..c83463b 100644
+index 6a09b07..20c2665 100644
 --- a/src/libssc-sensor.c
 +++ b/src/libssc-sensor.c
-@@ -406,25 +406,37 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid
- 						priv->stream_type = attr_msg->attr[i]->value_array->v[0]->i;
- 					break;
- 				case SSC_ATTRIBUTE_MOUNT_MATRIX:
+@@ -408,0 +409,4 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid_
 +				{
 +					gboolean all_zero = TRUE;
 +					gsize parsed_values = 0;
 +
- 					mount_matrix_attribute_populated = TRUE;
- 					/* 3x3 mount matrix has max 9 values but a 3x4 matrix is provided, use the first 9 values */
+@@ -410,0 +415 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid_
 +					memset (priv->mount_matrix, 0, sizeof (priv->mount_matrix));
- 					for (gsize j = 0; j < MIN(attr_msg->attr[i]->value_array->n_v, 9); j++) {
+@@ -412,3 +417,13 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid_
 -						if (attr_msg->attr[i]->value_array->v[j]->has_f) {
 -							priv->mount_matrix[j/3][j%3] = attr_msg->attr[i]->value_array->v[j]->f;
 -						}
@@ -49,8 +45,7 @@ index 6afad83..c83463b 100644
 +						priv->mount_matrix[j/3][j%3] = coefficient;
 +						all_zero = all_zero && coefficient == 0.0f;
 +						parsed_values++;
- 					}
- 
+@@ -417,6 +432,2 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid_
 -					/* Fallback to identity matrix in case matrix is all 0 */
 -					gint sum = 0;
 -					for (gsize k = 0; k < 9; k++)
@@ -59,15 +54,10 @@ index 6afad83..c83463b 100644
 -					if (sum == 0) {
 +					if (parsed_values != 9 || all_zero) {
 +						memset (priv->mount_matrix, 0, sizeof (priv->mount_matrix));
- 						priv->mount_matrix[0][0] = 1.0;
- 						priv->mount_matrix[1][1] = 1.0;
- 						priv->mount_matrix[2][2] = 1.0;
+@@ -426 +437 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid_
 -						g_warning ("Mount matrix provided by firmware is all 0, falling back to identity matrix!");
 +						g_warning ("Mount matrix provided by firmware is incomplete or all 0, falling back to identity matrix!");
- 					}
- 					break;
+@@ -428,0 +440 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid_
 +				}
- 		       }
- 		}
 -- 
 2.51.0
