@@ -123,6 +123,7 @@ for package in "${packages[@]}"; do
 			patches=(
 				0001-libssc-avoid-use-after-free-in-sensor-error-logging.patch
 				0002-libssc-accept-fractional-and-integer-mount-matrices.patch
+				0003-ssccli-probe-arbitrary-data-types.patch
 			)
             ;;
         iio-sensor-proxy-nabu)
@@ -130,6 +131,7 @@ for package in "${packages[@]}"; do
                 0001-WIP-iio-sensor-proxy.c-Do-not-exit-based-on-sensor-e.patch
                 0002-start-initial-sensors-claimed-during-discovery.patch
                 0003-udev-enable-libssc-accelerometer.patch
+                0004-udev-use-SDSP-and-the-kernel-mount-matrix-on-Nabu.patch
             )
             ;;
     esac

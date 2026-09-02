@@ -3,7 +3,7 @@
 
 Name:           iio-sensor-proxy-nabu
 Version:        3.9
-Release:        107.nabu5.test%{?dist}
+Release:        108.nabu6.test%{?dist}
 Summary:        Nabu IIO sensor service for orientation-aware desktops
 
 # tests/unittest_inspector.py is LGPL-2.1-or-later but it is not packaged
@@ -14,6 +14,7 @@ Source0:        %{url}/-/archive/%{version}/%{upstream_name}-%{version}.tar.gz
 Patch0001:      0001-WIP-iio-sensor-proxy.c-Do-not-exit-based-on-sensor-e.patch
 Patch0002:      0002-start-initial-sensors-claimed-during-discovery.patch
 Patch0003:      0003-udev-enable-libssc-accelerometer.patch
+Patch0004:      0004-udev-use-SDSP-and-the-kernel-mount-matrix-on-Nabu.patch
 
 BuildRequires:  meson
 BuildRequires:  gcc
@@ -72,6 +73,16 @@ grep -F 'HasCompass' tests/ssc-test.py
 grep -F 'CompassHeading' tests/ssc-test.py
 grep -F 'get_compass_dbus_property' tests/ssc-test.py
 
+# Keep desktop orientation board-defined and desktop-agnostic. Nabu must use
+# SDSP once, and iio-sensor-proxy must consume the standard udev mount matrix.
+grep -F 'KERNEL=="fastrpc-adsp*", ENV{IIO_SENSOR_PROXY_TYPE}=""' \
+    data/80-iio-sensor-proxy.rules
+grep -F 'KERNEL=="fastrpc-sdsp*", ENV{IIO_SENSOR_PROXY_TYPE}="ssc-accel ssc-light ssc-compass"' \
+    data/80-iio-sensor-proxy.rules
+grep -F 'ENV{ACCEL_MOUNT_MATRIX}="$attr{mount_matrix}"' \
+    data/80-iio-sensor-proxy.rules
+udevadm verify data/80-iio-sensor-proxy.rules
+
 %post
 %systemd_post %{upstream_name}.service
 
@@ -111,8 +122,12 @@ fi
 %{_datadir}/gtk-doc/html/%{upstream_name}/
 
 %changelog
+* Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-108.nabu6.test
+- Select Nabu SDSP as the sole SSC desktop sensor source.
+- Publish the kernel/Device Tree transform through ACCEL_MOUNT_MATRIX.
+- Keep rotation correct across GNOME, KDE and other SensorProxy consumers.
+
 * Mon Aug 31 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-107.nabu5.test
 - Move the proven Nabu SSC integration into the checksum-locked update pipeline.
 - Retain hotplug survival, initial-claim polling and FastRPC accelerometer patches.
 - Build from the stable upstream tag so future releases can be reviewed automatically.
-

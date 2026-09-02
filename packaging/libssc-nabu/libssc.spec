@@ -3,7 +3,7 @@
 
 Name:           libssc-nabu
 Version:        0.4.4
-Release:        2.nabu1.test%{?dist}
+Release:        3.nabu2.test%{?dist}
 Summary:        Qualcomm Sensor Core client library for Nabu sensor services
 
 License:        GPL-3.0-or-later
@@ -11,6 +11,7 @@ URL:            https://codeberg.org/DylanVanAssche/libssc
 Source0:        %{url}/archive/v%{version}.tar.gz#/%{upstream_name}-%{version}.tar.gz
 Patch0:         0001-libssc-avoid-use-after-free-in-sensor-error-logging.patch
 Patch1:         0002-libssc-accept-fractional-and-integer-mount-matrices.patch
+Patch2:         0003-ssccli-probe-arbitrary-data-types.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -69,6 +70,13 @@ Sensor Core client library.
 %check
 %meson_test
 
+# Keep the hardware-discovery interface and the already-supported gyroscope
+# visible as release contracts. The generic probe discovers only; it never
+# enables an unknown stream with a guessed decoder.
+grep -F 'probe-data-type' src/libssc-cli.c
+grep -F "'gyroscope'" src/libssc-cli.c
+grep -F 'Z=%f rad/s' src/libssc-cli.c
+
 %files
 %license LICENSE
 %{_bindir}/ssccli
@@ -86,6 +94,10 @@ Sensor Core client library.
 %{_libexecdir}/installed-tests/%{upstream_name}/ssc-server
 
 %changelog
+* Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-3.nabu2.test
+- Add safe discovery-only probing for arbitrary SSC data types.
+- Advertise the existing gyroscope CLI support and report angular velocity in rad/s.
+
 * Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-2.nabu1.test
 - Preserve valid fractional SSC mount matrices instead of truncating them.
 - Accept both floating-point and integer firmware matrix coefficients.

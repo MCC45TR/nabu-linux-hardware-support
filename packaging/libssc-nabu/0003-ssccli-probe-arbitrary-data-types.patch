@@ -1,0 +1,131 @@
+From: mcc45tr <mcc45tr@gmail.com>
+Subject: [PATCH] ssccli: probe arbitrary data types and document gyroscope
+
+Expose a discovery-only CLI path for vendor sensor data types. This allows
+hardware enablement to distinguish a missing SSC SUID from a decoder problem
+without enabling an unknown stream or guessing its message schema.
+
+Also list the already-supported gyroscope in --help and label its output with
+the correct angular-velocity unit.
+
+---
+ src/libssc-cli-private.h |  2 ++
+ src/libssc-cli.c         | 53 +++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 49 insertions(+), 6 deletions(-)
+
+diff --git a/src/libssc-cli-private.h b/src/libssc-cli-private.h
+index e210167..d4261e8 100644
+--- a/src/libssc-cli-private.h
++++ b/src/libssc-cli-private.h
+@@ -40,6 +40,8 @@
+ typedef struct {
+ 	GMainLoop *loop;
+ 	gchar *device_str;
++	gchar *probe_data_type;
++	gint exit_code;
+ 	SSCClient *client;
+ } SSCCli;
+ 
+diff --git a/src/libssc-cli.c b/src/libssc-cli.c
+index 5560862..a9e428f 100644
+--- a/src/libssc-cli.c
++++ b/src/libssc-cli.c
+@@ -24,6 +24,39 @@
+ #define OPEN_FAIL_EXIT_CODE -3
+ #define CLOSE_FAIL_EXIT_CODE -4
+ 
++static void
++probe_data_type_ready (GObject *source, GAsyncResult *result, gpointer user_data)
++{
++	g_autoptr (GError) err = NULL;
++	g_autoptr (SSCSensor) sensor = NULL;
++	SSCCli *cli = user_data;
++	gchar *name = NULL;
++	gchar *vendor = NULL;
++
++	sensor = ssc_sensor_new_finish (result, &err);
++	if (!sensor) {
++		g_printf ("SSC data type '%s' is unavailable: %s\n",
++			  cli->probe_data_type,
++			  err ? err->message : "UNKNOWN");
++		cli->exit_code = INIT_FAIL_EXIT_CODE;
++		g_main_loop_quit (cli->loop);
++		return;
++	}
++
++	g_object_get (sensor,
++		      SSC_SENSOR_NAME, &name,
++		      SSC_SENSOR_VENDOR, &vendor,
++		      NULL);
++	g_printf ("SSC data type '%s' is available (name=%s, vendor=%s)\n",
++		  cli->probe_data_type,
++		  name ? name : "unknown",
++		  vendor ? vendor : "unknown");
++	g_free (name);
++	g_free (vendor);
++	cli->exit_code = 0;
++	g_main_loop_quit (cli->loop);
++}
++
+ static gboolean
+ compass_close_cb (SSCSensorCompass *self)
+ {
+@@ -150,7 +183,7 @@ gyroscope_close_cb (SSCSensorGyroscope *self)
+ 
+ static void gyroscope_measurement (SSCSensorGyroscope *sensor, gfloat velocity_x, gfloat velocity_y, gfloat velocity_z, gpointer user_data)
+ {
+-	g_printf ("Gyroscope sensor measurement: X=%f Y=%f Z=%f m/s\n", velocity_x, velocity_y, velocity_z);
++	g_printf ("Gyroscope sensor measurement: X=%f Y=%f Z=%f rad/s\n", velocity_x, velocity_y, velocity_z);
+ 	fflush(stdout);
+ }
+ 
+@@ -160,15 +193,17 @@ int main(int argc, char *argv[])
+ {
+ 	g_autoptr(GOptionContext) opt_context = NULL;
+ 	GError *err = NULL;
+-	SSCCli cli;
++	SSCCli cli = { 0 };
+ 	gboolean print_version = FALSE;
+ 	gboolean debug = FALSE;
+ 	gchar *sensor_str = "";
++	gchar *probe_data_type = "";
+ 	gint64 timeout = DEFAULT_ENABLE_SECONDS;
+ 	const GOptionEntry options[] = {
+ 		{ "version", 0, 0, G_OPTION_ARG_NONE, &print_version, "Print version information and exit.", NULL },
+ 		{ "debug", 'v', 0, G_OPTION_ARG_NONE, &debug, "Enable debug logs.", NULL },
+-		{ "sensor", 0, 0, G_OPTION_ARG_STRING, &sensor_str, "Enable a sensor. Supported sensors: 'proximity', 'light', 'accelerometer', 'magnetometer', 'compass'", NULL },
++		{ "sensor", 0, 0, G_OPTION_ARG_STRING, &sensor_str, "Enable a sensor. Supported sensors: 'proximity', 'light', 'accelerometer', 'magnetometer', 'compass', 'gyroscope'", NULL },
++		{ "probe-data-type", 0, 0, G_OPTION_ARG_STRING, &probe_data_type, "Discover an arbitrary SSC data type without enabling it", "DATA_TYPE" },
+ 		{ "timeout", 0, 0, G_OPTION_ARG_INT64, &timeout, "Number of seconds before this will timeout [default 10]", NULL },
+ 		{ NULL, 0, 0, G_OPTION_ARG_NONE, NULL, NULL, NULL }
+ 	};
+@@ -199,7 +234,16 @@ int main(int argc, char *argv[])
+ 
+ 	g_info("libssc %d.%d.%d starting", LIBSSC_MAJOR_VERSION, LIBSSC_MINOR_VERSION, LIBSSC_PATCH_VERSION);
+ 
+-	if (g_strcmp0 (sensor_str, "proximity") == 0) {
++	cli.loop = g_main_loop_new (NULL, FALSE);
++	cli.probe_data_type = probe_data_type;
++	cli.exit_code = 0;
++
++	if (probe_data_type[0] != '\0') {
++		ssc_sensor_new (probe_data_type,
++				NULL,
++				(GAsyncReadyCallback) probe_data_type_ready,
++				&cli);
++	} else if (g_strcmp0 (sensor_str, "proximity") == 0) {
+ 		SSCSensorProximity *proximity = ssc_sensor_proximity_new_sync (NULL, &err);
+ 		if (!proximity) {
+ 			g_printf ("Unable to initialize proximity sensor: %s\n", err ? err->message : "UNKNOWN");
+@@ -295,8 +339,7 @@ int main(int argc, char *argv[])
+ 	}
+ 
+ 	/* Start GLib main loop */
+-	cli.loop = g_main_loop_new (NULL, FALSE);
+ 	g_main_loop_run (cli.loop);
+ 
+-	return 0;
++	return cli.exit_code;
+ }
+-- 
+2.52.0

@@ -55,6 +55,12 @@ grep -Fq 'parsed_values != 9 || all_zero' \
     "$repo_root/packaging/libssc-nabu/0002-libssc-accept-fractional-and-integer-mount-matrices.patch"
 grep -Fq 'else if (value->has_i)' \
     "$repo_root/packaging/libssc-nabu/0002-libssc-accept-fractional-and-integer-mount-matrices.patch"
+grep -Fq '0003-ssccli-probe-arbitrary-data-types.patch' \
+    "$repo_root/packaging/libssc-nabu/libssc.spec"
+grep -Fq 'probe-data-type' \
+    "$repo_root/packaging/libssc-nabu/0003-ssccli-probe-arbitrary-data-types.patch"
+grep -Fq 'Z=%f rad/s' \
+    "$repo_root/packaging/libssc-nabu/0003-ssccli-probe-arbitrary-data-types.patch"
 grep -Fq 'BuildRequires:  /usr/bin/protoc-c' \
     "$repo_root/packaging/libssc-nabu/libssc.spec"
 grep -Fq 'BuildRequires:  python3-gobject-base' \
@@ -68,6 +74,12 @@ grep -Fq 'Requires:       libssc-nabu' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/iio-sensor-proxy.spec"
 grep -Fq '%meson_test' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/iio-sensor-proxy.spec"
+grep -Fq '0004-udev-use-SDSP-and-the-kernel-mount-matrix-on-Nabu.patch' \
+    "$repo_root/packaging/iio-sensor-proxy-nabu/iio-sensor-proxy.spec"
+grep -Fq 'KERNEL=="fastrpc-adsp*", ENV{IIO_SENSOR_PROXY_TYPE}=""' \
+    "$repo_root/packaging/iio-sensor-proxy-nabu/0004-udev-use-SDSP-and-the-kernel-mount-matrix-on-Nabu.patch"
+grep -Fq 'ENV{ACCEL_MOUNT_MATRIX}="$attr{mount_matrix}"' \
+    "$repo_root/packaging/iio-sensor-proxy-nabu/0004-udev-use-SDSP-and-the-kernel-mount-matrix-on-Nabu.patch"
 "$repo_root/packaging/update-upstreams.sh" --check
 test -s "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
 grep -Eq '^[[:space:]]*PlaybackChannels[[:space:]]+4$' \
