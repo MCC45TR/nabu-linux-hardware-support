@@ -3,7 +3,7 @@
 
 Name:           iio-sensor-proxy-nabu
 Version:        3.9
-Release:        111.nabu9.test%{?dist}
+Release:        112.nabu10.test%{?dist}
 Summary:        Nabu IIO sensor service for orientation-aware desktops
 
 # tests/unittest_inspector.py is LGPL-2.1-or-later but it is not packaged
@@ -83,6 +83,12 @@ grep -F 'ENV{ACCEL_MOUNT_MATRIX}="$attr{mount_matrix}"' \
     data/80-iio-sensor-proxy.rules
 udevadm verify data/80-iio-sensor-proxy.rules
 
+# The well-known D-Bus name must not become visible until initial discovery is
+# complete; otherwise desktop clients can permanently cache Has* = false.
+grep -F 'Finish initial discovery before returning from the bus-acquired' \
+    src/iio-sensor-proxy.c
+grep -F 'if (find_sensors (data->client, data))' src/iio-sensor-proxy.c
+
 %post
 %systemd_post %{upstream_name}.service
 
@@ -122,6 +128,10 @@ fi
 %{_datadir}/gtk-doc/html/%{upstream_name}/
 
 %changelog
+* Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-112.nabu10.test
+- Complete initial sensor discovery before publishing the D-Bus name
+- Prevent desktops from caching a false accelerometer state at boot
+
 * Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-111.nabu9.test
 - Require udevadm for the packaged rule validation gate
 

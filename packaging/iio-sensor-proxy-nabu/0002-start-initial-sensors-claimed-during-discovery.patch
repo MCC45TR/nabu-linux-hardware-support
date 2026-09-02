@@ -1,40 +1,127 @@
-From 49f9ee80fd8568741a82b6ef731a871d22dc4e36 Mon Sep 17 00:00:00 2001
-From: SENEMOS Nabu maintainers <nabu@senemos.local>
-Date: Fri, 14 Aug 2026 19:10:00 +0300
-Subject: [PATCH] iio-sensor-proxy: start clients claimed during initial discovery
+From d0a15d1f22b9c480b9630551af91103e30e38e29 Mon Sep 17 00:00:00 2001
+From: mcc45tr <mcc45tr@gmail.com>
+Date: Wed, 2 Sep 2026 16:22:28 +0300
+Subject: [PATCH] iio-sensor-proxy: discover sensors before owning D-Bus name
 
-The D-Bus name is visible after bus_acquired_handler(), before
-name_acquired_handler() finishes synchronous SSC discovery. Desktop clients
-can therefore claim a sensor while driver_type_exists() is still false. The
-claim is recorded and returned, but the initial discovery path never starts
-polling for those clients. This leaves SensorProxy at 0 lux and undefined
-orientation even though direct libssc clients receive measurements.
-
-Mirror the existing hotplug path: when initial discovery opens a sensor that
-already has clients, start polling and delay the first aggregate property
-event until a real measurement arrives.
 ---
- src/iio-sensor-proxy.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ src/iio-sensor-proxy.c | 90 +++++++++++++++++++++---------------------
+ 1 file changed, 44 insertions(+), 46 deletions(-)
 
 diff --git a/src/iio-sensor-proxy.c b/src/iio-sensor-proxy.c
-index aed7cb4..a40aa11 100644
+index cbd4463..b785703 100644
 --- a/src/iio-sensor-proxy.c
 +++ b/src/iio-sensor-proxy.c
-@@ -779,6 +779,14 @@ name_acquired_handler (GDBusConnection *connection,
- 		}
+@@ -723,6 +723,46 @@ bus_acquired_handler (GDBusConnection *connection,
+     };
+ 	guint i;
  
- 		DEVICE_FOR_TYPE(i) = sensor_device;
++	/*
++	 * Finish initial discovery before returning from the bus-acquired
++	 * callback. g_bus_own_name() only requests the well-known name after this
++	 * callback returns, so clients cannot cache Has* = false while the initial
++	 * sensors are still being opened.
++	 */
++	data->client = g_udev_client_new (subsystems);
 +
-+		if (g_hash_table_size (data->clients[i]) > 0) {
-+			/* The D-Bus name is visible before initial sensor discovery
-+			 * completes. Start polling when a client claimed the sensor
-+			 * during that window, just as the hotplug path does. */
-+			data->sensor_startup_dbus_event_delayed[i] = TRUE;
-+			driver_set_polling (sensor_device, TRUE);
++	for (i = 0; i < NUM_SENSOR_TYPES; i++) {
++		data->clients[i] = create_clients_hash_table ();
++		data->sensor_startup_dbus_invocations_delayed[i] = g_ptr_array_new ();
++	}
++
++	data->connection = g_object_ref (connection);
++
++	g_signal_connect (G_OBJECT (data->client), "uevent",
++			  G_CALLBACK (sensor_changes), data);
++
++	if (find_sensors (data->client, data)) {
++		for (i = 0; i < NUM_SENSOR_TYPES; i++) {
++			SensorDevice *sensor_device;
++
++			if (!driver_type_exists (data, i))
++				continue;
++
++			sensor_device = driver_open (DRIVER_FOR_TYPE(i), UDEV_DEVICE_FOR_TYPE(i),
++						     driver_type_to_callback_func (data->drivers[i]->type), data);
++			if (!sensor_device) {
++				DRIVER_FOR_TYPE(i) = NULL;
++				g_clear_object (&UDEV_DEVICE_FOR_TYPE(i));
++				continue;
++			}
++
++			DEVICE_FOR_TYPE(i) = sensor_device;
 +		}
- 	}
++	}
++
++	if (!any_sensors_left (data))
++		g_message ("No sensors or missing kernel drivers for the sensors. Waiting for hotplug sensors");
++
+ 	g_dbus_connection_register_object (connection,
+ 					   SENSOR_PROXY_DBUS_PATH,
+ 					   data->introspection_data->interfaces[0],
+@@ -738,14 +778,6 @@ bus_acquired_handler (GDBusConnection *connection,
+ 					   data,
+ 					   NULL,
+ 					   NULL);
+-
+-	/* Initialize DBus clients hash table before DBus is fully exposed */
+-	data->client = g_udev_client_new (subsystems);
+-
+-	for (guint i = 0; i < NUM_SENSOR_TYPES; i++)
+-		data->clients[i] = create_clients_hash_table ();
+-
+-	data->connection = g_object_ref (connection);
+ }
  
- 	if (!any_sensors_left (data))
+ static void
+@@ -753,44 +785,10 @@ name_acquired_handler (GDBusConnection *connection,
+ 		       const gchar     *name,
+ 		       gpointer         user_data)
+ {
+-	SensorData *data = user_data;
+-	guint i;
+-
+-	if (!find_sensors (data->client, data))
+-		goto bail;
+-
+-	g_signal_connect (G_OBJECT (data->client), "uevent",
+-			  G_CALLBACK (sensor_changes), data);
+-
+-	for (i = 0; i < NUM_SENSOR_TYPES; i++) {
+-		SensorDevice *sensor_device;
+-
+-		data->sensor_startup_dbus_invocations_delayed[i] = g_ptr_array_new ();
+-
+-		if (!driver_type_exists (data, i))
+-			continue;
+-
+-		sensor_device = driver_open (DRIVER_FOR_TYPE(i), UDEV_DEVICE_FOR_TYPE(i),
+-					     driver_type_to_callback_func (data->drivers[i]->type), data);
+-		if (!sensor_device) {
+-			DRIVER_FOR_TYPE(i) = NULL;
+-			g_clear_object (&UDEV_DEVICE_FOR_TYPE(i));
+-			continue;
+-		}
+-
+-		DEVICE_FOR_TYPE(i) = sensor_device;
+-	}
+-
+-	if (!any_sensors_left (data))
+-		goto bail;
+-
+-	send_dbus_event (data, PROP_ALL);
+-	send_dbus_event (data, PROP_ALL_COMPASS);
+-	return;
+-
+-bail:
+-	data->ret = 0;
+-	g_message ("No sensors or missing kernel drivers for the sensors. Waiting for hotplug sensors");
++	/* Initial sensor state is complete before the name becomes visible. */
++	(void) connection;
++	(void) name;
++	(void) user_data;
+ }
+ 
+ static gboolean
 -- 
-2.52.0
+2.55.0
+
