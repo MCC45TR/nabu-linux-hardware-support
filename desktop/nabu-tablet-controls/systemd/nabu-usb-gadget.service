@@ -1,0 +1,16 @@
+[Unit]
+Description=SENEMOS Nabu USB device services
+Documentation=man:nabu-usb-gadget(8)
+Wants=sys-kernel-config.mount
+After=sys-kernel-config.mount
+ConditionPathExists=/sys/class/typec/port0/data_role
+ConditionPathExists=/sys/class/udc
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/libexec/nabu-usb-gadget start
+ExecStop=/usr/libexec/nabu-usb-gadget stop
+TimeoutStartSec=15
+TimeoutStopSec=10
+

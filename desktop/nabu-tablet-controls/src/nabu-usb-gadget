@@ -1,0 +1,229 @@
+#!/bin/sh
+
+set -eu
+
+gadget=/sys/kernel/config/usb_gadget/senemos-nabu
+config="$gadget/configs/c.1"
+runtime=/run/nabu-usb-gadget
+ffs_mtp=/dev/ffs-mtp
+ffs_adb=/dev/usb-ffs/adb
+sshd_marker="$runtime/started-sshd"
+
+is_root()
+{
+	if [ "$(id -u)" -ne 0 ]; then
+		echo "USB gadget changes require root privileges" >&2
+		exit 1
+	fi
+}
+
+selected_role()
+{
+	role_file=/sys/class/typec/port0/data_role
+	[ -r "$role_file" ] || return 1
+	sed -n 's/.*\[\([^]]*\)\].*/\1/p' "$role_file"
+}
+
+function_state()
+{
+	name=$1
+	if [ -L "$config/$name" ]; then
+		case "$name" in
+			ffs.*)
+				ready_file="$gadget/functions/$name/ready"
+				if [ -r "$ready_file" ] && [ "$(cat "$ready_file")" = 1 ]; then
+					echo ready
+				else
+					echo configured
+				fi
+				;;
+			*) echo ready ;;
+		esac
+	else
+		echo unavailable
+	fi
+}
+
+status_gadget()
+{
+	udc=none
+	state=inactive
+	if [ -r "$gadget/UDC" ]; then
+		udc=$(cat "$gadget/UDC")
+		[ -n "$udc" ] && state=active
+	fi
+	printf 'gadget=%s\n' "$state"
+	printf 'udc=%s\n' "${udc:-none}"
+	printf 'mtp=%s\n' "$(function_state ffs.mtp)"
+	printf 'adb=%s\n' "$(function_state ffs.adb)"
+	printf 'network=%s\n' "$(function_state ncm.usb0)"
+	printf 'serial=%s\n' "$(function_state acm.GS0)"
+	if [ "$state" = active ] && /usr/bin/systemctl -q is-active sshd.service; then
+		printf 'ssh=ready\n'
+	else
+		printf 'ssh=unavailable\n'
+	fi
+}
+
+wait_ready()
+{
+	ready_file=$1
+	count=0
+	while [ "$count" -lt 50 ]; do
+		[ -r "$ready_file" ] && [ "$(cat "$ready_file")" = 1 ] && return 0
+		sleep 0.1
+		count=$((count + 1))
+	done
+	return 1
+}
+
+stop_unit()
+{
+	unit=$1
+	/usr/bin/systemctl stop "$unit" >/dev/null 2>&1 || :
+}
+
+unlink_if_present()
+{
+	[ ! -L "$1" ] || unlink "$1"
+}
+
+rmdir_if_empty()
+{
+	[ ! -d "$1" ] || rmdir "$1" 2>/dev/null || :
+}
+
+stop_gadget()
+{
+	stop_unit serial-getty@ttyGS0.service
+	stop_unit nabu-adbd.service
+	stop_unit nabu-mtp-responder.service
+	if [ -e "$sshd_marker" ]; then
+		stop_unit sshd.service
+		rm -f "$sshd_marker"
+	fi
+
+	if [ -w "$gadget/UDC" ]; then
+		printf '' > "$gadget/UDC"
+	fi
+
+	if mountpoint -q "$ffs_adb"; then
+		umount "$ffs_adb"
+	fi
+	if mountpoint -q "$ffs_mtp"; then
+		umount "$ffs_mtp"
+	fi
+
+	unlink_if_present "$config/ffs.adb"
+	unlink_if_present "$config/ffs.mtp"
+	unlink_if_present "$config/ncm.usb0"
+	unlink_if_present "$config/acm.GS0"
+
+	rmdir_if_empty "$gadget/functions/ffs.adb"
+	rmdir_if_empty "$gadget/functions/ffs.mtp"
+	rmdir_if_empty "$gadget/functions/ncm.usb0"
+	rmdir_if_empty "$gadget/functions/acm.GS0"
+	rmdir_if_empty "$config/strings/0x409"
+	rmdir_if_empty "$config"
+	rmdir_if_empty "$gadget/strings/0x409"
+	rmdir_if_empty "$gadget/configs"
+	rmdir_if_empty "$gadget/functions"
+	rmdir_if_empty "$gadget/strings"
+	rmdir_if_empty "$gadget"
+	rmdir_if_empty "$ffs_adb"
+	rmdir_if_empty /dev/usb-ffs
+	rmdir_if_empty "$ffs_mtp"
+	rmdir_if_empty "$runtime"
+}
+
+start_gadget()
+{
+	role=$(selected_role || true)
+	if [ "$role" != device ]; then
+		echo "USB data role must be device before enabling the gadget" >&2
+		exit 1
+	fi
+
+	udc=$(find /sys/class/udc -mindepth 1 -maxdepth 1 -printf '%f\n' 2>/dev/null | head -n 1)
+	if [ -z "$udc" ]; then
+		echo "no USB Device Controller is available" >&2
+		exit 1
+	fi
+
+	if [ -e "$gadget" ]; then
+		stop_gadget
+	fi
+
+	mkdir -p "$runtime" "$config/strings/0x409" "$gadget/strings/0x409"
+	printf '0x1d6b\n' > "$gadget/idVendor"
+	printf '0x0104\n' > "$gadget/idProduct"
+	printf '0x0200\n' > "$gadget/bcdUSB"
+	printf '0x0100\n' > "$gadget/bcdDevice"
+	printf 'SENEMOS\n' > "$gadget/strings/0x409/manufacturer"
+	printf 'Nabu USB services\n' > "$gadget/strings/0x409/product"
+	sha256sum /etc/machine-id | cut -c1-32 > "$gadget/strings/0x409/serialnumber"
+	printf 'MTP, shell and network\n' > "$config/strings/0x409/configuration"
+	printf '250\n' > "$config/MaxPower"
+
+	mkdir "$gadget/functions/ncm.usb0"
+	ln -s "$gadget/functions/ncm.usb0" "$config/ncm.usb0"
+	mkdir "$gadget/functions/acm.GS0"
+	ln -s "$gadget/functions/acm.GS0" "$config/acm.GS0"
+
+	if [ -x /usr/libexec/nabu-umtprd ]; then
+		mkdir "$gadget/functions/ffs.mtp" "$ffs_mtp"
+		mount -t functionfs mtp "$ffs_mtp"
+		ln -s "$gadget/functions/ffs.mtp" "$config/ffs.mtp"
+		/usr/bin/systemctl --no-block start nabu-mtp-responder.service
+		if ! wait_ready "$gadget/functions/ffs.mtp/ready"; then
+			echo "MTP responder did not initialize FunctionFS" >&2
+			stop_gadget
+			exit 1
+		fi
+	fi
+
+	# ADB is enabled only when a Linux adbd is installed and at least one
+	# administrator-approved host key exists. This prevents an unauthenticated
+	# root shell from being exposed merely by selecting device mode.
+	if [ -x /usr/sbin/adbd ] && [ -s /adb_keys ]; then
+		mkdir -p /dev/usb-ffs
+		mkdir "$gadget/functions/ffs.adb" "$ffs_adb"
+		mount -t functionfs adb "$ffs_adb"
+		ln -s "$gadget/functions/ffs.adb" "$config/ffs.adb"
+		/usr/bin/systemctl --no-block start nabu-adbd.service
+		if ! wait_ready "$gadget/functions/ffs.adb/ready"; then
+			echo "adbd did not initialize FunctionFS" >&2
+			stop_gadget
+			exit 1
+		fi
+	fi
+
+	printf '%s\n' "$udc" > "$gadget/UDC"
+	if command -v nmcli >/dev/null 2>&1; then
+		nmcli connection reload >/dev/null 2>&1 || :
+	fi
+	if ! /usr/bin/systemctl -q is-active sshd.service; then
+		if /usr/bin/systemctl start sshd.service; then
+			: > "$sshd_marker"
+		fi
+	fi
+	/usr/bin/systemctl --no-block start serial-getty@ttyGS0.service >/dev/null 2>&1 || :
+}
+
+case "${1:-}" in
+	status)
+		status_gadget
+		;;
+	start)
+		is_root
+		start_gadget
+		;;
+	stop)
+		is_root
+		stop_gadget
+		;;
+	*)
+		echo "usage: nabu-usb-gadget status|start|stop" >&2
+		exit 2
+		;;
+esac

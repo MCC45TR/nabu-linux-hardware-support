@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: uk\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "Перевірка апаратної підтримки…"
+
+msgid "Not supported by this device"
+msgstr "Не підтримується цим пристроєм"
+
+msgid "Default brightness:"
+msgstr "Яскравість за замовчуванням:"
+
+msgid "Default flashlight brightness"
+msgstr "Стандартна яскравість ліхтарика"
+
+msgid "Current value:"
+msgstr "Поточне значення:"
+
+msgid "The requested change could not be applied."
+msgstr "Запитану зміну не вдалося застосувати."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "Не вдалося застосувати яскравість ліхтарика."
+
+msgid "Connected"
+msgstr "Підключено"
+
+msgid "Paired"
+msgstr "Парні"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Акумулятор: %1%"
+
+msgid "Charging"
+msgstr "Зарядка"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Ліміт заряду: %1%"
+
+msgid "Tablet Control"
+msgstr "Контроль планшета"
+
+msgid "Flashlight on"
+msgstr "Ліхтарик включений"
+
+msgid "Nabu hardware controls"
+msgstr "Апаратне керування Nabu"
+
+msgid "Refresh hardware state"
+msgstr "Оновити стан обладнання"
+
+msgid "Device"
+msgstr "пристрій"
+
+msgid "Flashlight"
+msgstr "Ліхтарик"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Увімкнено на %1%"
+
+msgid "Off"
+msgstr "Вимкнено"
+
+msgid "Flashlight brightness"
+msgstr "Яскравість ліхтарика"
+
+msgid "%1 percent"
+msgstr "%1 відсотків"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "Дисплей і кришка"
+
+msgid "Automatic rotation"
+msgstr "Автоматичне обертання"
+
+msgid "Active"
+msgstr "Активний"
+
+msgid "Inactive"
+msgstr "Неактивний"
+
+msgid "Automatic brightness"
+msgstr "Автоматична яскравість"
+
+msgid "Magnetic cover"
+msgstr "Магнітний чохол"
+
+msgid "Closed"
+msgstr "Закрито"
+
+msgid "Open"
+msgstr "відкритий"
+
+msgid "Sleep action active"
+msgstr "Дія сну активна"
+
+msgid "Sleep action inactive"
+msgstr "Режим сну неактивний"
+
+msgid "Magnetic cover sleep action"
+msgstr "Магнітний чохол сон дії"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 Специфічний"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "Підключитися"
+
+msgid "Pen battery"
+msgstr "Батарея ручки"
+
+msgid "Pogo keyboard"
+msgstr "Клавіатура Pogo"
+
+msgid "Attached"
+msgstr "Додається"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "Спільне використання пристрою USB"
+
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Серійний номер%2"
+
+msgid "USB data role"
+msgstr "Роль даних USB"
+
+msgid "Host mode"
+msgstr "Режим господаря"
+
+msgid "Device mode"
+msgstr "Режим пристрою"
+
+msgid "Use device"
+msgstr "Використовуйте пристрій"
+
+msgid "Use host"
+msgstr "Використовуйте хост"
+
+msgid "USB power role"
+msgstr "Роль влади USB"
+
+msgid "Supplying power"
+msgstr "Подача живлення"
+
+msgid "Power sink"
+msgstr "Силова раковина"
+
+msgid "Use sink"
+msgstr "Використовуйте раковину"
+
+msgid "Supply power"
+msgstr "Живлення живлення"

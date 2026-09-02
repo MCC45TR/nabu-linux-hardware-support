@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: fr\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "Vérification de la prise en charge matérielle…"
+
+msgid "Not supported by this device"
+msgstr "Non pris en charge par cet appareil"
+
+msgid "Default brightness:"
+msgstr "Luminosité par défaut :"
+
+msgid "Default flashlight brightness"
+msgstr "Luminosité de la lampe de poche par défaut"
+
+msgid "Current value:"
+msgstr "Valeur actuelle :"
+
+msgid "The requested change could not be applied."
+msgstr "La modification demandée n'a pas pu être appliquée."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "La luminosité de la lampe de poche n'a pas pu être appliquée."
+
+msgid "Connected"
+msgstr "Connecté"
+
+msgid "Paired"
+msgstr "Jumelé"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Batterie : %1%"
+
+msgid "Charging"
+msgstr "Chargement"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Limite de charge : %1%"
+
+msgid "Tablet Control"
+msgstr "Contrôle des tablettes"
+
+msgid "Flashlight on"
+msgstr "Lampe de poche allumée"
+
+msgid "Nabu hardware controls"
+msgstr "Commandes matérielles Nabu"
+
+msgid "Refresh hardware state"
+msgstr "Actualiser l'état du matériel"
+
+msgid "Device"
+msgstr "Appareil"
+
+msgid "Flashlight"
+msgstr "Lampe de poche"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Sur %1%"
+
+msgid "Off"
+msgstr "Désactivé"
+
+msgid "Flashlight brightness"
+msgstr "Luminosité de la lampe de poche"
+
+msgid "%1 percent"
+msgstr "%1 pour cent"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "Présentoir et couverture"
+
+msgid "Automatic rotation"
+msgstr "Rotation automatique"
+
+msgid "Active"
+msgstr "Actif"
+
+msgid "Inactive"
+msgstr "Inactif"
+
+msgid "Automatic brightness"
+msgstr "Luminosité automatique"
+
+msgid "Magnetic cover"
+msgstr "Couverture magnétique"
+
+msgid "Closed"
+msgstr "Fermé"
+
+msgid "Open"
+msgstr "Ouvert"
+
+msgid "Sleep action active"
+msgstr "Action de sommeil active"
+
+msgid "Sleep action inactive"
+msgstr "Action de sommeil inactive"
+
+msgid "Magnetic cover sleep action"
+msgstr "Action de sommeil de couverture magnétique"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 Spécifique"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "Se connecter"
+
+msgid "Pen battery"
+msgstr "Batterie du stylo"
+
+msgid "Pogo keyboard"
+msgstr "Clavier Pogo"
+
+msgid "Attached"
+msgstr "Ci-joint"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "Partage d'appareil USB"
+
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Série%2"
+
+msgid "USB data role"
+msgstr "Rôle de données USB"
+
+msgid "Host mode"
+msgstr "Mode hôte"
+
+msgid "Device mode"
+msgstr "Mode appareil"
+
+msgid "Use device"
+msgstr "Utiliser l'appareil"
+
+msgid "Use host"
+msgstr "Utiliser l'hôte"
+
+msgid "USB power role"
+msgstr "Rôle de puissance USB"
+
+msgid "Supplying power"
+msgstr "Alimentation électrique"
+
+msgid "Power sink"
+msgstr "Puits de puissance"
+
+msgid "Use sink"
+msgstr "Utiliser l'évier"
+
+msgid "Supply power"
+msgstr "Alimentation électrique"

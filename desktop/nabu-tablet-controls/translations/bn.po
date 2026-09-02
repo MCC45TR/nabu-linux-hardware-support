@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: bn\n"
+"Language: bn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "হার্ডওয়্যার সমর্থন পরীক্ষা করা হচ্ছে..."
+
+msgid "Not supported by this device"
+msgstr "এই ডিভাইস দ্বারা সমর্থিত নয়"
+
+msgid "Default brightness:"
+msgstr "ডিফল্ট উজ্জ্বলতা:"
+
+msgid "Default flashlight brightness"
+msgstr "ডিফল্ট ফ্ল্যাশলাইটের উজ্জ্বলতা"
+
+msgid "Current value:"
+msgstr "বর্তমান মান:"
+
+msgid "The requested change could not be applied."
+msgstr "অনুরোধ করা পরিবর্তন প্রয়োগ করা যাবে না."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "টর্চলাইটের উজ্জ্বলতা প্রয়োগ করা যায়নি।"
+
+msgid "Connected"
+msgstr "সংযুক্ত"
+
+msgid "Paired"
+msgstr "জোড়া হয়েছে"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "ব্যাটারি: %1%"
+
+msgid "Charging"
+msgstr "চার্জিং"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "চার্জ সীমা: %1%"
+
+msgid "Tablet Control"
+msgstr "ট্যাবলেট নিয়ন্ত্রণ"
+
+msgid "Flashlight on"
+msgstr "টর্চলাইট অন"
+
+msgid "Nabu hardware controls"
+msgstr "Nabu হার্ডওয়্যার নিয়ন্ত্রণ"
+
+msgid "Refresh hardware state"
+msgstr "হার্ডওয়্যারের অবস্থা রিফ্রেশ করুন"
+
+msgid "Device"
+msgstr "ডিভাইস"
+
+msgid "Flashlight"
+msgstr "টর্চলাইট"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "%1% এ চালু আছে"
+
+msgid "Off"
+msgstr "বন্ধ"
+
+msgid "Flashlight brightness"
+msgstr "টর্চলাইটের উজ্জ্বলতা"
+
+msgid "%1 percent"
+msgstr "%1 শতাংশ"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "প্রদর্শন এবং কভার"
+
+msgid "Automatic rotation"
+msgstr "স্বয়ংক্রিয় ঘূর্ণন"
+
+msgid "Active"
+msgstr "সক্রিয়"
+
+msgid "Inactive"
+msgstr "নিষ্ক্রিয়"
+
+msgid "Automatic brightness"
+msgstr "স্বয়ংক্রিয় উজ্জ্বলতা"
+
+msgid "Magnetic cover"
+msgstr "চৌম্বক আবরণ"
+
+msgid "Closed"
+msgstr "বন্ধ"
+
+msgid "Open"
+msgstr "খোলা"
+
+msgid "Sleep action active"
+msgstr "স্লিপ অ্যাকশন সক্রিয়"
+
+msgid "Sleep action inactive"
+msgstr "স্লিপ অ্যাকশন নিষ্ক্রিয়"
+
+msgid "Magnetic cover sleep action"
+msgstr "চৌম্বক কভার ঘুম কর্ম"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 নির্দিষ্ট"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "সংযোগ করুন"
+
+msgid "Pen battery"
+msgstr "কলমের ব্যাটারি"
+
+msgid "Pogo keyboard"
+msgstr "Pogo কীবোর্ড"
+
+msgid "Attached"
+msgstr "সংযুক্ত"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "USB ডিভাইস শেয়ারিং"
+
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · সিরিয়াল%2"
+
+msgid "USB data role"
+msgstr "USB ডেটা ভূমিকা"
+
+msgid "Host mode"
+msgstr "হোস্ট মোড"
+
+msgid "Device mode"
+msgstr "ডিভাইস মোড"
+
+msgid "Use device"
+msgstr "ডিভাইস ব্যবহার করুন"
+
+msgid "Use host"
+msgstr "হোস্ট ব্যবহার করুন"
+
+msgid "USB power role"
+msgstr "USB শক্তি ভূমিকা"
+
+msgid "Supplying power"
+msgstr "শক্তি সরবরাহ"
+
+msgid "Power sink"
+msgstr "পাওয়ার সিঙ্ক"
+
+msgid "Use sink"
+msgstr "সিঙ্ক ব্যবহার করুন"
+
+msgid "Supply power"
+msgstr "শক্তি সরবরাহ করুন"

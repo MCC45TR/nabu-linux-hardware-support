@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="nabu_tablet_control">
+  <schema id="org.gnome.shell.extensions.nabu-tablet-controls" path="/org/gnome/shell/extensions/nabu-tablet-controls/">
+    <key name="show-flashlight" type="b"><default>true</default><summary>Show flashlight</summary></key>
+    <key name="show-sound-slider" type="b"><default>true</default><summary>Show sound slider</summary></key>
+    <key name="show-auto-brightness" type="b"><default>true</default><summary>Show automatic brightness</summary></key>
+    <key name="show-usb-sharing" type="b"><default>true</default><summary>Show USB device sharing</summary></key>
+    <key name="show-usb-data-role" type="b"><default>true</default><summary>Show USB data role</summary></key>
+    <key name="show-usb-power-role" type="b"><default>true</default><summary>Show USB power role</summary></key>
+    <key name="show-pen" type="b"><default>true</default><summary>Show Xiaomi Smart Pen</summary></key>
+    <key name="show-keyboard" type="b"><default>true</default><summary>Show Xiaomi Keyboard</summary></key>
+    <key name="show-hold-awake" type="b"><default>true</default><summary>Show grip-aware hold-awake control</summary></key>
+  </schema>
+</schemalist>

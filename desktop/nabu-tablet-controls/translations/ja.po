@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: ja\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "ハードウェアのサポートを確認しています…"
+
+msgid "Not supported by this device"
+msgstr "このデバイスではサポートされていません"
+
+msgid "Default brightness:"
+msgstr "デフォルトの明るさ:"
+
+msgid "Default flashlight brightness"
+msgstr "デフォルトの懐中電灯の明るさ"
+
+msgid "Current value:"
+msgstr "現在の値:"
+
+msgid "The requested change could not be applied."
+msgstr "要求された変更を適用できませんでした。"
+
+msgid "The flashlight brightness could not be applied."
+msgstr "懐中電灯の明るさを適用できませんでした。"
+
+msgid "Connected"
+msgstr "接続済み"
+
+msgid "Paired"
+msgstr "ペアリング済み"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "バッテリー: %1%"
+
+msgid "Charging"
+msgstr "充電中"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "充電制限: %1%"
+
+msgid "Tablet Control"
+msgstr "タブレットコントロール"
+
+msgid "Flashlight on"
+msgstr "懐中電灯が点灯"
+
+msgid "Nabu hardware controls"
+msgstr "Nabu ハードウェア コントロール"
+
+msgid "Refresh hardware state"
+msgstr "ハードウェア状態を更新する"
+
+msgid "Device"
+msgstr "デバイス"
+
+msgid "Flashlight"
+msgstr "懐中電灯"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "%1%でオン"
+
+msgid "Off"
+msgstr "オフ"
+
+msgid "Flashlight brightness"
+msgstr "懐中電灯の明るさ"
+
+msgid "%1 percent"
+msgstr "%1パーセント"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "ディスプレイとカバー"
+
+msgid "Automatic rotation"
+msgstr "自動回転"
+
+msgid "Active"
+msgstr "アクティブ"
+
+msgid "Inactive"
+msgstr "非アクティブ"
+
+msgid "Automatic brightness"
+msgstr "自動明るさ"
+
+msgid "Magnetic cover"
+msgstr "マグネットカバー"
+
+msgid "Closed"
+msgstr "閉じています"
+
+msgid "Open"
+msgstr "開く"
+
+msgid "Sleep action active"
+msgstr "睡眠アクションがアクティブです"
+
+msgid "Sleep action inactive"
+msgstr "スリープアクションが無効です"
+
+msgid "Magnetic cover sleep action"
+msgstr "磁気カバーのスリープアクション"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 固有"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "接続する"
+
+msgid "Pen battery"
+msgstr "ペンのバッテリー"
+
+msgid "Pogo keyboard"
+msgstr "Pogoキーボード"
+
+msgid "Attached"
+msgstr "付属"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "USB デバイス共有"
+
+msgid " · SSH"
+msgstr "・SSH"
+
+msgid " · ADB"
+msgstr "・ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · シリアル%2"
+
+msgid "USB data role"
+msgstr "USB データの役割"
+
+msgid "Host mode"
+msgstr "ホストモード"
+
+msgid "Device mode"
+msgstr "デバイスモード"
+
+msgid "Use device"
+msgstr "デバイスを使用する"
+
+msgid "Use host"
+msgstr "ホストを使用する"
+
+msgid "USB power role"
+msgstr "USB パワーロール"
+
+msgid "Supplying power"
+msgstr "電源の供給"
+
+msgid "Power sink"
+msgstr "パワーシンク"
+
+msgid "Use sink"
+msgstr "シンクを使用する"
+
+msgid "Supply power"
+msgstr "電源を供給する"

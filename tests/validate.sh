@@ -28,6 +28,14 @@ jq -e '
 
 bash -n "$repo_root/systemd/nabu-pmic-rtc-sync"
 bash -n "$repo_root/systemd/nabu-sensor-session-gate"
+bash -n "$repo_root/services/nabu-sar-service/tools/nabu-sar-capture"
+bash -n "$repo_root/services/nabu-sar-service/tools/nabu-cct-iio-setup"
+grep -Fq 'org.freedesktop.login1.Manager' \
+    "$repo_root/services/nabu-sar-service/src/nabu-sar-service.c"
+grep -Fq 'SAMPLE_STALE_USEC' \
+    "$repo_root/services/nabu-sar-service/src/nabu-sar-service.c"
+grep -Fq 'SSC_SENSOR_DATA_TYPE, "cct_front"' \
+    "$repo_root/services/nabu-sar-service/src/nabu-cct-iio-bridge.c"
 bash "$repo_root/tests/test-sensor-session-gate.sh"
 grep -Fxq 'Before=display-manager.service plasmalogin.service' \
     "$repo_root/systemd/nabu-sensor-session-gate.service"

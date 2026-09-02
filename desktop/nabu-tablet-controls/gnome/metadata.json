@@ -1,0 +1,9 @@
+{
+  "name": "Nabu Tablet Controls",
+  "description": "Xiaomi Pad 5 hardware and grip-aware sleep controls in GNOME Quick Settings",
+  "uuid": "nabu-flashlight@senemos.org",
+  "gettext-domain": "nabu_tablet_control",
+  "settings-schema": "org.gnome.shell.extensions.nabu-tablet-controls",
+  "shell-version": ["46", "47", "48", "49", "50", "51"],
+  "version": 4
+}

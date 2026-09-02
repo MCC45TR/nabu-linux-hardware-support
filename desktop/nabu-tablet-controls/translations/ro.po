@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: ro\n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "Se verifică suportul hardware..."
+
+msgid "Not supported by this device"
+msgstr "Nu este acceptat de acest dispozitiv"
+
+msgid "Default brightness:"
+msgstr "Luminozitate implicită:"
+
+msgid "Default flashlight brightness"
+msgstr "Luminozitatea lanternă implicită"
+
+msgid "Current value:"
+msgstr "Valoarea curentă:"
+
+msgid "The requested change could not be applied."
+msgstr "Modificarea solicitată nu a putut fi aplicată."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "Luminozitatea lanternei nu a putut fi aplicată."
+
+msgid "Connected"
+msgstr "Conectat"
+
+msgid "Paired"
+msgstr "Împerecheate"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Baterie: %1%"
+
+msgid "Charging"
+msgstr "Încărcare"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Limită de încărcare: %1%"
+
+msgid "Tablet Control"
+msgstr "Controlul tabletei"
+
+msgid "Flashlight on"
+msgstr "Lanterna aprinsă"
+
+msgid "Nabu hardware controls"
+msgstr "comenzi hardware Nabu"
+
+msgid "Refresh hardware state"
+msgstr "Actualizează starea hardware"
+
+msgid "Device"
+msgstr "Dispozitiv"
+
+msgid "Flashlight"
+msgstr "Lanterna"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Pornit la %1%"
+
+msgid "Off"
+msgstr "Oprit"
+
+msgid "Flashlight brightness"
+msgstr "Luminozitatea lanternei"
+
+msgid "%1 percent"
+msgstr "%1 procente"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "Display și capac"
+
+msgid "Automatic rotation"
+msgstr "Rotire automată"
+
+msgid "Active"
+msgstr "Activ"
+
+msgid "Inactive"
+msgstr "Inactiv"
+
+msgid "Automatic brightness"
+msgstr "Luminozitate automată"
+
+msgid "Magnetic cover"
+msgstr "Capac magnetic"
+
+msgid "Closed"
+msgstr "Închis"
+
+msgid "Open"
+msgstr "Deschide"
+
+msgid "Sleep action active"
+msgstr "Acțiune de somn activă"
+
+msgid "Sleep action inactive"
+msgstr "Acțiunea de somn inactivă"
+
+msgid "Magnetic cover sleep action"
+msgstr "Husa magnetica actiune de somn"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 Specific"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "Conectați-vă"
+
+msgid "Pen battery"
+msgstr "Baterie stilou"
+
+msgid "Pogo keyboard"
+msgstr "Tastatură Pogo"
+
+msgid "Attached"
+msgstr "Atasat"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "Partajarea dispozitivului USB"
+
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Serial%2"
+
+msgid "USB data role"
+msgstr "Rolul de date USB"
+
+msgid "Host mode"
+msgstr "Modul gazdă"
+
+msgid "Device mode"
+msgstr "Modul dispozitiv"
+
+msgid "Use device"
+msgstr "Utilizați dispozitivul"
+
+msgid "Use host"
+msgstr "Utilizați gazdă"
+
+msgid "USB power role"
+msgstr "USB rol de putere"
+
+msgid "Supplying power"
+msgstr "Furnizarea de energie"
+
+msgid "Power sink"
+msgstr "Chiuveta de curent"
+
+msgid "Use sink"
+msgstr "Folosiți chiuveta"
+
+msgid "Supply power"
+msgstr "Alimentare cu energie"

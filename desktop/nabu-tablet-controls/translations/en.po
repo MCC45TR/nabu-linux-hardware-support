@@ -1,0 +1,201 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: en\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "Checking hardware support…"
+
+msgid "Not supported by this device"
+msgstr "Not supported by this device"
+
+msgid "Default brightness:"
+msgstr "Default brightness:"
+
+msgid "Default flashlight brightness"
+msgstr "Default flashlight brightness"
+
+msgid "Current value:"
+msgstr "Current value:"
+
+msgid "The requested change could not be applied."
+msgstr "The requested change could not be applied."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "The flashlight brightness could not be applied."
+
+msgid "Connected"
+msgstr "Connected"
+
+msgid "Paired"
+msgstr "Paired"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Battery: %1%"
+
+msgid "Charging"
+msgstr "Charging"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Charge limit: %1%"
+
+msgid "Tablet Control"
+msgstr "Tablet Control"
+
+msgid "Flashlight on"
+msgstr "Flashlight on"
+
+msgid "Nabu hardware controls"
+msgstr "Nabu hardware controls"
+
+msgid "Refresh hardware state"
+msgstr "Refresh hardware state"
+
+msgid "Device"
+msgstr "Device"
+
+msgid "Flashlight"
+msgstr "Flashlight"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "On at %1%"
+
+msgid "Off"
+msgstr "Off"
+
+msgid "Flashlight brightness"
+msgstr "Flashlight brightness"
+
+msgid "%1 percent"
+msgstr "%1 percent"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "Display and cover"
+
+msgid "Automatic rotation"
+msgstr "Automatic rotation"
+
+msgid "Active"
+msgstr "Active"
+
+msgid "Inactive"
+msgstr "Inactive"
+
+msgid "Automatic brightness"
+msgstr "Automatic brightness"
+
+msgid "Magnetic cover"
+msgstr "Magnetic cover"
+
+msgid "Closed"
+msgstr "Closed"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Sleep action active"
+msgstr "Sleep action active"
+
+msgid "Sleep action inactive"
+msgstr "Sleep action inactive"
+
+msgid "Magnetic cover sleep action"
+msgstr "Magnetic cover sleep action"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 Specific"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "Connect"
+
+msgid "Pen battery"
+msgstr "Pen battery"
+
+msgid "Pogo keyboard"
+msgstr "Pogo keyboard"
+
+msgid "Attached"
+msgstr "Attached"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "USB device sharing"
+
+msgid " · SSH"
+msgstr " · SSH"
+
+msgid " · ADB"
+msgstr " · ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Serial%2"
+
+msgid "USB data role"
+msgstr "USB data role"
+
+msgid "Host mode"
+msgstr "Host mode"
+
+msgid "Device mode"
+msgstr "Device mode"
+
+msgid "Use device"
+msgstr "Use device"
+
+msgid "Use host"
+msgstr "Use host"
+
+msgid "USB power role"
+msgstr "USB power role"
+
+msgid "Supplying power"
+msgstr "Supplying power"
+
+msgid "Power sink"
+msgstr "Power sink"
+
+msgid "Use sink"
+msgstr "Use sink"
+
+msgid "Supply power"
+msgstr "Supply power"
+
+msgid "Keep awake while held"
+msgstr "Keep awake while held"
+
+msgid "Use the calibrated grip sensor to prevent idle sleep while held"
+msgstr "Use the calibrated grip sensor to prevent idle sleep while held"
+
+msgid "Calibration required"
+msgstr "Calibration required"
+
+msgid "Held · sleep blocked"
+msgstr "Held · sleep blocked"
+
+msgid "Held · acquiring inhibitor"
+msgstr "Held · acquiring inhibitor"
+
+msgid "Waiting until held"
+msgstr "Waiting until held"
+
+msgid "Waiting for sensor data"
+msgstr "Waiting for sensor data"

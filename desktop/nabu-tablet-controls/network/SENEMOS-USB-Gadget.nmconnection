@@ -1,0 +1,16 @@
+[connection]
+id=SENEMOS USB Gadget
+type=ethernet
+interface-name=usb0
+autoconnect=true
+zone=trusted
+
+[ethernet]
+
+[ipv4]
+method=shared
+address1=10.55.0.1/24
+
+[ipv6]
+method=disabled
+

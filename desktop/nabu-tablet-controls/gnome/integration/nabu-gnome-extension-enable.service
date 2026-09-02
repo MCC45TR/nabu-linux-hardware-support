@@ -1,0 +1,10 @@
+[Unit]
+Description=Enable Nabu GNOME tablet controls on first GNOME login
+After=gnome-shell-wayland.service gnome-shell-x11.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/nabu-gnome-extension-enable
+
+[Install]
+WantedBy=graphical-session.target

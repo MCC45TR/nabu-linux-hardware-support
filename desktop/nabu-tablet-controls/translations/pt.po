@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: pt\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "Verificando suporte de hardware…"
+
+msgid "Not supported by this device"
+msgstr "Não suportado por este dispositivo"
+
+msgid "Default brightness:"
+msgstr "Brilho padrão:"
+
+msgid "Default flashlight brightness"
+msgstr "Brilho padrão da lanterna"
+
+msgid "Current value:"
+msgstr "Valor atual:"
+
+msgid "The requested change could not be applied."
+msgstr "A alteração solicitada não pôde ser aplicada."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "O brilho da lanterna não pôde ser aplicado."
+
+msgid "Connected"
+msgstr "Conectado"
+
+msgid "Paired"
+msgstr "Emparelhado"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Bateria: %1%"
+
+msgid "Charging"
+msgstr "Carregando"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Limite de carga: %1%"
+
+msgid "Tablet Control"
+msgstr "Controle de tablet"
+
+msgid "Flashlight on"
+msgstr "Lanterna ligada"
+
+msgid "Nabu hardware controls"
+msgstr "Controles de hardware Nabu"
+
+msgid "Refresh hardware state"
+msgstr "Atualizar estado do hardware"
+
+msgid "Device"
+msgstr "Dispositivo"
+
+msgid "Flashlight"
+msgstr "Lanterna"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Ligado em %1%"
+
+msgid "Off"
+msgstr "Desligado"
+
+msgid "Flashlight brightness"
+msgstr "Brilho da lanterna"
+
+msgid "%1 percent"
+msgstr "%1 por cento"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "Exibição e capa"
+
+msgid "Automatic rotation"
+msgstr "Rotação automática"
+
+msgid "Active"
+msgstr "Ativo"
+
+msgid "Inactive"
+msgstr "Inativo"
+
+msgid "Automatic brightness"
+msgstr "Brilho automático"
+
+msgid "Magnetic cover"
+msgstr "Capa magnética"
+
+msgid "Closed"
+msgstr "Fechado"
+
+msgid "Open"
+msgstr "Abrir"
+
+msgid "Sleep action active"
+msgstr "Ação de sono ativa"
+
+msgid "Sleep action inactive"
+msgstr "Ação do sono inativa"
+
+msgid "Magnetic cover sleep action"
+msgstr "Ação de dormir com capa magnética"
+
+msgid "Pad 5 Specific"
+msgstr "Específico Pad 5"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "Conectar"
+
+msgid "Pen battery"
+msgstr "Bateria da caneta"
+
+msgid "Pogo keyboard"
+msgstr "Teclado Pogo"
+
+msgid "Attached"
+msgstr "Anexado"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "Compartilhamento de dispositivo USB"
+
+msgid " · SSH"
+msgstr "·SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Série%2"
+
+msgid "USB data role"
+msgstr "Função de dados USB"
+
+msgid "Host mode"
+msgstr "Modo anfitrião"
+
+msgid "Device mode"
+msgstr "Modo de dispositivo"
+
+msgid "Use device"
+msgstr "Usar dispositivo"
+
+msgid "Use host"
+msgstr "Usar anfitrião"
+
+msgid "USB power role"
+msgstr "Função de potência USB"
+
+msgid "Supplying power"
+msgstr "Fornecendo energia"
+
+msgid "Power sink"
+msgstr "Dissipador de energia"
+
+msgid "Use sink"
+msgstr "Usar pia"
+
+msgid "Supply power"
+msgstr "Fornecimento de energia"

@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: el\n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "Έλεγχος υποστήριξης υλικού…"
+
+msgid "Not supported by this device"
+msgstr "Δεν υποστηρίζεται από αυτήν τη συσκευή"
+
+msgid "Default brightness:"
+msgstr "Προεπιλεγμένη φωτεινότητα:"
+
+msgid "Default flashlight brightness"
+msgstr "Προεπιλεγμένη φωτεινότητα φακού"
+
+msgid "Current value:"
+msgstr "Τρέχουσα τιμή:"
+
+msgid "The requested change could not be applied."
+msgstr "Δεν ήταν δυνατή η εφαρμογή της ζητούμενης αλλαγής."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "Δεν ήταν δυνατή η εφαρμογή της φωτεινότητας του φακού."
+
+msgid "Connected"
+msgstr "Συνδεδεμένος"
+
+msgid "Paired"
+msgstr "Ζευγάρισε"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Μπαταρία: %1%"
+
+msgid "Charging"
+msgstr "Φόρτιση"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Όριο χρέωσης: %1%"
+
+msgid "Tablet Control"
+msgstr "Έλεγχος tablet"
+
+msgid "Flashlight on"
+msgstr "Φακός αναμμένος"
+
+msgid "Nabu hardware controls"
+msgstr "Nabu χειριστήρια υλικού"
+
+msgid "Refresh hardware state"
+msgstr "Ανανέωση κατάστασης υλικού"
+
+msgid "Device"
+msgstr "Συσκευή"
+
+msgid "Flashlight"
+msgstr "Φακός"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Ενεργοποιημένο στο %1%"
+
+msgid "Off"
+msgstr "Απενεργοποίηση"
+
+msgid "Flashlight brightness"
+msgstr "Φωτεινότητα φακού"
+
+msgid "%1 percent"
+msgstr "%1 τοις εκατό"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "Οθόνη και κάλυμμα"
+
+msgid "Automatic rotation"
+msgstr "Αυτόματη περιστροφή"
+
+msgid "Active"
+msgstr "Ενεργός"
+
+msgid "Inactive"
+msgstr "Ανενεργό"
+
+msgid "Automatic brightness"
+msgstr "Αυτόματη φωτεινότητα"
+
+msgid "Magnetic cover"
+msgstr "Μαγνητικό κάλυμμα"
+
+msgid "Closed"
+msgstr "Κλειστό"
+
+msgid "Open"
+msgstr "Ανοίξτε"
+
+msgid "Sleep action active"
+msgstr "Ενεργή δράση ύπνου"
+
+msgid "Sleep action inactive"
+msgstr "Η ενέργεια ύπνου είναι ανενεργή"
+
+msgid "Magnetic cover sleep action"
+msgstr "Δράση ύπνου με μαγνητικό κάλυμμα"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 Ειδικά"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "Συνδεθείτε"
+
+msgid "Pen battery"
+msgstr "Μπαταρία στυλό"
+
+msgid "Pogo keyboard"
+msgstr "Πληκτρολόγιο Pogo"
+
+msgid "Attached"
+msgstr "Επισυνάπτεται"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "Κοινή χρήση συσκευών USB"
+
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Σειρά%2"
+
+msgid "USB data role"
+msgstr "Ρόλος δεδομένων USB"
+
+msgid "Host mode"
+msgstr "Λειτουργία κεντρικού υπολογιστή"
+
+msgid "Device mode"
+msgstr "Λειτουργία συσκευής"
+
+msgid "Use device"
+msgstr "Χρησιμοποιήστε συσκευή"
+
+msgid "Use host"
+msgstr "Χρήση κεντρικού υπολογιστή"
+
+msgid "USB power role"
+msgstr "Ρόλος ισχύος USB"
+
+msgid "Supplying power"
+msgstr "Παροχή ρεύματος"
+
+msgid "Power sink"
+msgstr "Νεροχύτης ρεύματος"
+
+msgid "Use sink"
+msgstr "Χρησιμοποιήστε νεροχύτη"
+
+msgid "Supply power"
+msgstr "Τροφοδοσία ρεύματος"

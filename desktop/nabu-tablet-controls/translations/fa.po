@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: fa\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "در حال بررسی پشتیبانی سخت افزاری…"
+
+msgid "Not supported by this device"
+msgstr "توسط این دستگاه پشتیبانی نمی شود"
+
+msgid "Default brightness:"
+msgstr "روشنایی پیش فرض:"
+
+msgid "Default flashlight brightness"
+msgstr "روشنایی پیش فرض چراغ قوه"
+
+msgid "Current value:"
+msgstr "ارزش فعلی:"
+
+msgid "The requested change could not be applied."
+msgstr "تغییر درخواستی قابل اعمال نیست."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "روشنایی چراغ قوه اعمال نشد."
+
+msgid "Connected"
+msgstr "متصل شد"
+
+msgid "Paired"
+msgstr "جفت شد"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "باتری: %1%"
+
+msgid "Charging"
+msgstr "شارژ کردن"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "محدودیت شارژ: %1%"
+
+msgid "Tablet Control"
+msgstr "کنترل تبلت"
+
+msgid "Flashlight on"
+msgstr "چراغ قوه روشن"
+
+msgid "Nabu hardware controls"
+msgstr "کنترل های سخت افزاری Nabu"
+
+msgid "Refresh hardware state"
+msgstr "وضعیت سخت افزار را به روز کنید"
+
+msgid "Device"
+msgstr "دستگاه"
+
+msgid "Flashlight"
+msgstr "چراغ قوه"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "در %1% روشن است"
+
+msgid "Off"
+msgstr "خاموش"
+
+msgid "Flashlight brightness"
+msgstr "روشنایی چراغ قوه"
+
+msgid "%1 percent"
+msgstr "درصد %1"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "نمایش و پوشش"
+
+msgid "Automatic rotation"
+msgstr "چرخش خودکار"
+
+msgid "Active"
+msgstr "فعال"
+
+msgid "Inactive"
+msgstr "غیر فعال"
+
+msgid "Automatic brightness"
+msgstr "روشنایی خودکار"
+
+msgid "Magnetic cover"
+msgstr "پوشش مغناطیسی"
+
+msgid "Closed"
+msgstr "بسته شد"
+
+msgid "Open"
+msgstr "باز کنید"
+
+msgid "Sleep action active"
+msgstr "Sleep action فعال است"
+
+msgid "Sleep action inactive"
+msgstr "عملکرد خواب غیرفعال است"
+
+msgid "Magnetic cover sleep action"
+msgstr "عملکرد خواب پوشش مغناطیسی"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 خاص"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "اتصال"
+
+msgid "Pen battery"
+msgstr "باتری قلمی"
+
+msgid "Pogo keyboard"
+msgstr "صفحه کلید Pogo"
+
+msgid "Attached"
+msgstr "پیوست شده است"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "اشتراک گذاری دستگاه USB"
+
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · سریال%2"
+
+msgid "USB data role"
+msgstr "نقش داده USB"
+
+msgid "Host mode"
+msgstr "حالت میزبان"
+
+msgid "Device mode"
+msgstr "حالت دستگاه"
+
+msgid "Use device"
+msgstr "از دستگاه استفاده کنید"
+
+msgid "Use host"
+msgstr "از هاست استفاده کنید"
+
+msgid "USB power role"
+msgstr "نقش قدرت USB"
+
+msgid "Supplying power"
+msgstr "تامین برق"
+
+msgid "Power sink"
+msgstr "سینک برق"
+
+msgid "Use sink"
+msgstr "از سینک استفاده کنید"
+
+msgid "Supply power"
+msgstr "تامین برق"

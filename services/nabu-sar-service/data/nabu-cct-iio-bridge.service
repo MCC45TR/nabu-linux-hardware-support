@@ -1,0 +1,19 @@
+[Unit]
+Description=Xiaomi Pad 5 TCS3701 colour temperature IIO bridge
+Requires=sys-kernel-config.mount
+After=sys-kernel-config.mount hexagonrpcd-sdsp.service
+Wants=hexagonrpcd-sdsp.service
+
+[Service]
+Type=simple
+ExecStartPre=/usr/libexec/nabu-cct-iio-setup
+ExecStart=/usr/libexec/nabu-cct-iio-bridge
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

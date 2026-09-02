@@ -1,0 +1,28 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+phase=${1:-}
+seconds=${2:-10}
+output=${3:-/dev/stdout}
+
+if [[ ! $phase =~ ^[a-z0-9_-]+$ ]] || [[ ! $seconds =~ ^[1-9][0-9]*$ ]]; then
+    echo "Usage: nabu-sar-capture PHASE SECONDS [OUTPUT.csv]" >&2
+    exit 2
+fi
+
+if [[ $output != /dev/stdout && ! -e $output ]]; then
+    printf 'timestamp_ns,phase,delta0,delta1,delta2,raw0,raw1,raw2,baseline0,baseline1,baseline2\n' >"$output"
+fi
+
+deadline=$((SECONDS + seconds))
+while (( SECONDS < deadline )); do
+    status=$(/usr/libexec/nabu-sar-control status)
+    fresh=$(awk -F= '$1 == "sample_fresh" { print $2 }' <<<"$status")
+    if [[ $fresh == 1 ]]; then
+        deltas=$(awk -F= '$1 == "deltas" { print $2 }' <<<"$status")
+        raw=$(awk -F= '$1 == "raw_values" { print $2 }' <<<"$status")
+        baselines=$(awk -F= '$1 == "baselines" { print $2 }' <<<"$status")
+        printf '%s,%s,%s,%s,%s\n' "$(date +%s%N)" "$phase" "$deltas" "$raw" "$baselines" >>"$output"
+    fi
+    sleep 0.2
+done

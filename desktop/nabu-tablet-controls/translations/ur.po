@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: ur\n"
+"Language: ur\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "ہارڈویئر سپورٹ کو چیک کیا جا رہا ہے…"
+
+msgid "Not supported by this device"
+msgstr "اس آلہ سے تعاون یافتہ نہیں ہے۔"
+
+msgid "Default brightness:"
+msgstr "پہلے سے طے شدہ چمک:"
+
+msgid "Default flashlight brightness"
+msgstr "پہلے سے طے شدہ ٹارچ کی چمک"
+
+msgid "Current value:"
+msgstr "موجودہ قدر:"
+
+msgid "The requested change could not be applied."
+msgstr "درخواست کردہ تبدیلی لاگو نہیں ہو سکی۔"
+
+msgid "The flashlight brightness could not be applied."
+msgstr "ٹارچ کی چمک کو لاگو نہیں کیا جا سکا۔"
+
+msgid "Connected"
+msgstr "جڑا ہوا"
+
+msgid "Paired"
+msgstr "جوڑا بنایا"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "بیٹری: %1%"
+
+msgid "Charging"
+msgstr "چارج ہو رہا ہے۔"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "چارج کی حد: %1%"
+
+msgid "Tablet Control"
+msgstr "ٹیبلٹ کنٹرول"
+
+msgid "Flashlight on"
+msgstr "ٹارچ آن"
+
+msgid "Nabu hardware controls"
+msgstr "Nabu ہارڈویئر کنٹرولز"
+
+msgid "Refresh hardware state"
+msgstr "ہارڈ ویئر کی حالت کو تازہ کریں۔"
+
+msgid "Device"
+msgstr "ڈیوائس"
+
+msgid "Flashlight"
+msgstr "ٹارچ"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "%1% پر آن"
+
+msgid "Off"
+msgstr "آف"
+
+msgid "Flashlight brightness"
+msgstr "ٹارچ کی چمک"
+
+msgid "%1 percent"
+msgstr "%1 فیصد"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "ڈسپلے اور کور"
+
+msgid "Automatic rotation"
+msgstr "خودکار گردش"
+
+msgid "Active"
+msgstr "فعال"
+
+msgid "Inactive"
+msgstr "غیر فعال"
+
+msgid "Automatic brightness"
+msgstr "خودکار چمک"
+
+msgid "Magnetic cover"
+msgstr "مقناطیسی کور"
+
+msgid "Closed"
+msgstr "بند"
+
+msgid "Open"
+msgstr "کھولیں۔"
+
+msgid "Sleep action active"
+msgstr "نیند کی کارروائی فعال ہے۔"
+
+msgid "Sleep action inactive"
+msgstr "نیند کی کارروائی غیر فعال"
+
+msgid "Magnetic cover sleep action"
+msgstr "مقناطیسی کور نیند ایکشن"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 مخصوص"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "جڑیں۔"
+
+msgid "Pen battery"
+msgstr "قلم کی بیٹری"
+
+msgid "Pogo keyboard"
+msgstr "Pogo کی بورڈ"
+
+msgid "Attached"
+msgstr "منسلک"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "USB ڈیوائس شیئرنگ"
+
+msgid " · SSH"
+msgstr "SSH"
+
+msgid " · ADB"
+msgstr "ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · سیریل%2"
+
+msgid "USB data role"
+msgstr "USB ڈیٹا رول"
+
+msgid "Host mode"
+msgstr "میزبان موڈ"
+
+msgid "Device mode"
+msgstr "ڈیوائس موڈ"
+
+msgid "Use device"
+msgstr "آلہ استعمال کریں۔"
+
+msgid "Use host"
+msgstr "میزبان کا استعمال کریں۔"
+
+msgid "USB power role"
+msgstr "USB پاور رول"
+
+msgid "Supplying power"
+msgstr "بجلی کی فراہمی"
+
+msgid "Power sink"
+msgstr "پاور سنک"
+
+msgid "Use sink"
+msgstr "سنک کا استعمال کریں۔"
+
+msgid "Supply power"
+msgstr "بجلی کی فراہمی"

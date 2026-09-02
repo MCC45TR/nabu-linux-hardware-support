@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: nl\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "Hardware-ondersteuning controleren..."
+
+msgid "Not supported by this device"
+msgstr "Niet ondersteund door dit apparaat"
+
+msgid "Default brightness:"
+msgstr "Standaard helderheid:"
+
+msgid "Default flashlight brightness"
+msgstr "Standaard zaklamphelderheid"
+
+msgid "Current value:"
+msgstr "Huidige waarde:"
+
+msgid "The requested change could not be applied."
+msgstr "De gevraagde wijziging kan niet worden toegepast."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "De helderheid van de zaklamp kon niet worden toegepast."
+
+msgid "Connected"
+msgstr "Verbonden"
+
+msgid "Paired"
+msgstr "Gekoppeld"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Batterij: %1%"
+
+msgid "Charging"
+msgstr "Opladen"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Laadlimiet: %1%"
+
+msgid "Tablet Control"
+msgstr "Tabletcontrole"
+
+msgid "Flashlight on"
+msgstr "Zaklamp aan"
+
+msgid "Nabu hardware controls"
+msgstr "Nabu hardwarebediening"
+
+msgid "Refresh hardware state"
+msgstr "Vernieuw de hardwarestatus"
+
+msgid "Device"
+msgstr "Apparaat"
+
+msgid "Flashlight"
+msgstr "Zaklamp"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Op bij %1%"
+
+msgid "Off"
+msgstr "Uit"
+
+msgid "Flashlight brightness"
+msgstr "Helderheid van de zaklamp"
+
+msgid "%1 percent"
+msgstr "%1 procent"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "Display en deksel"
+
+msgid "Automatic rotation"
+msgstr "Automatische rotatie"
+
+msgid "Active"
+msgstr "Actief"
+
+msgid "Inactive"
+msgstr "Inactief"
+
+msgid "Automatic brightness"
+msgstr "Automatische helderheid"
+
+msgid "Magnetic cover"
+msgstr "Magnetische hoes"
+
+msgid "Closed"
+msgstr "Gesloten"
+
+msgid "Open"
+msgstr "Openen"
+
+msgid "Sleep action active"
+msgstr "Slaapactie actief"
+
+msgid "Sleep action inactive"
+msgstr "Slaapactie inactief"
+
+msgid "Magnetic cover sleep action"
+msgstr "Magnetische hoes slaapactie"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 specifiek"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "Verbinden"
+
+msgid "Pen battery"
+msgstr "Pen-batterij"
+
+msgid "Pogo keyboard"
+msgstr "Pogo-toetsenbord"
+
+msgid "Attached"
+msgstr "Bijgevoegd"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "USB-apparaat delen"
+
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Serieel%2"
+
+msgid "USB data role"
+msgstr "USB-gegevensrol"
+
+msgid "Host mode"
+msgstr "Host-modus"
+
+msgid "Device mode"
+msgstr "Apparaatmodus"
+
+msgid "Use device"
+msgstr "Gebruik apparaat"
+
+msgid "Use host"
+msgstr "Gebruik gastheer"
+
+msgid "USB power role"
+msgstr "USB machtsrol"
+
+msgid "Supplying power"
+msgstr "Het leveren van stroom"
+
+msgid "Power sink"
+msgstr "Krachtige gootsteen"
+
+msgid "Use sink"
+msgstr "Gebruik gootsteen"
+
+msgid "Supply power"
+msgstr "Voeding leveren"

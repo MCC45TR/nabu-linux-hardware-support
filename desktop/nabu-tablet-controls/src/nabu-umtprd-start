@@ -1,0 +1,61 @@
+#!/bin/sh
+
+set -eu
+
+runtime=/run/nabu-usb-gadget
+config="$runtime/umtprd.conf"
+passwd_entry=$(getent passwd 1000 || true)
+
+if [ -z "$passwd_entry" ]; then
+	echo "no primary UID 1000 user is available for MTP" >&2
+	exit 1
+fi
+
+user_uid=$(printf '%s\n' "$passwd_entry" | cut -d: -f3)
+user_gid=$(printf '%s\n' "$passwd_entry" | cut -d: -f4)
+user_home=$(printf '%s\n' "$passwd_entry" | cut -d: -f6)
+
+case "$user_home" in
+	/home/*) ;;
+	*)
+		echo "the primary user's home directory is outside /home" >&2
+		exit 1
+		;;
+esac
+
+case "$user_home" in
+	*'"'*|*'\n'*)
+		echo "unsupported character in the primary user's home directory" >&2
+		exit 1
+		;;
+esac
+
+serial=$(sha256sum /etc/machine-id | cut -c1-32)
+mkdir -p "$runtime"
+cat > "$config" <<EOF
+loop_on_disconnect 1
+default_uid $user_uid
+default_gid $user_gid
+umask 002
+storage "$user_home" "Internal storage" "rw"
+manufacturer "SENEMOS"
+product "Xiaomi Pad 5"
+serial "$serial"
+firmware_version "Linux 6.17"
+mtp_extensions "microsoft.com: 1.0; android.com: 1.0;"
+interface "MTP"
+usb_vendor_id 0x1D6B
+usb_product_id 0x0100
+usb_class 0x6
+usb_subclass 0x1
+usb_protocol 0x1
+usb_dev_version 0x3008
+sync_when_close 0x1
+usb_functionfs_mode 0x1
+usb_dev_path "/dev/ffs-mtp/ep0"
+usb_epin_path "/dev/ffs-mtp/ep1"
+usb_epout_path "/dev/ffs-mtp/ep2"
+usb_epint_path "/dev/ffs-mtp/ep3"
+EOF
+
+exec /usr/libexec/nabu-umtprd -conf "$config"

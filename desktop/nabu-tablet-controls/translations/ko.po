@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: ko\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "하드웨어 지원 확인 중…"
+
+msgid "Not supported by this device"
+msgstr "이 장치에서는 지원되지 않습니다"
+
+msgid "Default brightness:"
+msgstr "기본 밝기:"
+
+msgid "Default flashlight brightness"
+msgstr "기본 손전등 밝기"
+
+msgid "Current value:"
+msgstr "현재 가치:"
+
+msgid "The requested change could not be applied."
+msgstr "요청한 변경사항을 적용할 수 없습니다."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "손전등 밝기를 적용할 수 없습니다."
+
+msgid "Connected"
+msgstr "연결됨"
+
+msgid "Paired"
+msgstr "페어링됨"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "배터리: %1%"
+
+msgid "Charging"
+msgstr "충전 중"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "충전 한도: %1%"
+
+msgid "Tablet Control"
+msgstr "태블릿 제어"
+
+msgid "Flashlight on"
+msgstr "손전등 켜짐"
+
+msgid "Nabu hardware controls"
+msgstr "Nabu 하드웨어 제어"
+
+msgid "Refresh hardware state"
+msgstr "하드웨어 상태 새로 고침"
+
+msgid "Device"
+msgstr "장치"
+
+msgid "Flashlight"
+msgstr "손전등"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "%1%에서 켜짐"
+
+msgid "Off"
+msgstr "끄기"
+
+msgid "Flashlight brightness"
+msgstr "손전등 밝기"
+
+msgid "%1 percent"
+msgstr "%1 퍼센트"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "디스플레이 및 커버"
+
+msgid "Automatic rotation"
+msgstr "자동 회전"
+
+msgid "Active"
+msgstr "활성"
+
+msgid "Inactive"
+msgstr "비활성"
+
+msgid "Automatic brightness"
+msgstr "자동 밝기"
+
+msgid "Magnetic cover"
+msgstr "자석 커버"
+
+msgid "Closed"
+msgstr "휴무"
+
+msgid "Open"
+msgstr "열기"
+
+msgid "Sleep action active"
+msgstr "수면 활동 활성화"
+
+msgid "Sleep action inactive"
+msgstr "수면 활동 비활성"
+
+msgid "Magnetic cover sleep action"
+msgstr "마그네틱 커버 슬립 액션"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 특정"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "연결하다"
+
+msgid "Pen battery"
+msgstr "펜 배터리"
+
+msgid "Pogo keyboard"
+msgstr "Pogo 키보드"
+
+msgid "Attached"
+msgstr "첨부"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "USB 장치 공유"
+
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · 시리얼%2"
+
+msgid "USB data role"
+msgstr "USB 데이터 역할"
+
+msgid "Host mode"
+msgstr "호스트 모드"
+
+msgid "Device mode"
+msgstr "장치 모드"
+
+msgid "Use device"
+msgstr "장치 사용"
+
+msgid "Use host"
+msgstr "호스트 사용"
+
+msgid "USB power role"
+msgstr "USB 전원 역할"
+
+msgid "Supplying power"
+msgstr "전원공급"
+
+msgid "Power sink"
+msgstr "전원 싱크"
+
+msgid "Use sink"
+msgstr "싱크대 사용"
+
+msgid "Supply power"
+msgstr "공급 전원"

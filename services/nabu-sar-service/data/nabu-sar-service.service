@@ -1,0 +1,20 @@
+[Unit]
+Description=Xiaomi Pad 5 ADUX1050 SAR sensor service
+After=dbus.service systemd-logind.service
+Wants=systemd-logind.service
+
+[Service]
+Type=dbus
+BusName=org.senemos.Nabu.Sar
+ExecStart=/usr/libexec/nabu-sar-service
+Restart=on-failure
+RestartSec=2
+StateDirectory=nabu-sar
+StateDirectoryMode=0700
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

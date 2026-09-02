@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: cs\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "Kontrola hardwarové podpory…"
+
+msgid "Not supported by this device"
+msgstr "Toto zařízení nepodporuje"
+
+msgid "Default brightness:"
+msgstr "Výchozí jas:"
+
+msgid "Default flashlight brightness"
+msgstr "Výchozí jas baterky"
+
+msgid "Current value:"
+msgstr "Aktuální hodnota:"
+
+msgid "The requested change could not be applied."
+msgstr "Požadovanou změnu nebylo možné použít."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "Jas baterky nelze použít."
+
+msgid "Connected"
+msgstr "Připojeno"
+
+msgid "Paired"
+msgstr "Spárováno"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Baterie: %1%"
+
+msgid "Charging"
+msgstr "Nabíjení"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Limit nabíjení: %1%"
+
+msgid "Tablet Control"
+msgstr "Ovládání tabletu"
+
+msgid "Flashlight on"
+msgstr "Svítilna"
+
+msgid "Nabu hardware controls"
+msgstr "Hardwarové ovládací prvky Nabu"
+
+msgid "Refresh hardware state"
+msgstr "Obnovit stav hardwaru"
+
+msgid "Device"
+msgstr "Zařízení"
+
+msgid "Flashlight"
+msgstr "Svítilna"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Zapnuto na %1%"
+
+msgid "Off"
+msgstr "Vypnuto"
+
+msgid "Flashlight brightness"
+msgstr "Jas svítilny"
+
+msgid "%1 percent"
+msgstr "%1 procent"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "Displej a kryt"
+
+msgid "Automatic rotation"
+msgstr "Automatické otáčení"
+
+msgid "Active"
+msgstr "Aktivní"
+
+msgid "Inactive"
+msgstr "Neaktivní"
+
+msgid "Automatic brightness"
+msgstr "Automatický jas"
+
+msgid "Magnetic cover"
+msgstr "Magnetický kryt"
+
+msgid "Closed"
+msgstr "Zavřeno"
+
+msgid "Open"
+msgstr "Otevřít"
+
+msgid "Sleep action active"
+msgstr "Aktivní režim spánku"
+
+msgid "Sleep action inactive"
+msgstr "Akce spánku je neaktivní"
+
+msgid "Magnetic cover sleep action"
+msgstr "Magnetický kryt uspávací akce"
+
+msgid "Pad 5 Specific"
+msgstr "Specifické pro Pad 5"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "Připojte se"
+
+msgid "Pen battery"
+msgstr "Tužková baterie"
+
+msgid "Pogo keyboard"
+msgstr "Klávesnice Pogo"
+
+msgid "Attached"
+msgstr "Připojeno"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "Sdílení zařízení USB"
+
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Serial%2"
+
+msgid "USB data role"
+msgstr "Datová role USB"
+
+msgid "Host mode"
+msgstr "Režim hostitele"
+
+msgid "Device mode"
+msgstr "Režim zařízení"
+
+msgid "Use device"
+msgstr "Použijte zařízení"
+
+msgid "Use host"
+msgstr "Použít hostitele"
+
+msgid "USB power role"
+msgstr "USB mocenská role"
+
+msgid "Supplying power"
+msgstr "Napájení"
+
+msgid "Power sink"
+msgstr "Napájecí jímka"
+
+msgid "Use sink"
+msgstr "Použijte dřez"
+
+msgid "Supply power"
+msgstr "Napájení"

@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: az\n"
+"Language: az\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "Avadanlıq dəstəyi yoxlanılır..."
+
+msgid "Not supported by this device"
+msgstr "Bu cihaz tərəfindən dəstəklənmir"
+
+msgid "Default brightness:"
+msgstr "Defolt parlaqlıq:"
+
+msgid "Default flashlight brightness"
+msgstr "Defolt fənər parlaqlığı"
+
+msgid "Current value:"
+msgstr "Cari dəyər:"
+
+msgid "The requested change could not be applied."
+msgstr "Tələb olunan dəyişikliyi tətbiq etmək mümkün olmadı."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "Fənərin parlaqlığını tətbiq etmək mümkün olmadı."
+
+msgid "Connected"
+msgstr "Qoşuldu"
+
+msgid "Paired"
+msgstr "Cütləşdi"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Batareya: %1%"
+
+msgid "Charging"
+msgstr "Doldurulur"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Doldurma limiti: %1%"
+
+msgid "Tablet Control"
+msgstr "Planşetə nəzarət"
+
+msgid "Flashlight on"
+msgstr "Fənər yandırılır"
+
+msgid "Nabu hardware controls"
+msgstr "Nabu aparat nəzarətləri"
+
+msgid "Refresh hardware state"
+msgstr "Aparat vəziyyətini yeniləyin"
+
+msgid "Device"
+msgstr "Cihaz"
+
+msgid "Flashlight"
+msgstr "Fənər"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "%1%-də aktivdir"
+
+msgid "Off"
+msgstr "Söndür"
+
+msgid "Flashlight brightness"
+msgstr "Fənər parlaqlığı"
+
+msgid "%1 percent"
+msgstr "%1 faiz"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "Ekran və qapaq"
+
+msgid "Automatic rotation"
+msgstr "Avtomatik fırlanma"
+
+msgid "Active"
+msgstr "Aktiv"
+
+msgid "Inactive"
+msgstr "Qeyri-aktiv"
+
+msgid "Automatic brightness"
+msgstr "Avtomatik parlaqlıq"
+
+msgid "Magnetic cover"
+msgstr "Maqnit örtüyü"
+
+msgid "Closed"
+msgstr "bağlıdır"
+
+msgid "Open"
+msgstr "Açıq"
+
+msgid "Sleep action active"
+msgstr "Yuxu hərəkəti aktivdir"
+
+msgid "Sleep action inactive"
+msgstr "Yuxu hərəkəti qeyri-aktivdir"
+
+msgid "Magnetic cover sleep action"
+msgstr "Maqnit örtüyü yuxu hərəkəti"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 Xüsusi"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "Qoşun"
+
+msgid "Pen battery"
+msgstr "Qələm batareyası"
+
+msgid "Pogo keyboard"
+msgstr "Pogo klaviatura"
+
+msgid "Attached"
+msgstr "Əlavə olunub"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "USB cihaz paylaşımı"
+
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Serial%2"
+
+msgid "USB data role"
+msgstr "USB məlumat rolu"
+
+msgid "Host mode"
+msgstr "Host rejimi"
+
+msgid "Device mode"
+msgstr "Cihaz rejimi"
+
+msgid "Use device"
+msgstr "Cihazdan istifadə edin"
+
+msgid "Use host"
+msgstr "Host istifadə edin"
+
+msgid "USB power role"
+msgstr "USB güc rolu"
+
+msgid "Supplying power"
+msgstr "Enerji təchizatı"
+
+msgid "Power sink"
+msgstr "Elektrik lavabo"
+
+msgid "Use sink"
+msgstr "Lavabodan istifadə edin"
+
+msgid "Supply power"
+msgstr "Enerji təchizatı"

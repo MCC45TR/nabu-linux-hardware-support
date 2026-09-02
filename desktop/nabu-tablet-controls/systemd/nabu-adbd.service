@@ -1,0 +1,13 @@
+[Unit]
+Description=SENEMOS Nabu authenticated ADB daemon
+ConditionFileIsExecutable=/usr/sbin/adbd
+ConditionPathExists=/adb_keys
+ConditionPathIsMountPoint=/dev/usb-ffs/adb
+
+[Service]
+Type=simple
+Environment=ADB_EXTERNAL_STORAGE=/home
+ExecStart=/usr/sbin/adbd
+Restart=on-failure
+RestartSec=1
+

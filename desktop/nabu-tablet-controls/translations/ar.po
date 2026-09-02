@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: ar\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "جارٍ التحقق من دعم الأجهزة…"
+
+msgid "Not supported by this device"
+msgstr "غير مدعوم من هذا الجهاز"
+
+msgid "Default brightness:"
+msgstr "السطوع الافتراضي:"
+
+msgid "Default flashlight brightness"
+msgstr "سطوع المصباح الافتراضي"
+
+msgid "Current value:"
+msgstr "القيمة الحالية:"
+
+msgid "The requested change could not be applied."
+msgstr "لا يمكن تطبيق التغيير المطلوب."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "لا يمكن تطبيق سطوع المصباح اليدوي."
+
+msgid "Connected"
+msgstr "متصل"
+
+msgid "Paired"
+msgstr "يقترن"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "البطارية: %1%"
+
+msgid "Charging"
+msgstr "الشحن"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "حد الشحن: %1%"
+
+msgid "Tablet Control"
+msgstr "التحكم بالكمبيوتر اللوحي"
+
+msgid "Flashlight on"
+msgstr "تشغيل المصباح"
+
+msgid "Nabu hardware controls"
+msgstr "ضوابط الأجهزة Nabu"
+
+msgid "Refresh hardware state"
+msgstr "تحديث حالة الأجهزة"
+
+msgid "Device"
+msgstr "الجهاز"
+
+msgid "Flashlight"
+msgstr "مصباح يدوي"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "في %1%"
+
+msgid "Off"
+msgstr "إيقاف"
+
+msgid "Flashlight brightness"
+msgstr "سطوع المصباح"
+
+msgid "%1 percent"
+msgstr "%1 في المئة"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "العرض والغطاء"
+
+msgid "Automatic rotation"
+msgstr "الدوران التلقائي"
+
+msgid "Active"
+msgstr "نشط"
+
+msgid "Inactive"
+msgstr "غير نشط"
+
+msgid "Automatic brightness"
+msgstr "السطوع التلقائي"
+
+msgid "Magnetic cover"
+msgstr "غطاء مغناطيسي"
+
+msgid "Closed"
+msgstr "مغلق"
+
+msgid "Open"
+msgstr "مفتوح"
+
+msgid "Sleep action active"
+msgstr "عمل النوم نشط"
+
+msgid "Sleep action inactive"
+msgstr "عمل النوم غير نشط"
+
+msgid "Magnetic cover sleep action"
+msgstr "غطاء مغناطيسي يعمل على النوم"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 محددة"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "الاتصال"
+
+msgid "Pen battery"
+msgstr "بطارية القلم"
+
+msgid "Pogo keyboard"
+msgstr "لوحة المفاتيح Pogo"
+
+msgid "Attached"
+msgstr "مرفق"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "مشاركة الجهاز USB"
+
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · المسلسل%2"
+
+msgid "USB data role"
+msgstr "دور البيانات USB"
+
+msgid "Host mode"
+msgstr "وضع المضيف"
+
+msgid "Device mode"
+msgstr "وضع الجهاز"
+
+msgid "Use device"
+msgstr "استخدم الجهاز"
+
+msgid "Use host"
+msgstr "استخدم المضيف"
+
+msgid "USB power role"
+msgstr "دور الطاقة USB"
+
+msgid "Supplying power"
+msgstr "توريد الطاقة"
+
+msgid "Power sink"
+msgstr "بالوعة الطاقة"
+
+msgid "Use sink"
+msgstr "استخدام بالوعة"
+
+msgid "Supply power"
+msgstr "قوة الإمداد"

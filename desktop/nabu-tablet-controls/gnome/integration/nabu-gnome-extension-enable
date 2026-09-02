@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+case ":${XDG_CURRENT_DESKTOP:-}:" in
+    *:GNOME:*|*:GNOME-Classic:*) ;;
+    *) exit 0 ;;
+esac
+
+state_root="${XDG_STATE_HOME:-${HOME}/.local/state}/senemos-nabu"
+stamp="$state_root/gnome-tablet-controls-initialized"
+test ! -e "$stamp" || exit 0
+
+mkdir -p "$state_root"
+if /usr/bin/gnome-extensions list | /usr/bin/grep -Fxq 'nabu-flashlight@senemos.org'; then
+    /usr/bin/gnome-extensions enable 'nabu-flashlight@senemos.org'
+    : >"$stamp"
+fi

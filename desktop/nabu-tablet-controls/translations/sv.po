@@ -1,0 +1,180 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"PO-Revision-Date: 2026-08-29 20:00+0300\n"
+"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
+"Language-Team: sv\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Checking hardware support…"
+msgstr "Kontrollerar hårdvarustöd..."
+
+msgid "Not supported by this device"
+msgstr "Stöds inte av den här enheten"
+
+msgid "Default brightness:"
+msgstr "Standardljusstyrka:"
+
+msgid "Default flashlight brightness"
+msgstr "Standard ljusstyrka för ficklampan"
+
+msgid "Current value:"
+msgstr "Aktuellt värde:"
+
+msgid "The requested change could not be applied."
+msgstr "Den begärda ändringen kunde inte tillämpas."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "Ficklampans ljusstyrka kunde inte tillämpas."
+
+msgid "Connected"
+msgstr "Ansluten"
+
+msgid "Paired"
+msgstr "Parat"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Batteri: %1%"
+
+msgid "Charging"
+msgstr "Laddar"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Laddningsgräns: %1%"
+
+msgid "Tablet Control"
+msgstr "Tablettkontroll"
+
+msgid "Flashlight on"
+msgstr "Ficklampa på"
+
+msgid "Nabu hardware controls"
+msgstr "Nabu hårdvarukontroller"
+
+msgid "Refresh hardware state"
+msgstr "Uppdatera hårdvarutillstånd"
+
+msgid "Device"
+msgstr "Enhet"
+
+msgid "Flashlight"
+msgstr "Ficklampa"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "På på %1%"
+
+msgid "Off"
+msgstr "Av"
+
+msgid "Flashlight brightness"
+msgstr "Ficklampans ljusstyrka"
+
+msgid "%1 percent"
+msgstr "%1 procent"
+
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Display and cover"
+msgstr "Display och lock"
+
+msgid "Automatic rotation"
+msgstr "Automatisk rotation"
+
+msgid "Active"
+msgstr "Aktiv"
+
+msgid "Inactive"
+msgstr "Inaktiv"
+
+msgid "Automatic brightness"
+msgstr "Automatisk ljusstyrka"
+
+msgid "Magnetic cover"
+msgstr "Magnetisk lock"
+
+msgid "Closed"
+msgstr "Stängt"
+
+msgid "Open"
+msgstr "Öppna"
+
+msgid "Sleep action active"
+msgstr "Sömnåtgärden är aktiv"
+
+msgid "Sleep action inactive"
+msgstr "Sömnåtgärd inaktiv"
+
+msgid "Magnetic cover sleep action"
+msgstr "Magnetisk överdrag sömnåtgärd"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 Specifik"
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Connect"
+msgstr "Anslut"
+
+msgid "Pen battery"
+msgstr "Pennbatteri"
+
+msgid "Pogo keyboard"
+msgstr "Pogo tangentbord"
+
+msgid "Attached"
+msgstr "Bifogat"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "USB device sharing"
+msgstr "USB enhetsdelning"
+
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Serial%2"
+
+msgid "USB data role"
+msgstr "USB dataroll"
+
+msgid "Host mode"
+msgstr "Värdläge"
+
+msgid "Device mode"
+msgstr "Enhetsläge"
+
+msgid "Use device"
+msgstr "Använd enheten"
+
+msgid "Use host"
+msgstr "Använd värd"
+
+msgid "USB power role"
+msgstr "USB makt roll"
+
+msgid "Supplying power"
+msgstr "Levererar ström"
+
+msgid "Power sink"
+msgstr "Elvask"
+
+msgid "Use sink"
+msgstr "Använd handfat"
+
+msgid "Supply power"
+msgstr "Tillföra ström"

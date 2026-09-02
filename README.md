@@ -19,6 +19,8 @@ consumed by
 | RMTFS activation | Validated | The udev rule starts `rmtfs.service` when shared memory appears. |
 | Wi-Fi WoWLAN policy | Static candidate | Requests only disconnect and magic-packet wake triggers; suspend retention and wake frequency require Nabu hardware testing. |
 | Sensor session gate | Static candidate | Waits for SSC accelerometer enumeration and performs at most one bounded iio-sensor-proxy restart without blocking graphical fallback. |
+| Colour temperature | Static candidate | TCS3701 `cct_front` is decoded by libssc and published as standard IIO `in_colortemp_raw`; kernel/COPR/HIL gates remain. |
+| SAR hold-awake | Static candidate | Existing Plasma/GNOME controls use calibrated ADUX1050 state and a fail-closed logind inhibitor; physical thresholds remain to be calibrated. |
 
 The default Plasma profile keeps automatic brightness disabled. The measured
 curve is retained under `plasma/experimental/` for continued calibration.
@@ -30,6 +32,11 @@ curve is retained under `plasma/experimental/` for continued calibration.
 - `plasma/experimental/auto-brightness/`: current calibration experiment.
 - `systemd/`: PMIC RTC synchronization service and helper.
 - `networkmanager/`: Nabu-specific WCN3990 WoWLAN defaults.
+- `desktop/nabu-tablet-controls/`: the existing Plasma widget and GNOME Quick
+  Settings extension, backed by shared Nabu helpers rather than compositor
+  forks.
+- `services/nabu-sar-service/`: the ADUX1050 D-Bus service, guided calibration
+  capture tool, fail-closed logind inhibitor and TCS3701-to-IIO bridge.
 - `packaging/hexagonrpc-nabu/`: current upstream HexagonRPC plus the pinned,
   checksummed Hotdog/Nabu FastRPC merge layer.
 - `packaging/libssc-nabu/`: current upstream libssc plus the Nabu SLPI failure

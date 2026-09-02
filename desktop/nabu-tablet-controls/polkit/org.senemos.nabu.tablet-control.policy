@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+  "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>SENEMOS Nabu</vendor>
+  <vendor_url>https://copr.fedorainfracloud.org/coprs/mcc45tr/nabu-linux/</vendor_url>
+  <action id="org.senemos.nabu.tablet-control.usb-role">
+    <description>Change the Xiaomi Pad 5 USB-C role or device services</description>
+    <message>Authentication is required to change the tablet USB mode</message>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/libexec/nabu-usb-role</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
+  <action id="org.senemos.nabu.tablet-control.sar-hold-awake">
+    <description>Change grip-aware sleep prevention</description>
+    <message>Authentication is required to change grip-aware sleep prevention</message>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/libexec/nabu-sar-control</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
+</policyconfig>

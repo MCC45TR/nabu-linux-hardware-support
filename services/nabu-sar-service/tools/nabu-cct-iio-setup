@@ -1,0 +1,25 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+/usr/sbin/modprobe industrialio-configfs
+/usr/sbin/modprobe industrialio-sw-device
+/usr/sbin/modprobe qcom-ssc-cct
+
+config_root=/sys/kernel/config/iio/devices/ssc_cct
+endpoint=$config_root/nabu-cct
+
+for _attempt in {1..50}; do
+    [[ -d $config_root ]] && break
+    sleep 0.1
+done
+[[ -d $config_root ]]
+mkdir -p "$endpoint"
+
+for device in /sys/bus/iio/devices/iio:device*; do
+    [[ -r $device/name ]] || continue
+    [[ $(<"$device/name") == nabu-cct ]] || continue
+    exit 0
+done
+
+echo "nabu-cct IIO device was not registered" >&2
+exit 1
