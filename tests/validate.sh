@@ -78,7 +78,9 @@ grep -Fq '0003-udev-standardize-Nabu-SDSP-orientation.patch' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/iio-sensor-proxy.spec"
 grep -Fq 'KERNEL=="fastrpc-adsp*", ENV{IIO_SENSOR_PROXY_TYPE}=""' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/0003-udev-standardize-Nabu-SDSP-orientation.patch"
-grep -Fq 'ENV{ACCEL_MOUNT_MATRIX}="$attr{mount_matrix}"' \
+grep -Fq 'drv-ssc-accel reads mount_matrix directly' \
+    "$repo_root/packaging/iio-sensor-proxy-nabu/0003-udev-standardize-Nabu-SDSP-orientation.patch"
+! grep -Fq 'ENV{ACCEL_MOUNT_MATRIX}' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/0003-udev-standardize-Nabu-SDSP-orientation.patch"
 "$repo_root/packaging/update-upstreams.sh" --check
 test -s "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
