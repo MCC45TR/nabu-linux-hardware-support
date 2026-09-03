@@ -1,38 +1,32 @@
+From 31b8438b1afdb0d4a4c3ad444f4f8d2dfeeafc34 Mon Sep 17 00:00:00 2001
 From: mcc45tr <mcc45tr@gmail.com>
-Subject: [PATCH] libssc: treat an all-zero placement as unspecified
+Date: Thu, 3 Sep 2026 20:32:29 +0300
+Subject: [PATCH] libssc: treat zero placement as unspecified
 
-Qualcomm registry payloads describe physical placement with a 3x4 array.  On
+Qualcomm registry payloads describe physical placement with a 3x4 array. On
 Nabu, lsm6dso_0_platform.placement intentionally contains twelve zeroes while
 the sensor orientation is described separately by the registry's .orient
-group.  The SSC service consequently exports nine zero coefficients.
+group. The SSC service consequently exports nine zero coefficients.
 
 An all-zero placement still needs the identity fallback, but it is not a
 malformed response and must not produce a warning on every sensor discovery.
 Keep warnings for incomplete numeric arrays, report the unspecified placement
 at debug level, and retain the exact identity behavior.
 
+Signed-off-by: mcc45tr <mcc45tr@gmail.com>
 ---
- src/libssc-sensor.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ src/libssc-sensor.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/src/libssc-sensor.c b/src/libssc-sensor.c
-index 20c2665..5aa94c1 100644
+index 20c2665..e9afefd 100644
 --- a/src/libssc-sensor.c
 +++ b/src/libssc-sensor.c
-@@ -432,10 +432,15 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid_
--					if (parsed_values != 9 || all_zero) {
-+					if (parsed_values != 9 || all_zero) {
- 						memset (priv->mount_matrix, 0, sizeof (priv->mount_matrix));
- 						priv->mount_matrix[0][0] = 1.0;
- 						priv->mount_matrix[1][1] = 1.0;
- 						priv->mount_matrix[2][2] = 1.0;
+@@ -437 +437,4 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid_
 -						g_warning ("Mount matrix provided by firmware is incomplete or all 0, falling back to identity matrix!");
 +						if (parsed_values != 9)
 +							g_warning ("SSC placement matrix is incomplete, falling back to identity matrix");
 +						else
 +							g_debug ("SSC placement matrix is unspecified (all zero), using identity matrix");
- 					}
- 				}
- 					break;
 -- 
 2.55.0

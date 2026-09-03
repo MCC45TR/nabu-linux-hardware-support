@@ -3,7 +3,7 @@
 
 Name:           libssc-nabu
 Version:        0.4.4
-Release:        4.nabu3.test%{?dist}
+Release:        5.nabu4.test%{?dist}
 Summary:        Qualcomm Sensor Core client library for Nabu sensor services
 
 License:        GPL-3.0-or-later
@@ -98,6 +98,9 @@ grep -F 'SSC placement matrix is incomplete, falling back to identity matrix' sr
 %{_libexecdir}/installed-tests/%{upstream_name}/ssc-server
 
 %changelog
+* Thu Sep 03 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-5.nabu4.test
+- Correct the zero-placement patch hunk length so RPM can apply it strictly.
+
 * Thu Sep 03 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-4.nabu3.test
 - Treat Nabu's all-zero Qualcomm placement array as an unspecified placement.
 - Keep identity semantics without emitting a false firmware warning at startup.
