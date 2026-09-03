@@ -1,3 +1,4 @@
 5d6a23a2ac3c0b40be2a946ba3d741d75a0a2b35179df5d2a511faae4bd95f57  0001-libssc-avoid-use-after-free-in-sensor-error-logging.patch
 465158b15ce03621fa61d7a4034abea47e50f4aa9e7f8b4bc0a8a6d626e6a9b2  0002-libssc-accept-fractional-and-integer-mount-matrices.patch
 5d38f96a7aeb2add69024572edf890383f9ae547c1c85b28dcc7da51f24d2fb7  0003-ssccli-probe-arbitrary-data-types.patch
+362702212f69c2f3f568d77a4da882bfaf3c20f6230fda8e268f867f24af4873  0004-libssc-treat-zero-placement-as-unspecified.patch

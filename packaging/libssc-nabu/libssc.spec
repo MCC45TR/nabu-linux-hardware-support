@@ -3,7 +3,7 @@
 
 Name:           libssc-nabu
 Version:        0.4.4
-Release:        3.nabu2.test%{?dist}
+Release:        4.nabu3.test%{?dist}
 Summary:        Qualcomm Sensor Core client library for Nabu sensor services
 
 License:        GPL-3.0-or-later
@@ -12,6 +12,7 @@ Source0:        %{url}/archive/v%{version}.tar.gz#/%{upstream_name}-%{version}.t
 Patch0:         0001-libssc-avoid-use-after-free-in-sensor-error-logging.patch
 Patch1:         0002-libssc-accept-fractional-and-integer-mount-matrices.patch
 Patch2:         0003-ssccli-probe-arbitrary-data-types.patch
+Patch3:         0004-libssc-treat-zero-placement-as-unspecified.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -76,6 +77,9 @@ Sensor Core client library.
 grep -F 'probe-data-type' src/libssc-cli.c
 grep -F "'gyroscope'" src/libssc-cli.c
 grep -F 'Z=%f rad/s' src/libssc-cli.c
+grep -F 'SSC placement matrix is unspecified (all zero), using identity matrix' src/libssc-sensor.c
+grep -F 'SSC placement matrix is incomplete, falling back to identity matrix' src/libssc-sensor.c
+! grep -Fq 'Mount matrix provided by firmware is incomplete or all 0' src/libssc-sensor.c
 
 %files
 %license LICENSE
@@ -94,6 +98,11 @@ grep -F 'Z=%f rad/s' src/libssc-cli.c
 %{_libexecdir}/installed-tests/%{upstream_name}/ssc-server
 
 %changelog
+* Thu Sep 03 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-4.nabu3.test
+- Treat Nabu's all-zero Qualcomm placement array as an unspecified placement.
+- Keep identity semantics without emitting a false firmware warning at startup.
+- Retain warnings for genuinely incomplete SSC placement arrays.
+
 * Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-3.nabu2.test
 - Add safe discovery-only probing for arbitrary SSC data types.
 - Advertise the existing gyroscope CLI support and report angular velocity in rad/s.
