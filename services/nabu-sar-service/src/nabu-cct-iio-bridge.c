@@ -12,6 +12,7 @@
 #define CCT_MIN_KELVIN 1000.0f
 #define CCT_MAX_KELVIN 40000.0f
 #define CCT_STALE_USEC (3 * G_USEC_PER_SEC)
+#define CCT_INVALID_WARNING_USEC (30 * G_USEC_PER_SEC)
 
 typedef struct {
 	GMainLoop *loop;
@@ -20,6 +21,8 @@ typedef struct {
 	guint stale_timer_id;
 	gint exit_status;
 	gint64 last_sample_usec;
+	gint64 last_invalid_warning_usec;
+	guint invalid_samples_suppressed;
 } Bridge;
 
 static gboolean
@@ -81,7 +84,19 @@ measurement(SSCSensorLight *sensor, gfloat kelvin, gpointer user_data)
 
 	if (!isfinite(kelvin) || kelvin < CCT_MIN_KELVIN ||
 	    kelvin > CCT_MAX_KELVIN) {
-		g_warning("discarding invalid TCS3701 CCT measurement: %.9g", kelvin);
+		gint64 now = g_get_monotonic_time();
+
+		if (!bridge->last_invalid_warning_usec ||
+		    now - bridge->last_invalid_warning_usec >=
+		    CCT_INVALID_WARNING_USEC) {
+			g_warning("discarding invalid TCS3701 CCT measurement: %.9g "
+				  "(%u similar samples suppressed)", kelvin,
+				  bridge->invalid_samples_suppressed);
+			bridge->last_invalid_warning_usec = now;
+			bridge->invalid_samples_suppressed = 0;
+		} else if (bridge->invalid_samples_suppressed < G_MAXUINT) {
+			bridge->invalid_samples_suppressed++;
+		}
 		return;
 	}
 	if (!publish_kelvin(bridge->iio_cct_path, (gint)lroundf(kelvin), &error))
