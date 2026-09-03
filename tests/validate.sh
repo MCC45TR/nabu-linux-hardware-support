@@ -37,8 +37,10 @@ grep -Fq 'SAMPLE_STALE_USEC' \
 grep -Fq 'SSC_SENSOR_DATA_TYPE, "cct_front_strm"' \
     "$repo_root/services/nabu-sar-service/src/nabu-cct-iio-bridge.c"
 bash "$repo_root/tests/test-sensor-session-gate.sh"
-grep -Fxq 'Before=display-manager.service plasmalogin.service' \
+grep -Fxq 'Before=display-manager.service gdm.service plasmalogin.service' \
     "$repo_root/systemd/nabu-sensor-session-gate.service"
+grep -Fq -- '--sensor accelerometer --timeout 1' \
+    "$repo_root/systemd/nabu-sensor-session-gate"
 grep -Fxq 'wifi.wake-on-wlan=12' \
     "$repo_root/networkmanager/20-nabu-wifi-wowlan.conf"
 grep -Fq '%meson_test' \

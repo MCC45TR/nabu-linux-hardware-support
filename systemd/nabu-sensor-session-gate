@@ -1,17 +1,29 @@
 #!/usr/bin/bash
-# Keep the graphical session behind a bounded SSC readiness check. If the
-# first iio-sensor-proxy enumeration raced SLPI publication, restart the daemon
-# once and retry. Failure remains non-fatal so an unavailable sensor DSP never
-# prevents the user from reaching the desktop and rolling the package back.
+# Keep the graphical session behind a bounded SSC readiness check.  A running
+# hexagonrpcd process only proves that the FastRPC filesystem server was
+# started; it does not prove that SLPI has published the accelerometer yet.
+# Wait for an actual sample before accepting SensorProxy's discovery result.
+# If the proxy enumerated the FastRPC device too early, restart it once after
+# SSC is known to be ready.  Failure remains non-fatal so a broken sensor DSP
+# never prevents the user from reaching the desktop and rolling back.
 
 set -u
 
 busctl_bin=${NABU_SENSOR_GATE_BUSCTL:-/usr/bin/busctl}
+grep_bin=${NABU_SENSOR_GATE_GREP:-/usr/bin/grep}
+ssccli_bin=${NABU_SENSOR_GATE_SSCCLI:-/usr/bin/ssccli}
 systemctl_bin=${NABU_SENSOR_GATE_SYSTEMCTL:-/usr/bin/systemctl}
+timeout_bin=${NABU_SENSOR_GATE_TIMEOUT:-/usr/bin/timeout}
 sleep_bin=${NABU_SENSOR_GATE_SLEEP:-/usr/bin/sleep}
-initial_attempts=${NABU_SENSOR_GATE_INITIAL_ATTEMPTS:-20}
-recovery_attempts=${NABU_SENSOR_GATE_RECOVERY_ATTEMPTS:-40}
+ssc_attempts=${NABU_SENSOR_GATE_SSC_ATTEMPTS:-6}
+proxy_attempts=${NABU_SENSOR_GATE_PROXY_ATTEMPTS:-12}
 interval=${NABU_SENSOR_GATE_INTERVAL:-0.25}
+
+ssc_ready() {
+	LC_ALL=C "${timeout_bin}" 2 "${ssccli_bin}" \
+		--sensor accelerometer --timeout 1 2>/dev/null |
+		"${grep_bin}" -qm1 '^Accelerometer sensor measurement:'
+}
 
 sensor_ready() {
 	[[ $("${busctl_bin}" get-property net.hadess.SensorProxy \
@@ -19,12 +31,13 @@ sensor_ready() {
 		HasAccelerometer 2>/dev/null || :) == 'b true' ]]
 }
 
-wait_for_sensor() {
-	local attempts=$1
+wait_until() {
+	local check=$1
+	local attempts=$2
 	local attempt
 
 	for ((attempt = 0; attempt < attempts; attempt++)); do
-		if sensor_ready; then
+		if "${check}"; then
 			return 0
 		fi
 		"${sleep_bin}" "${interval}"
@@ -32,21 +45,24 @@ wait_for_sensor() {
 	return 1
 }
 
-if wait_for_sensor "${initial_attempts}"; then
-	echo 'Nabu sensor gate: accelerometer was ready before the graphical session.'
+if ! wait_until ssc_ready "${ssc_attempts}"; then
+	echo 'Nabu sensor gate: SSC produced no accelerometer sample within the bounded startup window.' >&2
+	echo 'Nabu sensor gate: allowing the desktop to start for recovery.' >&2
+	exit 0
+fi
+echo 'Nabu sensor gate: SSC produced an accelerometer sample.'
+
+if wait_until sensor_ready "${proxy_attempts}"; then
+	echo 'Nabu sensor gate: SensorProxy exported the accelerometer before the graphical session.'
 	exit 0
 fi
 
-echo 'Nabu sensor gate: restarting iio-sensor-proxy after a late SLPI enumeration.' >&2
-if ! "${systemctl_bin}" restart iio-sensor-proxy.service; then
-	echo 'Nabu sensor gate: restart failed; continuing without blocking the desktop.' >&2
+echo 'Nabu sensor gate: restarting iio-sensor-proxy after late SSC publication.' >&2
+if "${systemctl_bin}" restart iio-sensor-proxy.service && \
+	wait_until sensor_ready "${proxy_attempts}"; then
+	echo 'Nabu sensor gate: SensorProxy exported the accelerometer after one bounded restart.'
 	exit 0
 fi
 
-if wait_for_sensor "${recovery_attempts}"; then
-	echo 'Nabu sensor gate: accelerometer became ready after one bounded restart.'
-	exit 0
-fi
-
-echo 'Nabu sensor gate: accelerometer is still unavailable; continuing with the current desktop behavior.' >&2
+echo 'Nabu sensor gate: accelerometer is still unavailable; allowing the desktop to start for recovery.' >&2
 exit 0
