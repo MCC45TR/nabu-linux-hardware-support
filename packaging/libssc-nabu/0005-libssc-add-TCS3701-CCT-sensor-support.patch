@@ -1,0 +1,420 @@
+diff --git a/data/meson.build b/data/meson.build
+index 76dc22b..152a04f 100644
+--- a/data/meson.build
++++ b/data/meson.build
+@@ -23,6 +23,7 @@ msgs = [
+   'sensor-suid',
+   'sensor-proximity',
+   'sensor-light',
++  'sensor-cct',
+   'sensor-accelerometer',
+   'sensor-magnetometer',
+   'sensor-rotationvector',
+diff --git a/data/ssc-sensor-cct.proto b/data/ssc-sensor-cct.proto
+new file mode 100644
+index 0000000..1f0c8de
+--- /dev/null
++++ b/data/ssc-sensor-cct.proto
+@@ -0,0 +1,17 @@
++/* Qualcomm sns_cct_event response carried by the cct_front data type. */
++syntax = "proto2";
++
++message SscCctResponse {
++	required float cct = 1;
++	required int32 red_raw = 2;
++	required int32 green_raw = 3;
++	required int32 blue_raw = 4;
++	required int32 clear_raw = 5;
++	required int32 wband_raw = 6;
++	required float ir_ratio = 7;
++	required float x = 8;
++	required float y = 9;
++	required float lux = 10;
++	required float als_gain = 11;
++	required float a_time = 12;
++}
+diff --git a/libssc.map b/libssc.map
+index d5a2ee2..3b6f3d8 100644
+--- a/libssc.map
++++ b/libssc.map
+@@ -36,6 +36,15 @@ LIBSSC_0.4.0 {
+ 		ssc_sensor_light_close;
+ 		ssc_sensor_light_close_finish;
+ 		ssc_sensor_light_close_sync;
++		ssc_sensor_cct_new;
++		ssc_sensor_cct_new_finish;
++		ssc_sensor_cct_new_sync;
++		ssc_sensor_cct_open;
++		ssc_sensor_cct_open_finish;
++		ssc_sensor_cct_open_sync;
++		ssc_sensor_cct_close;
++		ssc_sensor_cct_close_finish;
++		ssc_sensor_cct_close_sync;
+ 		ssc_sensor_magnetometer_new;
+ 		ssc_sensor_magnetometer_new_finish;
+ 		ssc_sensor_magnetometer_new_sync;
+@@ -68,6 +77,7 @@ LIBSSC_0.4.0 {
+ 		ssc_sensor_compass_get_type;
+ 		ssc_sensor_gyroscope_get_type;
+ 		ssc_sensor_light_get_type;
++		ssc_sensor_cct_get_type;
+ 		ssc_sensor_magnetometer_get_type;
+ 		ssc_sensor_proximity_get_type;
+ 		ssc_sensor_error_quark;
+diff --git a/src/libssc-common-private.h b/src/libssc-common-private.h
+index e427c11..4e0adb2 100644
+--- a/src/libssc-common-private.h
++++ b/src/libssc-common-private.h
+@@ -34,6 +34,7 @@
+ #define SSC_MSG_REQUEST_GET_ATTRIBUTES			1
+ #define SSC_MSG_RESPONSE_GET_ATTRIBUTES			128
+ #define SSC_MSG_REPORT_MEASUREMENT_PROXIMITY		769
++#define SSC_MSG_REPORT_MEASUREMENT_CCT			882
+ #define SSC_MSG_REPORT_MEASUREMENT			1025
+ 
+ #define SSC_ACCURACY_UNRELIABLE				0
+diff --git a/src/libssc-sensor-cct.c b/src/libssc-sensor-cct.c
+new file mode 100644
+index 0000000..be42f35
+--- /dev/null
++++ b/src/libssc-sensor-cct.c
+@@ -0,0 +1,248 @@
++/*
++ * libssc: Library to expose Qualcomm Sensor Core sensors
++ * Copyright (C) 2022-2026 Dylan Van Assche
++ * Copyright (C) 2026 mcc45tr <mcc45tr@gmail.com>
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ */
++
++#include "libssc-client-private.h"
++#include "libssc-common-private.h"
++#include "ssc-sensor-cct.pb-c.h"
++#include "libssc-sensor-cct.h"
++
++enum {
++	SIGNAL_MEASUREMENT,
++	N_SIGNALS
++};
++static guint signals[N_SIGNALS];
++
++typedef struct _SSCSensorCctPrivate {
++	guint report_id;
++} SSCSensorCctPrivate;
++
++G_DEFINE_TYPE_WITH_CODE (SSCSensorCct, ssc_sensor_cct, SSC_TYPE_SENSOR,
++			 G_ADD_PRIVATE (SSCSensorCct))
++
++typedef struct {
++	SSCSensorCct *sensor;
++	SscCctResponse sample;
++} SignalContext;
++
++static void
++signal_context_free (SignalContext *ctx)
++{
++	g_slice_free (SignalContext, ctx);
++}
++
++static gboolean
++emit_signal (gpointer user_data)
++{
++	SignalContext *ctx = user_data;
++	SscCctResponse *s = &ctx->sample;
++
++	g_signal_emit (ctx->sensor, signals[SIGNAL_MEASUREMENT], 0,
++		       s->cct, s->red_raw, s->green_raw, s->blue_raw,
++		       s->clear_raw, s->wband_raw, s->ir_ratio, s->x, s->y,
++		       s->lux, s->als_gain, s->a_time);
++	return G_SOURCE_REMOVE;
++}
++
++static void
++report_received (SSCClient *self, guint32 msg_id, guint64 uid_high,
++		 guint64 uid_low, GArray *buf, gpointer user_data)
++{
++	SSCSensorCct *sensor = SSC_SENSOR_CCT (user_data);
++	SscCctResponse *msg;
++	SignalContext *ctx;
++	guint64 sensor_uid_low;
++	guint64 sensor_uid_high;
++
++	g_object_get (sensor,
++		      SSC_SENSOR_UID_HIGH, &sensor_uid_high,
++		      SSC_SENSOR_UID_LOW, &sensor_uid_low,
++		      NULL);
++	if (sensor_uid_high != uid_high || sensor_uid_low != uid_low ||
++	    msg_id != SSC_MSG_REPORT_MEASUREMENT_CCT)
++		return;
++
++	msg = ssc_cct_response__unpack (NULL, buf->len,
++					(const uint8_t *) buf->data);
++	if (!msg) {
++		g_warning ("Failed to unpack CCT measurement message");
++		return;
++	}
++	ctx = g_slice_new0 (SignalContext);
++	ctx->sensor = sensor;
++	ctx->sample = *msg;
++	g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, emit_signal, ctx,
++			 (GDestroyNotify) signal_context_free);
++	ssc_cct_response__free_unpacked (msg, NULL);
++}
++
++static void
++cct_close_ready (SSCSensor *sensor, GAsyncResult *result, gpointer user_data)
++{
++	GTask *task = G_TASK (user_data);
++	g_autoptr (GError) error = NULL;
++
++	if (!SSC_SENSOR_CLASS (ssc_sensor_cct_parent_class)->close_finish (
++			sensor, result, &error)) {
++		g_task_return_error (task, g_steal_pointer (&error));
++		g_object_unref (task);
++		return;
++	}
++	g_task_return_boolean (task, TRUE);
++	g_object_unref (task);
++}
++
++gboolean
++ssc_sensor_cct_close_finish (SSCSensorCct *self, GAsyncResult *result,
++			     GError **error)
++{
++	return g_task_propagate_boolean (G_TASK (result), error);
++}
++
++void
++ssc_sensor_cct_close (SSCSensorCct *self, GCancellable *cancellable,
++		      GAsyncReadyCallback callback, gpointer user_data)
++{
++	SSCSensorCctPrivate *priv = ssc_sensor_cct_get_instance_private (self);
++	SSCClient *client = NULL;
++	GTask *task;
++
++	task = g_task_new (self, cancellable, callback, user_data);
++	g_object_get (SSC_SENSOR (self), SSC_SENSOR_CLIENT, &client, NULL);
++	if (priv->report_id) {
++		g_signal_handler_disconnect (client, priv->report_id);
++		priv->report_id = 0;
++	}
++	SSC_SENSOR_CLASS (ssc_sensor_cct_parent_class)->close (
++		SSC_SENSOR (self), cancellable,
++		(GAsyncReadyCallback) cct_close_ready, task);
++}
++
++gboolean
++ssc_sensor_cct_close_sync (SSCSensorCct *self, GCancellable *cancellable,
++			   GError **error)
++{
++	gboolean success;
++	SyncContext ctx;
++
++	ssc_common_init_sync_context (&ctx);
++	ssc_sensor_cct_close (self, cancellable,
++			      ssc_common_callback_sync_context, &ctx);
++	ssc_common_wait_sync_context (&ctx);
++	success = ssc_sensor_cct_close_finish (self, ctx.result, error);
++	ssc_common_clear_sync_context (&ctx);
++	return success;
++}
++
++static void
++cct_open_ready (SSCSensor *sensor, GAsyncResult *result, gpointer user_data)
++{
++	GTask *task = G_TASK (user_data);
++	g_autoptr (GError) error = NULL;
++
++	if (!SSC_SENSOR_CLASS (ssc_sensor_cct_parent_class)->open_finish (
++			sensor, result, &error)) {
++		g_task_return_error (task, g_steal_pointer (&error));
++		g_object_unref (task);
++		return;
++	}
++	g_task_return_boolean (task, TRUE);
++	g_object_unref (task);
++}
++
++gboolean
++ssc_sensor_cct_open_finish (SSCSensorCct *self, GAsyncResult *result,
++			    GError **error)
++{
++	return g_task_propagate_boolean (G_TASK (result), error);
++}
++
++void
++ssc_sensor_cct_open (SSCSensorCct *self, GCancellable *cancellable,
++		     GAsyncReadyCallback callback, gpointer user_data)
++{
++	SSCSensorCctPrivate *priv = ssc_sensor_cct_get_instance_private (self);
++	SSCClient *client = NULL;
++	GTask *task;
++
++	task = g_task_new (self, cancellable, callback, user_data);
++	g_object_get (SSC_SENSOR (self), SSC_SENSOR_CLIENT, &client, NULL);
++	priv->report_id = g_signal_connect (client, "report",
++					    G_CALLBACK (report_received), self);
++	SSC_SENSOR_CLASS (ssc_sensor_cct_parent_class)->open (
++		SSC_SENSOR (self), cancellable,
++		(GAsyncReadyCallback) cct_open_ready, task);
++}
++
++gboolean
++ssc_sensor_cct_open_sync (SSCSensorCct *self, GCancellable *cancellable,
++			  GError **error)
++{
++	gboolean success;
++	SyncContext ctx;
++
++	ssc_common_init_sync_context (&ctx);
++	ssc_sensor_cct_open (self, cancellable,
++			     ssc_common_callback_sync_context, &ctx);
++	ssc_common_wait_sync_context (&ctx);
++	success = ssc_sensor_cct_open_finish (self, ctx.result, error);
++	ssc_common_clear_sync_context (&ctx);
++	return success;
++}
++
++static void
++ssc_sensor_cct_class_init (SSCSensorCctClass *klass)
++{
++	signals[SIGNAL_MEASUREMENT] = g_signal_new (
++		"measurement", G_TYPE_FROM_CLASS (klass), G_SIGNAL_RUN_FIRST,
++		0, NULL, NULL, NULL, G_TYPE_NONE, 12,
++		G_TYPE_FLOAT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT,
++		G_TYPE_INT, G_TYPE_FLOAT, G_TYPE_FLOAT, G_TYPE_FLOAT,
++		G_TYPE_FLOAT, G_TYPE_FLOAT, G_TYPE_FLOAT);
++}
++
++static void
++ssc_sensor_cct_init (SSCSensorCct *self)
++{
++}
++
++SSCSensorCct *
++ssc_sensor_cct_new_finish (GAsyncResult *result, GError **error)
++{
++	GObject *source = g_async_result_get_source_object (result);
++	GObject *sensor = g_async_initable_new_finish (
++		G_ASYNC_INITABLE (source), result, error);
++
++	g_object_unref (source);
++	return sensor ? SSC_SENSOR_CCT (sensor) : NULL;
++}
++
++void
++ssc_sensor_cct_new (GCancellable *cancellable, GAsyncReadyCallback callback,
++		    gpointer user_data)
++{
++	g_async_initable_new_async (
++		SSC_TYPE_SENSOR_CCT, G_PRIORITY_DEFAULT, cancellable,
++		callback, user_data, SSC_SENSOR_DATA_TYPE, "cct_front", NULL);
++}
++
++SSCSensorCct *
++ssc_sensor_cct_new_sync (GCancellable *cancellable, GError **error)
++{
++	SSCSensorCct *self;
++	SyncContext ctx;
++
++	ssc_common_init_sync_context (&ctx);
++	ssc_sensor_cct_new (cancellable, ssc_common_callback_sync_context, &ctx);
++	ssc_common_wait_sync_context (&ctx);
++	self = ssc_sensor_cct_new_finish (ctx.result, error);
++	ssc_common_clear_sync_context (&ctx);
++	return self;
++}
+diff --git a/src/libssc-sensor-cct.h b/src/libssc-sensor-cct.h
+new file mode 100644
+index 0000000..7d8aa8c
+--- /dev/null
++++ b/src/libssc-sensor-cct.h
+@@ -0,0 +1,37 @@
++/*
++ * libssc: Library to expose Qualcomm Sensor Core sensors
++ * Copyright (C) 2022-2026 Dylan Van Assche
++ * Copyright (C) 2026 mcc45tr <mcc45tr@gmail.com>
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef _LIBSSC_SENSOR_CCT_H_
++#define _LIBSSC_SENSOR_CCT_H_
++
++#include <glib.h>
++#include <gio/gio.h>
++#include "libssc-sensor.h"
++
++#define SSC_TYPE_SENSOR_CCT (ssc_sensor_cct_get_type())
++
++typedef struct _SSCSensorCct {
++	SSCSensor parent;
++} SSCSensorCct;
++
++G_DECLARE_FINAL_TYPE (SSCSensorCct, ssc_sensor_cct, SSC, SENSOR_CCT, SSCSensor);
++
++void		 ssc_sensor_cct_new (GCancellable *cancellable, GAsyncReadyCallback callback, gpointer user_data);
++SSCSensorCct	*ssc_sensor_cct_new_finish (GAsyncResult *result, GError **error);
++SSCSensorCct	*ssc_sensor_cct_new_sync (GCancellable *cancellable, GError **error);
++void		 ssc_sensor_cct_open (SSCSensorCct *self, GCancellable *cancellable, GAsyncReadyCallback callback, gpointer user_data);
++gboolean	 ssc_sensor_cct_open_finish (SSCSensorCct *self, GAsyncResult *result, GError **error);
++gboolean	 ssc_sensor_cct_open_sync (SSCSensorCct *self, GCancellable *cancellable, GError **error);
++void		 ssc_sensor_cct_close (SSCSensorCct *self, GCancellable *cancellable, GAsyncReadyCallback callback, gpointer user_data);
++gboolean	 ssc_sensor_cct_close_finish (SSCSensorCct *self, GAsyncResult *result, GError **error);
++gboolean	 ssc_sensor_cct_close_sync (SSCSensorCct *self, GCancellable *cancellable, GError **error);
++
++#endif /* _LIBSSC_SENSOR_CCT_H_ */
+diff --git a/src/libssc-sensor.c b/src/libssc-sensor.c
+index e9afefd..d45b72d 100644
+--- a/src/libssc-sensor.c
++++ b/src/libssc-sensor.c
+@@ -506,7 +506,10 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid_
+ 	 * Apply this for any sensor to cover new sensors in the future as well.
+ 	 * Either a configuration update or measurement will complete the task and disconnect the listener.
+ 	 */
+-	} else if (uid_high == priv->uid_high && uid_low == priv->uid_low && (msg_id == SSC_MSG_REPORT_MEASUREMENT || msg_id == SSC_MSG_REPORT_MEASUREMENT_PROXIMITY)) {
++	} else if (uid_high == priv->uid_high && uid_low == priv->uid_low &&
++		   (msg_id == SSC_MSG_REPORT_MEASUREMENT ||
++		    msg_id == SSC_MSG_REPORT_MEASUREMENT_PROXIMITY ||
++		    msg_id == SSC_MSG_REPORT_MEASUREMENT_CCT)) {
+ 		g_debug ("Measurement received for '%s' sensor (%" G_GUINT64_FORMAT " %" G_GUINT64_FORMAT "), assuming enabled", priv->data_type, priv->uid_high, priv->uid_low);
+ 
+ 		if (ctx->task) {
+diff --git a/src/libssc.h b/src/libssc.h
+index 4b42241..5c0dbe0 100644
+--- a/src/libssc.h
++++ b/src/libssc.h
+@@ -23,6 +23,7 @@
+ #include <libssc-sensor-accelerometer.h>
+ #include <libssc-sensor-compass.h>
+ #include <libssc-sensor-light.h>
++#include <libssc-sensor-cct.h>
+ #include <libssc-sensor-proximity.h>
+ #include <libssc-sensor-gyroscope.h>
+ 
+diff --git a/src/meson.build b/src/meson.build
+index 5ea1dff..368a526 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -31,6 +31,7 @@ headers += files(
+   'libssc-sensor.h',
+   'libssc-sensor-proximity.h',
+   'libssc-sensor-light.h',
++  'libssc-sensor-cct.h',
+   'libssc-sensor-accelerometer.h',
+   'libssc-sensor-magnetometer.h',
+   'libssc-sensor-compass.h',
+@@ -48,6 +49,7 @@ sources += files(
+   'libssc-sensor.c',
+   'libssc-sensor-proximity.c',
+   'libssc-sensor-light.c',
++  'libssc-sensor-cct.c',
+   'libssc-sensor-accelerometer.c',
+   'libssc-sensor-magnetometer.c',
+   'libssc-sensor-compass.c',

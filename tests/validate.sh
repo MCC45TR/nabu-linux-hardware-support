@@ -34,7 +34,7 @@ grep -Fq 'org.freedesktop.login1.Manager' \
     "$repo_root/services/nabu-sar-service/src/nabu-sar-service.c"
 grep -Fq 'SAMPLE_STALE_USEC' \
     "$repo_root/services/nabu-sar-service/src/nabu-sar-service.c"
-grep -Fq 'SSC_SENSOR_DATA_TYPE, "cct_front_strm"' \
+grep -Fq 'SSC_SENSOR_DATA_TYPE, "cct_front"' \
     "$repo_root/services/nabu-sar-service/src/nabu-cct-iio-bridge.c"
 bash "$repo_root/tests/test-sensor-session-gate.sh"
 grep -Fxq 'Before=display-manager.service gdm.service plasmalogin.service' \

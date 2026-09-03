@@ -1,7 +1,7 @@
 #include <errno.h>
 #include <gio/gio.h>
 #include <glib-unix.h>
-#include <libssc/libssc-sensor-light.h>
+#include <libssc/libssc-sensor-cct.h>
 #include <math.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -16,7 +16,7 @@
 
 typedef struct {
 	GMainLoop *loop;
-	SSCSensorLight *sensor;
+	SSCSensorCct *sensor;
 	gchar *iio_cct_path;
 	guint stale_timer_id;
 	gint exit_status;
@@ -77,7 +77,10 @@ find_iio_cct_path(void)
 }
 
 static void
-measurement(SSCSensorLight *sensor, gfloat kelvin, gpointer user_data)
+measurement(SSCSensorCct *sensor, gfloat kelvin,
+	    gint red_raw, gint green_raw, gint blue_raw, gint clear_raw,
+	    gint wband_raw, gfloat ir_ratio, gfloat x, gfloat y, gfloat lux,
+	    gfloat als_gain, gfloat a_time, gpointer user_data)
 {
 	Bridge *bridge = user_data;
 	g_autoptr(GError) error = NULL;
@@ -128,8 +131,8 @@ sensor_opened(GObject *source, GAsyncResult *result, gpointer user_data)
 	Bridge *bridge = user_data;
 	g_autoptr(GError) error = NULL;
 
-	if (!ssc_sensor_light_open_finish(bridge->sensor, result, &error)) {
-		g_warning("cannot enable TCS3701 cct_front_strm stream: %s", error->message);
+	if (!ssc_sensor_cct_open_finish(bridge->sensor, result, &error)) {
+		g_warning("cannot enable TCS3701 cct_front sensor: %s", error->message);
 		bridge->exit_status = 1;
 		g_main_loop_quit(bridge->loop);
 		return;
@@ -146,14 +149,14 @@ sensor_ready(GObject *source, GAsyncResult *result, gpointer user_data)
 		result, &error);
 
 	if (!object) {
-		g_warning("TCS3701 cct_front_strm unavailable: %s", error->message);
+		g_warning("TCS3701 cct_front unavailable: %s", error->message);
 		bridge->exit_status = 1;
 		g_main_loop_quit(bridge->loop);
 		return;
 	}
-	bridge->sensor = SSC_SENSOR_LIGHT(object);
+	bridge->sensor = SSC_SENSOR_CCT(object);
 	g_signal_connect(bridge->sensor, "measurement", G_CALLBACK(measurement), bridge);
-	ssc_sensor_light_open(bridge->sensor, NULL, sensor_opened, bridge);
+	ssc_sensor_cct_open(bridge->sensor, NULL, sensor_opened, bridge);
 }
 
 static gboolean
@@ -179,15 +182,15 @@ main(void)
 	bridge.stale_timer_id = g_timeout_add_seconds(1, check_freshness, &bridge);
 	g_unix_signal_add(SIGTERM, quit_signal, &bridge);
 	g_unix_signal_add(SIGINT, quit_signal, &bridge);
-	g_async_initable_new_async(SSC_TYPE_SENSOR_LIGHT, G_PRIORITY_DEFAULT,
+	g_async_initable_new_async(SSC_TYPE_SENSOR_CCT, G_PRIORITY_DEFAULT,
 		NULL, sensor_ready, &bridge,
-		SSC_SENSOR_DATA_TYPE, "cct_front_strm", NULL);
+		SSC_SENSOR_DATA_TYPE, "cct_front", NULL);
 	g_main_loop_run(bridge.loop);
 	if (bridge.stale_timer_id)
 		g_source_remove(bridge.stale_timer_id);
 	publish_kelvin(bridge.iio_cct_path, 0, NULL);
 	if (bridge.sensor) {
-		ssc_sensor_light_close_sync(bridge.sensor, NULL, NULL);
+		ssc_sensor_cct_close_sync(bridge.sensor, NULL, NULL);
 		g_object_unref(bridge.sensor);
 	}
 	g_free(bridge.iio_cct_path);

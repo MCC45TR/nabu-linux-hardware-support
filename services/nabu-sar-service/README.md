@@ -17,7 +17,7 @@ Use `nabu-sar-capture PHASE SECONDS OUTPUT.csv` for controlled HIL calibration.
 Do not enable `Mapping.Enabled` until uncovered and held samples have produced
 separable thresholds on every intended grip edge.
 
-The companion CCT bridge opens the continuous firmware `cct_front_strm` stream through
+The companion CCT bridge opens the firmware `cct_front` endpoint through
 libssc, rejects non-finite and out-of-range data, and feeds Kelvin values into
 the kernel's `IIO_COLORTEMP` endpoint. Consumers therefore read the standard
 `in_colortemp_raw` ABI instead of a desktop-specific interface. A three-second

@@ -3,7 +3,7 @@
 
 Name:           libssc-nabu
 Version:        0.4.4
-Release:        5.nabu4.test%{?dist}
+Release:        6.nabu5.test%{?dist}
 Summary:        Qualcomm Sensor Core client library for Nabu sensor services
 
 License:        GPL-3.0-or-later
@@ -13,6 +13,7 @@ Patch0:         0001-libssc-avoid-use-after-free-in-sensor-error-logging.patch
 Patch1:         0002-libssc-accept-fractional-and-integer-mount-matrices.patch
 Patch2:         0003-ssccli-probe-arbitrary-data-types.patch
 Patch3:         0004-libssc-treat-zero-placement-as-unspecified.patch
+Patch4:         0005-libssc-add-TCS3701-CCT-sensor-support.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -80,6 +81,9 @@ grep -F 'Z=%f rad/s' src/libssc-cli.c
 grep -F 'SSC placement matrix is unspecified (all zero), using identity matrix' src/libssc-sensor.c
 grep -F 'SSC placement matrix is incomplete, falling back to identity matrix' src/libssc-sensor.c
 ! grep -Fq 'Mount matrix provided by firmware is incomplete or all 0' src/libssc-sensor.c
+grep -F 'SSC_MSG_REPORT_MEASUREMENT_CCT' src/libssc-common-private.h
+grep -F 'SSC_SENSOR_DATA_TYPE, "cct_front"' src/libssc-sensor-cct.c
+grep -F 'required float cct = 1;' data/ssc-sensor-cct.proto
 
 %files
 %license LICENSE
@@ -98,6 +102,11 @@ grep -F 'SSC placement matrix is incomplete, falling back to identity matrix' sr
 %{_libexecdir}/installed-tests/%{upstream_name}/ssc-server
 
 %changelog
+* Thu Sep 03 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-6.nabu5.test
+- Add a typed cct_front client for the TCS3701 sns_cct protocol.
+- Expose Kelvin, calibrated lux, raw RGB/C/W channels, chromaticity, IR ratio,
+  gain and integration time without mis-decoding the ambient-light stream.
+
 * Thu Sep 03 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-5.nabu4.test
 - Correct the zero-placement patch hunk length so RPM can apply it strictly.
 
