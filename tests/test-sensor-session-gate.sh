@@ -94,6 +94,44 @@ NABU_SENSOR_GATE_PROXY_ATTEMPTS=1 \
 "${helper}" >"${test_root}/no-sample.log" 2>&1
 
 grep -Fq 'SSC produced no accelerometer sample' "${test_root}/no-sample.log"
-grep -Fq 'allowing the desktop to start for recovery' "${test_root}/no-sample.log"
+grep -Fq 'SLPI recovery failed; allowing the desktop to start for recovery' "${test_root}/no-sample.log"
 test ! -e "${test_root}/systemctl.log"
+
+cat >"${test_root}/ssccli" <<'EOF'
+#!/usr/bin/bash
+state=${NABU_SENSOR_GATE_TEST_STATE:?}
+[[ $(cat "${state}/slpi-state") == start ]] || exit 1
+echo 'Accelerometer sensor measurement: X=0.0 Y=9.8 Z=0.0 m/s2'
+EOF
+cat >"${test_root}/busctl" <<'EOF'
+#!/usr/bin/bash
+state=${NABU_SENSOR_GATE_TEST_STATE:?}
+grep -Fxq 'start iio-sensor-proxy.service' "${state}/systemctl.log" 2>/dev/null && echo 'b true' || echo 'b false'
+EOF
+cat >"${test_root}/systemctl" <<'EOF'
+#!/usr/bin/bash
+state=${NABU_SENSOR_GATE_TEST_STATE:?}
+printf '%s\n' "$*" >>"${state}/systemctl.log"
+EOF
+chmod +x "${test_root}/ssccli" "${test_root}/busctl" "${test_root}/systemctl"
+: >"${test_root}/slpi-state"
+: >"${test_root}/systemctl.log"
+
+NABU_SENSOR_GATE_TEST_STATE=${test_root} \
+NABU_SENSOR_GATE_BUSCTL=${test_root}/busctl \
+NABU_SENSOR_GATE_SSCCLI=${test_root}/ssccli \
+NABU_SENSOR_GATE_SYSTEMCTL=${test_root}/systemctl \
+NABU_SENSOR_GATE_TIMEOUT=${test_root}/timeout \
+NABU_SENSOR_GATE_SLEEP=${test_root}/sleep \
+NABU_SENSOR_GATE_SLPI_STATE=${test_root}/slpi-state \
+NABU_SENSOR_GATE_SSC_ATTEMPTS=1 \
+NABU_SENSOR_GATE_RECOVERY_ATTEMPTS=1 \
+NABU_SENSOR_GATE_PROXY_ATTEMPTS=1 \
+"${helper}" >"${test_root}/slpi-recovery.log" 2>&1
+
+grep -Fxq 'stop nabu-cct-iio-bridge.service iio-sensor-proxy.service hexagonrpcd-sdsp.service' "${test_root}/systemctl.log"
+grep -Fxq 'start hexagonrpcd-sdsp.service' "${test_root}/systemctl.log"
+grep -Fxq 'start iio-sensor-proxy.service' "${test_root}/systemctl.log"
+grep -Fq 'SSC recovered after one bounded SLPI cycle' "${test_root}/slpi-recovery.log"
+grep -Fq 'exported the accelerometer before the graphical session' "${test_root}/slpi-recovery.log"
 echo 'sensor session gate tests passed'
