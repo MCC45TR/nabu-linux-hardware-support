@@ -19,9 +19,12 @@ done
 work_dir=$(mktemp -d /tmp/nabu-userspace-srpm.XXXXXX)
 trap 'rm -rf -- "$work_dir"' EXIT
 
-for package in libssc-nabu hexagonrpc-nabu iio-sensor-proxy-nabu; do
+for package in libssc-nabu hexagonrpc-nabu iio-sensor-proxy-nabu xiaomi-nabu-firmware; do
     package_dir="$repo_root/packaging/$package"
-    spec="$package_dir/${package%-nabu}.spec"
+    case "$package" in
+        xiaomi-nabu-firmware) spec="$package_dir/xiaomi-nabu-firmware.spec" ;;
+        *) spec="$package_dir/${package%-nabu}.spec" ;;
+    esac
     version=$(sed -n 's/^Version:[[:space:]]*//p' "$spec" | head -n 1)
     topdir="$work_dir/$package"
     mkdir -p "$topdir"/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
@@ -40,6 +43,10 @@ for package in libssc-nabu hexagonrpc-nabu iio-sensor-proxy-nabu; do
         iio-sensor-proxy-nabu)
             url="https://gitlab.freedesktop.org/hadess/iio-sensor-proxy/-/archive/$version/iio-sensor-proxy-$version.tar.gz"
             filename="iio-sensor-proxy-$version.tar.gz"
+            ;;
+        xiaomi-nabu-firmware)
+            url="https://gitlab.postmarketos.org/panpanpanpan/nabu-firmware/-/archive/$version/nabu-firmware-$version.tar.gz"
+            filename="nabu-firmware-$version.tar.gz"
             ;;
     esac
 

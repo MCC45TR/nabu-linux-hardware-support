@@ -92,6 +92,12 @@ grep -Fq 'drv-ssc-accel reads mount_matrix directly' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/0003-udev-standardize-Nabu-SDSP-orientation.patch"
 ! grep -Fq 'ENV{ACCEL_MOUNT_MATRIX}' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/0003-udev-standardize-Nabu-SDSP-orientation.patch"
+grep -Fq '[BT][LR]-cs35l41*' \
+    "$repo_root/packaging/xiaomi-nabu-firmware/xiaomi-nabu-firmware.spec"
+for amplifier in BR TR BL TL; do
+    grep -Fq "cirrus/$amplifier-cs35l41-dsp1-spk-prot.bin" \
+        "$repo_root/packaging/xiaomi-nabu-firmware/xiaomi-nabu-firmware.spec"
+done
 "$repo_root/packaging/update-upstreams.sh" --check
 test -s "$repo_root/alsa/ucm2/Xiaomi/nabu/HiFi.conf"
 grep -Eq '^[[:space:]]*PlaybackChannels[[:space:]]+4$' \
