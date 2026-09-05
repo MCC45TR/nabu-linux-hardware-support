@@ -4,7 +4,7 @@
 
 Name:           hexagonrpc-nabu
 Version:        0.5.0
-Release:        1.nabu1.test%{?dist}
+Release:        2.nabu1.test%{?dist}
 Summary:        Qualcomm FastRPC userspace bridge for Xiaomi Pad 5
 License:        GPL-3.0-or-later
 URL:            https://github.com/linux-msm/hexagonrpc
@@ -22,6 +22,7 @@ Patch0:         0001-serve-writable-files.patch
 Patch1:         0002-implement-fremove.patch
 Patch2:         0003-raise-listener-input-limit.patch
 Patch3:         0004-support-extended-frename.patch
+Patch4:         0005-keep-listener-alive-on-stale-requests.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -103,6 +104,10 @@ install -Dm0644 %{SOURCE5} %{buildroot}%{_udevrulesdir}/10-fastrpc.rules
 %{_libdir}/libhexagonrpc.so
 
 %changelog
+* Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.5.0-2.nabu1.test
+- Keep the SDSP reverse tunnel alive when firmware sends a stale request after
+  resume and clear consumed listener buffers before the next transaction.
+
 * Mon Aug 31 2026 mcc45tr <mcc45tr@gmail.com> - 0.5.0-1.nabu1.test
 - Rebase on upstream 0.5.0 while retaining all four Nabu FastRPC merge patches.
 - Keep the Nabu service topology, unprivileged account and SDSP registry root.

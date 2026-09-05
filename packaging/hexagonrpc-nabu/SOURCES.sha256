@@ -3,3 +3,4 @@ b871bd403fcaf4b7cc5aab8828053737f4608521073704e88b6c5f398b00b0eb  0001-serve-wri
 883a5826e7d5c6a5012b86c27667c64f56aebb73ba0444c5434efbe8f63c2208  0002-implement-fremove.patch
 56d110a389ab0112c2cb74c74b4ff7192fd41ced7166c87b776ba7789e879f5f  0003-raise-listener-input-limit.patch
 b9033f682ac17fda748deb7034075c6ac3ab568f0c03cf8a0bc4dddcb038d4e2  0004-support-extended-frename.patch
+a03af49d9da292e98718dcd851f8ceba8f6746e7dd1483792f677c069ed263dc  0005-keep-listener-alive-on-stale-requests.patch
