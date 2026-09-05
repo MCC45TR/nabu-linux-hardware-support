@@ -35,6 +35,16 @@ sensor_ready() {
 		HasAccelerometer 2>/dev/null || :) == 'b true' ]]
 }
 
+proxy_sample_ready() {
+	# Claim from this short-lived system-bus client and wait for the first real
+	# sample. When busctl exits its unique name vanishes, so SensorProxy releases
+	# the claim automatically. This warms the stream before KWin appears and
+	# prevents its default 25-second D-Bus timeout from delaying login.
+	"${timeout_bin}" 4 "${busctl_bin}" call net.hadess.SensorProxy \
+		/net/hadess/SensorProxy net.hadess.SensorProxy \
+		ClaimAccelerometer >/dev/null 2>&1
+}
+
 wait_until() {
 	local check=$1
 	local attempts=$2
@@ -83,15 +93,15 @@ if ! wait_until ssc_ready "${ssc_attempts}"; then
 fi
 echo 'Nabu sensor gate: SSC produced an accelerometer sample.'
 
-if wait_until sensor_ready "${proxy_attempts}"; then
-	echo 'Nabu sensor gate: SensorProxy exported the accelerometer before the graphical session.'
+if wait_until sensor_ready "${proxy_attempts}" && proxy_sample_ready; then
+	echo 'Nabu sensor gate: SensorProxy delivered an accelerometer sample before the graphical session.'
 	exit 0
 fi
 
 echo 'Nabu sensor gate: restarting iio-sensor-proxy after late SSC publication.' >&2
 if "${systemctl_bin}" restart iio-sensor-proxy.service && \
-	wait_until sensor_ready "${proxy_attempts}"; then
-	echo 'Nabu sensor gate: SensorProxy exported the accelerometer after one bounded restart.'
+	wait_until sensor_ready "${proxy_attempts}" && proxy_sample_ready; then
+	echo 'Nabu sensor gate: SensorProxy delivered an accelerometer sample after one bounded restart.'
 	exit 0
 fi
 

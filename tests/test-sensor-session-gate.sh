@@ -9,6 +9,10 @@ trap 'rm -rf "${test_root}"' EXIT
 cat >"${test_root}/busctl" <<'EOF'
 #!/usr/bin/bash
 state=${NABU_SENSOR_GATE_TEST_STATE:?}
+if [[ $* == *ClaimAccelerometer* ]]; then
+	echo "$*" >>"${state}/busctl.log"
+	exit 0
+fi
 if [[ -e ${state}/restarted ]]; then
 	echo 'b true'
 else
@@ -51,7 +55,8 @@ NABU_SENSOR_GATE_PROXY_ATTEMPTS=1 \
 
 grep -Fxq -- '--sensor accelerometer --timeout 1' "${test_root}/ssccli.log"
 grep -Fxq 'restart iio-sensor-proxy.service' "${test_root}/systemctl.log"
-grep -Fq 'exported the accelerometer after one bounded restart' "${test_root}/success.log"
+grep -Fq 'delivered an accelerometer sample after one bounded restart' "${test_root}/success.log"
+grep -Fq 'ClaimAccelerometer' "${test_root}/busctl.log"
 
 rm -f "${test_root}/restarted" "${test_root}/systemctl.log"
 cat >"${test_root}/systemctl" <<'EOF'
@@ -79,6 +84,9 @@ exit 1
 EOF
 cat >"${test_root}/busctl" <<'EOF'
 #!/usr/bin/bash
+if [[ $* == *ClaimAccelerometer* ]]; then
+	exit 0
+fi
 echo 'b true'
 EOF
 chmod +x "${test_root}/ssccli" "${test_root}/busctl"
@@ -133,5 +141,5 @@ grep -Fxq 'stop nabu-cct-iio-bridge.service iio-sensor-proxy.service hexagonrpcd
 grep -Fxq 'start hexagonrpcd-sdsp.service' "${test_root}/systemctl.log"
 grep -Fxq 'start iio-sensor-proxy.service' "${test_root}/systemctl.log"
 grep -Fq 'SSC recovered after one bounded SLPI cycle' "${test_root}/slpi-recovery.log"
-grep -Fq 'exported the accelerometer before the graphical session' "${test_root}/slpi-recovery.log"
+grep -Fq 'delivered an accelerometer sample before the graphical session' "${test_root}/slpi-recovery.log"
 echo 'sensor session gate tests passed'
