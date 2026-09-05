@@ -3,7 +3,7 @@
 
 Name:           libssc-nabu
 Version:        0.4.4
-Release:        9.nabu8.test%{?dist}
+Release:        10.nabu9.test%{?dist}
 Summary:        Qualcomm Sensor Core client library for Nabu sensor services
 
 License:        GPL-3.0-or-later
@@ -16,6 +16,7 @@ Patch3:         0004-libssc-treat-zero-placement-as-unspecified.patch
 Patch4:         0005-libssc-add-TCS3701-CCT-sensor-support.patch
 Patch5:         0006-libssc-use-standard-measurement-id-for-CCT.patch
 Patch6:         0007-libssc-decode-packed-CCT-standard-event.patch
+Patch7:         0008-libssc-address-named-light-sensor-data-types.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -88,6 +89,8 @@ grep -F 'msg_id != SSC_MSG_REPORT_MEASUREMENT' src/libssc-sensor-cct.c
 grep -F 'SSC_SENSOR_DATA_TYPE, "cct_front"' src/libssc-sensor-cct.c
 grep -F 'repeated float data = 1 [packed = true];' data/ssc-sensor-cct.proto
 grep -F 'ctx->cct = msg->data[0];' src/libssc-sensor-cct.c
+grep -F 'ssc_sensor_light_new_for_data_type_sync' src/libssc-sensor-light.c
+grep -F '"ambient_light_back"' src/libssc-cli.c
 
 %files
 %license LICENSE
@@ -111,6 +114,11 @@ if [ -x /usr/bin/systemctl ]; then
 fi
 
 %changelog
+* Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-10.nabu9.test
+- Allow clients to address a named SSC ambient-light stream while preserving
+  the existing default API.
+- Add an ssccli light-back diagnostic for Nabu's rear BU27030 sensor.
+
 * Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-9.nabu8.test
 - Decode the packed three-float sns_std_sensor_event emitted by cct_front.
 - Publish its measured Kelvin value while preserving chromaticity coordinates.

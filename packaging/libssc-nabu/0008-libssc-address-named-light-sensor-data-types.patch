@@ -1,0 +1,156 @@
+From: mcc45tr <mcc45tr@gmail.com>
+Date: Sat, 5 Sep 2026 19:35:00 +0300
+Subject: [PATCH] libssc: address named light sensor data types
+
+Some Qualcomm platforms publish more than one calibrated ambient-light
+stream under distinct SSC data types. Keep the existing ambient_light API as
+the compatible default, and add constructors which let consumers explicitly
+open another stream such as Nabu's ambient_light_back. Also expose the rear
+stream through ssccli so hardware can be validated without a desktop policy.
+---
+ src/libssc-cli.c          |  9 ++++++---
+ src/libssc-sensor-light.c | 33 +++++++++++++++++++++++++++++----
+ src/libssc-sensor-light.h |  2 ++
+ tests/light.c             | 15 +++++++++++++++
+ 4 files changed, 52 insertions(+), 7 deletions(-)
+
+diff --git a/src/libssc-cli.c b/src/libssc-cli.c
+index a9e428f..adc16b8 100644
+--- a/src/libssc-cli.c
++++ b/src/libssc-cli.c
+@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
+ 	const GOptionEntry options[] = {
+ 		{ "version", 0, 0, G_OPTION_ARG_NONE, &print_version, "Print version information and exit.", NULL },
+ 		{ "debug", 'v', 0, G_OPTION_ARG_NONE, &debug, "Enable debug logs.", NULL },
+-		{ "sensor", 0, 0, G_OPTION_ARG_STRING, &sensor_str, "Enable a sensor. Supported sensors: 'proximity', 'light', 'accelerometer', 'magnetometer', 'compass', 'gyroscope'", NULL },
++		{ "sensor", 0, 0, G_OPTION_ARG_STRING, &sensor_str, "Enable a sensor. Supported sensors: 'proximity', 'light', 'light-back', 'accelerometer', 'magnetometer', 'compass', 'gyroscope'", NULL },
+ 		{ "probe-data-type", 0, 0, G_OPTION_ARG_STRING, &probe_data_type, "Discover an arbitrary SSC data type without enabling it", "DATA_TYPE" },
+ 		{ "timeout", 0, 0, G_OPTION_ARG_INT64, &timeout, "Number of seconds before this will timeout [default 10]", NULL },
+ 		{ NULL, 0, 0, G_OPTION_ARG_NONE, NULL, NULL, NULL }
+@@ -258,8 +258,11 @@ int main(int argc, char *argv[])
+ 			return OPEN_FAIL_EXIT_CODE;
+ 		}
+ 		g_timeout_add_seconds (timeout, (GSourceFunc)proximity_close_cb, proximity);
+-	} else if (g_strcmp0 (sensor_str, "light") == 0) {
+-		SSCSensorLight *light = ssc_sensor_light_new_sync (NULL, &err);
++	} else if (g_strcmp0 (sensor_str, "light") == 0 ||
++		   g_strcmp0 (sensor_str, "light-back") == 0) {
++		const gchar *data_type = g_strcmp0 (sensor_str, "light-back") == 0 ?
++			"ambient_light_back" : "ambient_light";
++		SSCSensorLight *light = ssc_sensor_light_new_for_data_type_sync (data_type, NULL, &err);
+ 		if (!light) {
+ 			g_printf ("Unable to initialize light sensor: %s\n", err ? err->message : "UNKNOWN");
+ 			return INIT_FAIL_EXIT_CODE;
+diff --git a/src/libssc-sensor-light.c b/src/libssc-sensor-light.c
+index e0bd99a..103ed6b 100644
+--- a/src/libssc-sensor-light.c
++++ b/src/libssc-sensor-light.c
+@@ -266,29 +266,54 @@ ssc_sensor_light_new_finish (GAsyncResult *result, GError **error)
+ }
+ 
+ void
+-ssc_sensor_light_new (GCancellable *cancellable, GAsyncReadyCallback callback, gpointer user_data)
++ssc_sensor_light_new_for_data_type (const gchar *data_type,
++				    GCancellable *cancellable,
++				    GAsyncReadyCallback callback,
++				    gpointer user_data)
+ {
++	g_return_if_fail (data_type != NULL && data_type[0] != '\0');
++
+ 	g_async_initable_new_async (
+ 			SSC_TYPE_SENSOR_LIGHT,
+ 			G_PRIORITY_DEFAULT,
+ 			cancellable,
+ 			callback,
+ 			user_data,
+-			SSC_SENSOR_DATA_TYPE, "ambient_light",
++			SSC_SENSOR_DATA_TYPE, data_type,
+ 			NULL);
+ }
+ 
++void
++ssc_sensor_light_new (GCancellable *cancellable,
++		      GAsyncReadyCallback callback,
++		      gpointer user_data)
++{
++	ssc_sensor_light_new_for_data_type ("ambient_light", cancellable,
++					    callback, user_data);
++}
++
+ SSCSensorLight *
+-ssc_sensor_light_new_sync (GCancellable *cancellable, GError **error)
++ssc_sensor_light_new_for_data_type_sync (const gchar *data_type,
++					 GCancellable *cancellable,
++					 GError **error)
+ {
+ 	SSCSensorLight *self = NULL;
+ 	SyncContext ctx;
+ 
+ 	ssc_common_init_sync_context (&ctx);
+-	ssc_sensor_light_new (cancellable, ssc_common_callback_sync_context, &ctx);
++	ssc_sensor_light_new_for_data_type (data_type, cancellable,
++					    ssc_common_callback_sync_context,
++					    &ctx);
+ 	ssc_common_wait_sync_context (&ctx);
+ 	self = ssc_sensor_light_new_finish (ctx.result, error);
+ 	ssc_common_clear_sync_context (&ctx);
+ 
+ 	return self;
+ }
++
++SSCSensorLight *
++ssc_sensor_light_new_sync (GCancellable *cancellable, GError **error)
++{
++	return ssc_sensor_light_new_for_data_type_sync ("ambient_light",
++						cancellable, error);
++}
+diff --git a/src/libssc-sensor-light.h b/src/libssc-sensor-light.h
+index c83e0e1..0c5c47d 100644
+--- a/src/libssc-sensor-light.h
++++ b/src/libssc-sensor-light.h
+@@ -32,8 +32,10 @@ typedef struct _SSCSensorLight {
+ G_DECLARE_FINAL_TYPE (SSCSensorLight, ssc_sensor_light, SSC, SENSOR_LIGHT, SSCSensor);
+ 
+ void		 ssc_sensor_light_new (GCancellable *cancellable, GAsyncReadyCallback callback, gpointer user_data);
++void		 ssc_sensor_light_new_for_data_type (const gchar *data_type, GCancellable *cancellable, GAsyncReadyCallback callback, gpointer user_data);
+ SSCSensorLight	*ssc_sensor_light_new_finish (GAsyncResult *result, GError **error);
+ SSCSensorLight	*ssc_sensor_light_new_sync (GCancellable *cancellable, GError **error);
++SSCSensorLight	*ssc_sensor_light_new_for_data_type_sync (const gchar *data_type, GCancellable *cancellable, GError **error);
+ void		 ssc_sensor_light_open (SSCSensorLight *self, GCancellable *cancellable, GAsyncReadyCallback callback, gpointer user_data);
+ gboolean	 ssc_sensor_light_open_finish (SSCSensorLight *self, GAsyncResult *result, GError **error);
+ gboolean	 ssc_sensor_light_open_sync (SSCSensorLight *self, GCancellable *cancellable, GError **error);
+diff --git a/tests/light.c b/tests/light.c
+index 52fabb7..7c09bfe 100644
+--- a/tests/light.c
++++ b/tests/light.c
+@@ -116,6 +116,20 @@ test_libssc_sensor_light_probe_sync (void)
+ 	g_assert_true (ssc_sensor_light_close_sync (sensor, NULL, &error));
+ }
+ 
++static void
++test_libssc_sensor_light_named_data_type_sync (void)
++{
++	g_autoptr (GError) error = NULL;
++	g_autofree gchar *data_type = NULL;
++
++	SSCSensorLight *sensor = ssc_sensor_light_new_for_data_type_sync (
++		"ambient_light", NULL, &error);
++	g_assert_nonnull (sensor);
++	g_object_get (sensor, SSC_SENSOR_DATA_TYPE, &data_type, NULL);
++	g_assert_cmpstr (data_type, ==, "ambient_light");
++	g_clear_object (&sensor);
++}
++
+ int main (int argc, char *argv[])
+ {
+ 	GLogLevelFlags mask;
+@@ -133,6 +147,7 @@ int main (int argc, char *argv[])
+ 	/* Tests */
+ 	g_test_add_func("/libssc/sensor/light/measurements", test_libssc_sensor_light);
+ 	g_test_add_func("/libssc/sensor/light/probe-sync", test_libssc_sensor_light_probe_sync);
++	g_test_add_func("/libssc/sensor/light/named-data-type-sync", test_libssc_sensor_light_named_data_type_sync);
+ 
+ 	/* Execute tests */
+ 	return g_test_run();
+-- 
+2.51.0

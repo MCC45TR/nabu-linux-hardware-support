@@ -71,6 +71,10 @@ grep -Fq 'probe-data-type' \
     "$repo_root/packaging/libssc-nabu/0003-ssccli-probe-arbitrary-data-types.patch"
 grep -Fq 'Z=%f rad/s' \
     "$repo_root/packaging/libssc-nabu/0003-ssccli-probe-arbitrary-data-types.patch"
+grep -Fq 'ssc_sensor_light_new_for_data_type_sync' \
+    "$repo_root/packaging/libssc-nabu/0008-libssc-address-named-light-sensor-data-types.patch"
+grep -Fq '"ambient_light_back"' \
+    "$repo_root/packaging/libssc-nabu/0008-libssc-address-named-light-sensor-data-types.patch"
 grep -Fq 'BuildRequires:  /usr/bin/protoc-c' \
     "$repo_root/packaging/libssc-nabu/libssc.spec"
 grep -Fq 'BuildRequires:  python3-gobject-base' \
