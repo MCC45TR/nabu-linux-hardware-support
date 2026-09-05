@@ -1,0 +1,67 @@
+From: mcc45tr <mcc45tr@gmail.com>
+Date: Sat, 5 Sep 2026 21:12:00 +0300
+Subject: [PATCH] libssc: support single-output sensor streams
+
+Qualcomm SSC stream type 2 is SINGLE_OUTPUT and is used by Nabu's LSM6DSO
+`motion_detect` sensor.  libssc currently labels every non-streaming sensor as
+on-change and aborts when opening anything other than stream types 0 or 1.
+
+Single-output sensors use the same empty ON_CHANGE_CONFIG request as on-change
+sensors.  Accept type 2 in that path and report its real type in diagnostics.
+
+Signed-off-by: mcc45tr <mcc45tr@gmail.com>
+---
+ src/libssc-common-private.h | 1 +
+ src/libssc-sensor.c         | 9 ++++++---
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/src/libssc-common-private.h b/src/libssc-common-private.h
+index 49bd5ac..c48fbd4 100644
+--- a/src/libssc-common-private.h
++++ b/src/libssc-common-private.h
+@@ -71,6 +71,7 @@
+ 
+ #define SSC_STREAM_TYPE_CONTINUOUS			0
+ #define SSC_STREAM_TYPE_ON_CHANGE			1
++#define SSC_STREAM_TYPE_SINGLE_OUTPUT			2
+ 
+ typedef struct {
+ 	GMutex mutex;
+diff --git a/src/libssc-sensor.c b/src/libssc-sensor.c
+index 37cd63b..c50a60d 100644
+--- a/src/libssc-sensor.c
++++ b/src/libssc-sensor.c
+@@ -207,7 +207,10 @@ sensor_open (SSCSensor *self, GCancellable *cancellable, GAsyncReadyCallback cal
+ 		return;
+ 	}
+ 
+-	g_info ("Enabling sensor (%" G_GUINT64_FORMAT " %" G_GUINT64_FORMAT ") in '%s' mode", priv->uid_high, priv->uid_low, priv->stream_type == SSC_STREAM_TYPE_CONTINUOUS? "continuous" : "on-change");
++	g_info ("Enabling sensor (%" G_GUINT64_FORMAT " %" G_GUINT64_FORMAT ") in '%s' mode", priv->uid_high, priv->uid_low,
++		priv->stream_type == SSC_STREAM_TYPE_CONTINUOUS ? "continuous" :
++		priv->stream_type == SSC_STREAM_TYPE_ON_CHANGE ? "on-change" :
++		priv->stream_type == SSC_STREAM_TYPE_SINGLE_OUTPUT ? "single-output" : "unknown");
+ 
+ 	/*
+ 	 * Sensors which support continuous streaming need a sample rate,
+@@ -234,7 +237,8 @@ sensor_open (SSCSensor *self, GCancellable *cancellable, GAsyncReadyCallback cal
+ 	 * Sensors which support on-change do not need any configuration,
+ 	 * only a different message ID to enable them.
+ 	 */
+-	} else if (priv->stream_type == SSC_STREAM_TYPE_ON_CHANGE) {
++	} else if (priv->stream_type == SSC_STREAM_TYPE_ON_CHANGE ||
++		   priv->stream_type == SSC_STREAM_TYPE_SINGLE_OUTPUT) {
+ 		msg_id = SSC_MSG_REQUEST_ENABLE_REPORT_ON_CHANGE;
+ 	} else
+ 		g_assert_not_reached ();
+@@ -435,7 +439,8 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid_
+ 		g_debug ("  name: %s", priv->name);
+ 		g_debug ("  vendor: %s", priv->vendor);
+ 		g_debug ("  data-type: %s", priv->data_type);
+-		g_debug ("  stream-type: %s", priv->stream_type == SSC_STREAM_TYPE_CONTINUOUS ? "continuous" : "on-change");
++		g_debug ("  stream-type: %s", priv->stream_type == SSC_STREAM_TYPE_CONTINUOUS ? "continuous" :
++			 priv->stream_type == SSC_STREAM_TYPE_ON_CHANGE ? "on-change" : "single-output");
+ 		g_debug ("  sample-rate: %f Hz", priv->sample_rate);
+ 		g_debug ("  available: %s", priv->available ? "yes" : "no");
+ 		if (mount_matrix_attribute_populated) {
+-- 
+2.52.0

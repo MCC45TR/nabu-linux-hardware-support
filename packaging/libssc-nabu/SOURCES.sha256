@@ -8,3 +8,4 @@ afb0100ed3410e80f7b4aad0460994bb41d5212e6c607f250a97d48e5064d4a0  0006-libssc-us
 5a013dd4d686f23a03721cb9c6fcde038869ebf573e67ab2c7365e68c8843090  0008-libssc-address-named-light-sensor-data-types.patch
 68ccb0acdc0bb53a05505a13939cb6066b484764dcbfd75e02548933d5c9bd1e  0009-ssccli-expose-LSM6DSO-temperature-stream.patch
 cb0a337727b97c7788a6956d10d2398dde2cd5015f5b3d3bae535b8a024fee25  0010-ssccli-expose-LSM6DSO-motion-detect-events.patch
+fea07aa191f8d59c10bec3d9af2d2a3217a35ee6db71befd48ef19f5e56db098  0011-libssc-support-single-output-sensor-streams.patch

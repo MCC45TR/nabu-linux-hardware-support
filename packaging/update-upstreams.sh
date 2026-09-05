@@ -132,6 +132,7 @@ for package in "${packages[@]}"; do
 				0008-libssc-address-named-light-sensor-data-types.patch
 				0009-ssccli-expose-LSM6DSO-temperature-stream.patch
 				0010-ssccli-expose-LSM6DSO-motion-detect-events.patch
+				0011-libssc-support-single-output-sensor-streams.patch
 			)
             ;;
         iio-sensor-proxy-nabu)
