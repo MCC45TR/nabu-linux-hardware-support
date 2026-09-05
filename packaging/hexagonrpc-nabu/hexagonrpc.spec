@@ -4,7 +4,7 @@
 
 Name:           hexagonrpc-nabu
 Version:        0.5.0
-Release:        2.nabu1.test%{?dist}
+Release:        3.nabu1.test%{?dist}
 Summary:        Qualcomm FastRPC userspace bridge for Xiaomi Pad 5
 License:        GPL-3.0-or-later
 URL:            https://github.com/linux-msm/hexagonrpc
@@ -104,6 +104,10 @@ install -Dm0644 %{SOURCE5} %{buildroot}%{_udevrulesdir}/10-fastrpc.rules
 %{_libdir}/libhexagonrpc.so
 
 %changelog
+* Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.5.0-3.nabu1.test
+- Rebase the resume-safety fix after the existing Nabu extended-listener
+  patches and clear consumed buffers between reverse-tunnel transactions.
+
 * Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.5.0-2.nabu1.test
 - Keep the SDSP reverse tunnel alive when firmware sends a stale request after
   resume and clear consumed listener buffers before the next transaction.

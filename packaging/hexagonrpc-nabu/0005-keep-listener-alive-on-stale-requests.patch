@@ -1,15 +1,15 @@
 From: mcc45tr <mcc45tr@gmail.com>
-Subject: [PATCH] hexagonrpcd: keep listener alive on stale requests
+Subject: [PATCH] hexagonrpcd: clear listener buffers between requests
 
-The sensors DSP can deliver a stale invalid-handle request immediately after
-system resume.  Treat request validation failures as protocol replies rather
-than terminating the reverse tunnel.  Track the actual returned buffer count
-and clear freed pointers so the following listener transaction cannot encode
-or release stale storage.
+The SDSP can submit an invalid-handle request immediately after resume.  The
+existing Nabu listener support returns the protocol error and continues, but
+the successful-request path leaves freed input and output pointers visible to
+the next transaction.  Track the actual returned-buffer count and clear every
+consumed pointer so a stale resume request cannot encode or free old storage.
 
 --- a/hexagonrpcd/listener.c
 +++ b/hexagonrpcd/listener.c
-@@ -138,6 +138,7 @@ static int return_for_next_invoke(int fd,
+@@ -141,6 +141,7 @@ static int return_for_next_invoke(int fd,
  				  uint32_t *rctx,
  				  uint32_t *handle,
  				  uint32_t *sc,
@@ -17,17 +17,17 @@ or release stale storage.
  				  const struct fastrpc_io_buffer *returned,
  				  struct fastrpc_io_buffer **decoded)
  {
-@@ -148,7 +149,7 @@ static int return_for_next_invoke(int fd,
- 	uint32_t outbufs_len;
- 	int ret;
+@@ -157,7 +158,7 @@ static int return_for_next_invoke(int fd,
+ 		return -1;
+ 	}
  
 -	outbufs_len = outbufs_calculate_size(REMOTE_SCALARS_OUTBUFS(*sc), returned);
 +	outbufs_len = outbufs_calculate_size(returned_count, returned);
  
  	if (outbufs_len) {
  		outbufs = malloc(outbufs_len);
-@@ -157,7 +158,7 @@ static int return_for_next_invoke(int fd,
- 			return -1;
+@@ -167,7 +168,7 @@ static int return_for_next_invoke(int fd,
+ 			goto err_free_inbufs;
  		}
  
 -		outbufs_encode(REMOTE_SCALARS_OUTBUFS(*sc), returned, outbufs);
@@ -35,63 +35,7 @@ or release stale storage.
  	}
  
  	ret = adsp_listener_next2(fd,
-@@ -224,19 +225,19 @@ static int invoke_requested_procedure(size_t n_ifaces,
- 		fprintf(stderr, "Handles are not supported, but got %u in, %u out\n",
- 				(sc & 0xf0) >> 4, sc & 0xf);
- 		*result = AEE_EBADPARM;
--		return 1;
-+		return 0;
- 	}
- 
- 	if (handle >= n_ifaces) {
- 		fprintf(stderr, "Unsupported handle: %u\n", handle);
- 		*result = AEE_EUNSUPPORTED;
--		return 1;
-+		return 0;
- 	}
- 
- 	if (method >= ifaces[handle]->n_procs) {
- 		fprintf(stderr, "Unsupported method: %u (%08x)\n", method, sc);
- 		*result = AEE_EUNSUPPORTED;
--		return 1;
-+		return 0;
- 	}
- 
- 	impl = &ifaces[handle]->procs[method];
-@@ -244,7 +245,7 @@ static int invoke_requested_procedure(size_t n_ifaces,
- 	if (impl->def == NULL || impl->impl == NULL) {
- 		fprintf(stderr, "Unsupported method: %u (%08x)\n", method, sc);
- 		*result = AEE_EUNSUPPORTED;
--		return 1;
-+		return 0;
- 	}
- 
- 	in_count = impl->def->in_bufs + ((impl->def->in_nums
-@@ -259,20 +260,20 @@ static int invoke_requested_procedure(size_t n_ifaces,
- 			REMOTE_SCALARS_INBUFS(sc), in_count,
- 			REMOTE_SCALARS_OUTBUFS(sc), out_count);
- 		*result = AEE_EBADPARM;
--		return 1;
-+		return 0;
- 	}
- 
- 	ret = check_inbuf_sizes(impl->def, decoded);
- 	if (ret) {
- 		*result = AEE_EBADPARM;
--		return 1;
-+		return 0;
- 	}
- 
- 	*returned = allocate_outbufs(impl->def, decoded[0].p);
- 	if (*returned == NULL && out_count > 0) {
- 		perror("Could not allocate output buffers");
- 		*result = AEE_ENOMEMORY;
--		return 1;
-+		return 0;
- 	}
- 
- 	*result = impl->impl(ifaces[handle]->data, decoded, *returned);
-@@ -302,12 +303,16 @@ int run_fastrpc_listener(int fd,
+@@ -328,12 +329,16 @@ int run_fastrpc_listener(int fd,
  	while (!ret) {
  		ret = return_for_next_invoke(fd,
  					     result, &rctx, &handle, &sc,
@@ -109,9 +53,9 @@ or release stale storage.
  
  		ret = invoke_requested_procedure(n_ifaces, ifaces,
  						 handle, sc, &result,
-@@ -315,10 +320,12 @@ int run_fastrpc_listener(int fd,
- 		if (ret)
- 			break;
+@@ -357,10 +362,12 @@ int run_fastrpc_listener(int fd,
+ 			continue;
+ 		}
  
 -		if (decoded != NULL)
 +		if (decoded != NULL) {
