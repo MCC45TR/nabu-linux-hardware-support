@@ -3,4 +3,4 @@
 5d38f96a7aeb2add69024572edf890383f9ae547c1c85b28dcc7da51f24d2fb7  0003-ssccli-probe-arbitrary-data-types.patch
 a9fd52f199d76cf7fc0949207710497df6805f149c0f8497c95760c7742708ac  0004-libssc-treat-zero-placement-as-unspecified.patch
 ec2c4aaae22e7e1dfde6a7d6a3375b086d109886a47712e653e318f45e6cf3b3  0005-libssc-add-TCS3701-CCT-sensor-support.patch
-3eda19bd52ab22900751fe0a5a89b1f4858dccc2ac0f1eff2f9373ce1fe9e492  0006-libssc-use-standard-measurement-id-for-CCT.patch
+afb0100ed3410e80f7b4aad0460994bb41d5212e6c607f250a97d48e5064d4a0  0006-libssc-use-standard-measurement-id-for-CCT.patch
