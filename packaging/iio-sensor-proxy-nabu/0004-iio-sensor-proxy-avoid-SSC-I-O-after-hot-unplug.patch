@@ -9,15 +9,15 @@ a synchronous RPC and can either crash or block indefinitely after an SLPI
 reset.  Release only local driver resources for a udev remove event; retain the
 normal stop-polling path for orderly service shutdown.
 ---
- src/drivers.h          | 17 +++++++++++++++++
+ src/drivers.h          | 19 +++++++++++++++++++
  src/iio-sensor-proxy.c |  2 +-
- 2 files changed, 18 insertions(+), 1 deletion(-)
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
 diff --git a/src/drivers.h b/src/drivers.h
 index e42b1b2..8a11f67 100644
 --- a/src/drivers.h
 +++ b/src/drivers.h
-@@ -153,6 +153,23 @@ driver_close (SensorDevice *sensor_device)
+@@ -153,6 +153,25 @@ driver_close (SensorDevice *sensor_device)
  	driver->close (sensor_device);
  }
  

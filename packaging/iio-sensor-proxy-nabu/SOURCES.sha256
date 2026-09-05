@@ -1,4 +1,4 @@
 5499f6fa249b0da01dda716d44c7492452411fb671d9bd77fa73451ea8f7fbad  0001-WIP-iio-sensor-proxy.c-Do-not-exit-based-on-sensor-e.patch
 a468e2b9ddbe9f1bc9ecf146102cc8e9ef07f63e68e54f0476be5b7e2edadc6e  0002-start-initial-sensors-claimed-during-discovery.patch
 d722324a6fc38c0c40c20618b9ad0428adcd72cbd989b0e5d3f3f7c6f904a16b  0003-udev-standardize-Nabu-SDSP-orientation.patch
-9d698701f1d96cafc6a5e02aa6b18353cd01fd7b6cf52955bc75d218f5633751  0004-iio-sensor-proxy-avoid-SSC-I-O-after-hot-unplug.patch
+c6f69652daeefef68ae2a1861e0270da7ecd116a0c584a41af4788425775a5d6  0004-iio-sensor-proxy-avoid-SSC-I-O-after-hot-unplug.patch

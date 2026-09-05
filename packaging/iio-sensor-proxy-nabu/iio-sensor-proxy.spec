@@ -3,7 +3,7 @@
 
 Name:           iio-sensor-proxy-nabu
 Version:        3.9
-Release:        114.nabu12.test%{?dist}
+Release:        115.nabu13.test%{?dist}
 Summary:        Nabu IIO sensor service for orientation-aware desktops
 
 # tests/unittest_inspector.py is LGPL-2.1-or-later but it is not packaged
@@ -147,7 +147,7 @@ fi
 %{_datadir}/gtk-doc/html/%{upstream_name}/
 
 %changelog
-* Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-114.nabu12.test
+* Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-115.nabu13.test
 - Avoid synchronous SSC I/O after a FastRPC hot-unplug event.
 - Bound service shutdown when remote sensor firmware no longer responds.
 
