@@ -100,6 +100,10 @@ grep -Fq '"ambient_light_back"' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/0005-iio-sensor-proxy-fuse-front-and-rear-SSC-light.patch"
 grep -Fq 'LIGHT_READING_MAX_AGE_USEC' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/0005-iio-sensor-proxy-fuse-front-and-rear-SSC-light.patch"
+grep -Fq 'must never' \
+    "$repo_root/packaging/iio-sensor-proxy-nabu/0005-iio-sensor-proxy-fuse-front-and-rear-SSC-light.patch"
+grep -Fq 'MIN (rear->intensity, drv_data->published)' \
+    "$repo_root/packaging/iio-sensor-proxy-nabu/0005-iio-sensor-proxy-fuse-front-and-rear-SSC-light.patch"
 grep -Fq '[BT][LR]-cs35l41*' \
     "$repo_root/packaging/xiaomi-nabu-firmware/xiaomi-nabu-firmware.spec"
 for amplifier in BR TR BL TL; do

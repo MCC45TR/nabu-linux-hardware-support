@@ -1,24 +1,29 @@
+From 1ca8343bf735eb4ee4bae5ab242d2979565d9bc9 Mon Sep 17 00:00:00 2001
 From: mcc45tr <mcc45tr@gmail.com>
-Date: Sat, 5 Sep 2026 19:42:00 +0300
-Subject: [PATCH] iio-sensor-proxy: fuse front and rear SSC light
+Date: Sun, 6 Sep 2026 00:17:03 +0300
+Subject: [PATCH] iio-sensor-proxy: use rear ALS as bounded confidence
 
-Nabu has a front TCS3701 and a rear BU27030, but the SSC light driver only
-opens ambient_light. Open ambient_light_back as an optional second calibrated
-stream and publish the brighter fresh reading through the standard SensorProxy
-lux property. This prevents a hand or cover shadowing either tablet face from
-causing an unwanted dimming event, while retaining single-sensor fallback.
+Keep the front TCS3701 as the automatic-brightness authority. Use the rear BU27030 only to veto transient front-side occlusion without ever raising the published lux value, and retain rear-only fallback if the front stream is unavailable. This prevents rear flash and reflected panel light from forming a brightness feedback loop.
 ---
- src/drv-ssc-light.c | 164 ++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 123 insertions(+), 41 deletions(-)
+ src/drv-ssc-light.c | 180 ++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 139 insertions(+), 41 deletions(-)
 
 diff --git a/src/drv-ssc-light.c b/src/drv-ssc-light.c
-index 27c819f..a952c7d 100644
+index 27c819f..0f824a4 100644
 --- a/src/drv-ssc-light.c
 +++ b/src/drv-ssc-light.c
-@@ -18,10 +18,34 @@
+@@ -9,6 +9,7 @@
+ #include "drivers.h"
+
+ #include <fcntl.h>
++#include <math.h>
+ #include <unistd.h>
+ #include <string.h>
+ #include <errno.h>
+@@ -18,10 +19,36 @@
  #include <libssc-sensor.h>
  #include <libssc-sensor-light.h>
- 
+
 -typedef struct DrvData {
 +typedef struct DrvData DrvData;
 +
@@ -35,6 +40,8 @@ index 27c819f..a952c7d 100644
 +struct DrvData {
 +	SensorDevice *sensor_device;
 +	LightStream streams[2];
++	gfloat published;
++	gboolean have_published;
 +};
 +
 +static const gchar *light_data_types[] = {
@@ -42,20 +49,20 @@ index 27c819f..a952c7d 100644
 +	"ambient_light_back",
 +};
 +
-+#define LIGHT_READING_MAX_AGE_USEC (5 * G_USEC_PER_SEC)
++#define LIGHT_READING_MAX_AGE_USEC (6 * G_USEC_PER_SEC)
 +
 +static SSCSensorLight *
 +new_light_sensor (const gchar *data_type, GError **error)
 +{
 +	return ssc_sensor_light_new_for_data_type_sync (data_type, NULL, error);
 +}
- 
+
  static gboolean
  ssc_light_discover (GUdevDevice *device)
-@@ -32,12 +56,17 @@ ssc_light_discover (GUdevDevice *device)
+@@ -32,12 +59,17 @@ ssc_light_discover (GUdevDevice *device)
  	if (!drv_check_udev_sensor_type (device, "ssc-light", NULL))
  		return FALSE;
- 
+
 -	/* Open and close SSC light sensor for discovering */
 -	sensor = ssc_sensor_light_new_sync (NULL, NULL);
 -	if (!sensor)
@@ -65,7 +72,7 @@ index 27c819f..a952c7d 100644
 +		sensor = new_light_sensor (light_data_types[i], NULL);
 +		if (!sensor)
 +			continue;
- 
+
 -	if (!ssc_sensor_light_close_sync (sensor, NULL, NULL))
 +		if (ssc_sensor_light_close_sync (sensor, NULL, NULL))
 +			break;
@@ -73,43 +80,57 @@ index 27c819f..a952c7d 100644
 +	}
 +	if (!sensor)
  		return FALSE;
- 
+
  	g_debug ("Found SSC light at %s", g_udev_device_get_sysfs_path (device));
-@@ -47,12 +76,40 @@ ssc_light_discover (GUdevDevice *device)
+@@ -47,12 +79,54 @@ ssc_light_discover (GUdevDevice *device)
  static void
  measurement_cb (SSCSensorLight *sensor, gfloat intensity, gpointer user_data)
  {
 -	SensorDevice *sensor_device = user_data;
 +	LightStream *stream = user_data;
 +	DrvData *drv_data = stream->owner;
++	LightStream *front = &drv_data->streams[0];
++	LightStream *rear = &drv_data->streams[1];
  	LightReadings readings;
 +	gint64 now = g_get_monotonic_time ();
-+	gboolean have_reading = FALSE;
-+	gfloat fused = 0.0;
++	gboolean front_fresh;
++	gboolean rear_fresh;
++	gfloat fused;
++
++	if (!isfinite (intensity) || intensity < 0.0f)
++		return;
 +
 +	stream->intensity = intensity;
 +	stream->updated_at = now;
++	front_fresh = front->updated_at != 0 &&
++		now - front->updated_at <= LIGHT_READING_MAX_AGE_USEC;
++	rear_fresh = rear->updated_at != 0 &&
++		now - rear->updated_at <= LIGHT_READING_MAX_AGE_USEC;
 +
 +	/*
-+	 * Use the brighter fresh face. A hand or cover can occlude either side of
-+	 * a tablet; taking the lower value would turn that local shadow into an
-+	 * unwanted global dimming event. A stale or unavailable stream naturally
-+	 * falls back to the other calibrated sensor.
++	 * TCS3701 faces the display side and remains the brightness authority.
++	 * BU27030 is a rear-facing confidence signal: it may veto a transient
++	 * dimming caused by a hand covering the front sensor, but must never
++	 * brighten the display. That asymmetric rule also makes a rear-camera
++	 * flash harmless and avoids feeding panel/reflected light back into KWin.
 +	 */
-+	for (guint i = 0; i < G_N_ELEMENTS (drv_data->streams); i++) {
-+		LightStream *candidate = &drv_data->streams[i];
-+
-+		if (candidate->updated_at == 0 ||
-+		    now - candidate->updated_at > LIGHT_READING_MAX_AGE_USEC)
-+			continue;
-+		if (!have_reading || candidate->intensity > fused)
-+			fused = candidate->intensity;
-+		have_reading = TRUE;
-+	}
-+	if (!have_reading)
++	if (front_fresh) {
++		if (stream == rear)
++			return;
++		fused = front->intensity;
++		if (drv_data->have_published && rear_fresh &&
++		    fused < drv_data->published && rear->intensity > fused)
++			fused = MIN (rear->intensity, drv_data->published);
++	} else if (rear_fresh) {
++		/* Rear-only fallback is allowed when the front stream is unavailable. */
++		fused = rear->intensity;
++	} else {
 +		return;
- 
++	}
+
 -	readings.level = intensity;
++	drv_data->published = fused;
++	drv_data->have_published = TRUE;
 +	readings.level = fused;
  	readings.uses_lux = TRUE;
 -	sensor_device->callback_func (sensor_device, (gpointer) &readings, sensor_device->user_data);
@@ -117,11 +138,11 @@ index 27c819f..a952c7d 100644
 +						(gpointer) &readings,
 +						drv_data->sensor_device->user_data);
  }
- 
+
  static SensorDevice *
-@@ -66,13 +123,28 @@ ssc_light_open (GUdevDevice *device)
+@@ -66,13 +140,28 @@ ssc_light_open (GUdevDevice *device)
  	sensor_device->priv = g_new0 (DrvData, 1);
- 
+
  	drv_data = (DrvData *) sensor_device->priv;
 -	drv_data->sensor = ssc_sensor_light_new_sync (NULL, &error);
 -	if (!drv_data->sensor)
@@ -152,10 +173,10 @@ index 27c819f..a952c7d 100644
 +	else if (drv_data->streams[1].sensor)
 +		g_object_get (drv_data->streams[1].sensor,
 +			      SSC_SENSOR_NAME, &sensor_device->name, NULL);
- 
+
  	return sensor_device;
  }
-@@ -81,38 +153,48 @@ static void
+@@ -81,38 +170,47 @@ static void
  ssc_light_set_polling (SensorDevice *sensor_device, gboolean state)
  {
  	DrvData *drv_data = (DrvData *) sensor_device->priv;
@@ -181,7 +202,6 @@ index 27c819f..a952c7d 100644
 -		/* Disable sensor */
 -		if (!ssc_sensor_light_close_sync (drv_data->sensor, NULL, &error))
 -			g_warning ("Closing SSC light sensor failed: %s", error->message);
-+
 +	for (guint i = 0; i < G_N_ELEMENTS (drv_data->streams); i++) {
 +		LightStream *stream = &drv_data->streams[i];
 +		g_autoptr (GError) error = NULL;
@@ -215,18 +235,18 @@ index 27c819f..a952c7d 100644
 +		}
  	}
  }
- 
+
  static void
  ssc_light_close (SensorDevice *sensor_device)
  {
 -	g_autoptr(GError) error = NULL;
  	DrvData *drv_data = (DrvData *) sensor_device->priv;
- 
+
 -	g_clear_object (&drv_data->sensor);
 +	for (guint i = 0; i < G_N_ELEMENTS (drv_data->streams); i++)
 +		g_clear_object (&drv_data->streams[i].sensor);
  	g_clear_pointer (&sensor_device->priv, g_free);
  	g_free (sensor_device);
  }
--- 
-2.51.0
+--
+2.55.0

@@ -3,7 +3,7 @@
 
 Name:           iio-sensor-proxy-nabu
 Version:        3.9
-Release:        116.nabu14.test%{?dist}
+Release:        117.nabu15.test%{?dist}
 Summary:        Nabu IIO sensor service for orientation-aware desktops
 
 # tests/unittest_inspector.py is LGPL-2.1-or-later but it is not packaged
@@ -108,6 +108,8 @@ grep -F 'TimeoutStopSec=5s' \
     %{buildroot}%{_unitdir}/%{upstream_name}.service.d/30-nabu-bounded-stop.conf
 grep -F '"ambient_light_back"' src/drv-ssc-light.c
 grep -F 'LIGHT_READING_MAX_AGE_USEC' src/drv-ssc-light.c
+grep -F 'must never' src/drv-ssc-light.c
+grep -F 'MIN (rear->intensity, drv_data->published)' src/drv-ssc-light.c
 
 %post
 %systemd_post %{upstream_name}.service
@@ -150,6 +152,11 @@ fi
 %{_datadir}/gtk-doc/html/%{upstream_name}/
 
 %changelog
+* Sun Sep 06 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-117.nabu15.test
+- Keep the front TCS3701 as the automatic-brightness authority.
+- Use the rear BU27030 only as a bounded anti-occlusion signal or fallback;
+  rear flash and reflected light can no longer raise the published lux value.
+
 * Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-116.nabu14.test
 - Open Nabu's front TCS3701 and rear BU27030 SSC ambient-light streams.
 - Publish the brighter fresh lux value with stale-stream and single-sensor
