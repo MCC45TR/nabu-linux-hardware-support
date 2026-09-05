@@ -3,7 +3,7 @@
 
 Name:           iio-sensor-proxy-nabu
 Version:        3.9
-Release:        115.nabu13.test%{?dist}
+Release:        116.nabu14.test%{?dist}
 Summary:        Nabu IIO sensor service for orientation-aware desktops
 
 # tests/unittest_inspector.py is LGPL-2.1-or-later but it is not packaged
@@ -15,6 +15,7 @@ Patch0001:      0001-WIP-iio-sensor-proxy.c-Do-not-exit-based-on-sensor-e.patch
 Patch0002:      0002-start-initial-sensors-claimed-during-discovery.patch
 Patch0003:      0003-udev-standardize-Nabu-SDSP-orientation.patch
 Patch0004:      0004-iio-sensor-proxy-avoid-SSC-I-O-after-hot-unplug.patch
+Patch0005:      0005-iio-sensor-proxy-fuse-front-and-rear-SSC-light.patch
 
 BuildRequires:  meson
 BuildRequires:  gcc
@@ -32,7 +33,7 @@ BuildRequires:  umockdev
 BuildRequires:  python3-dbusmock
 %{?systemd_requires}
 
-Requires:       libssc-nabu
+Requires:       libssc-nabu >= 0.4.4-10.nabu9.test
 Requires:       dbus
 Provides:       iio-sensor-proxy = %{version}-%{release}
 Provides:       iio-sensor-proxy%{?_isa} = %{version}-%{release}
@@ -105,6 +106,8 @@ grep -F 'driver_close_removed (DEVICE_FOR_TYPE(i));' src/iio-sensor-proxy.c
 grep -F 'FastRPC endpoint' src/drivers.h
 grep -F 'TimeoutStopSec=5s' \
     %{buildroot}%{_unitdir}/%{upstream_name}.service.d/30-nabu-bounded-stop.conf
+grep -F '"ambient_light_back"' src/drv-ssc-light.c
+grep -F 'LIGHT_READING_MAX_AGE_USEC' src/drv-ssc-light.c
 
 %post
 %systemd_post %{upstream_name}.service
@@ -147,6 +150,11 @@ fi
 %{_datadir}/gtk-doc/html/%{upstream_name}/
 
 %changelog
+* Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-116.nabu14.test
+- Open Nabu's front TCS3701 and rear BU27030 SSC ambient-light streams.
+- Publish the brighter fresh lux value with stale-stream and single-sensor
+  fallback through the standard SensorProxy interface.
+
 * Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-115.nabu13.test
 - Avoid synchronous SSC I/O after a FastRPC hot-unplug event.
 - Bound service shutdown when remote sensor firmware no longer responds.

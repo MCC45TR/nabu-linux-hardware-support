@@ -3,7 +3,7 @@
 
 Name:           libssc-nabu
 Version:        0.4.4
-Release:        10.nabu9.test%{?dist}
+Release:        11.nabu10.test%{?dist}
 Summary:        Qualcomm Sensor Core client library for Nabu sensor services
 
 License:        GPL-3.0-or-later
@@ -114,6 +114,10 @@ if [ -x /usr/bin/systemctl ]; then
 fi
 
 %changelog
+* Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-11.nabu10.test
+- Export the named light constructors through libssc's version script so
+  consumers and the diagnostic CLI can link on all supported architectures.
+
 * Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-10.nabu9.test
 - Allow clients to address a named SSC ambient-light stream while preserving
   the existing default API.

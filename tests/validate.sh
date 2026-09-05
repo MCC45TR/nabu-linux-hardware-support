@@ -96,6 +96,10 @@ grep -Fq 'drv-ssc-accel reads mount_matrix directly' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/0003-udev-standardize-Nabu-SDSP-orientation.patch"
 ! grep -Fq 'ENV{ACCEL_MOUNT_MATRIX}' \
     "$repo_root/packaging/iio-sensor-proxy-nabu/0003-udev-standardize-Nabu-SDSP-orientation.patch"
+grep -Fq '"ambient_light_back"' \
+    "$repo_root/packaging/iio-sensor-proxy-nabu/0005-iio-sensor-proxy-fuse-front-and-rear-SSC-light.patch"
+grep -Fq 'LIGHT_READING_MAX_AGE_USEC' \
+    "$repo_root/packaging/iio-sensor-proxy-nabu/0005-iio-sensor-proxy-fuse-front-and-rear-SSC-light.patch"
 grep -Fq '[BT][LR]-cs35l41*' \
     "$repo_root/packaging/xiaomi-nabu-firmware/xiaomi-nabu-firmware.spec"
 for amplifier in BR TR BL TL; do

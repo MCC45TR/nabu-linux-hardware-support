@@ -8,11 +8,26 @@ the compatible default, and add constructors which let consumers explicitly
 open another stream such as Nabu's ambient_light_back. Also expose the rear
 stream through ssccli so hardware can be validated without a desktop policy.
 ---
+ libssc.map                |  2 ++
  src/libssc-cli.c          |  9 ++++++---
  src/libssc-sensor-light.c | 33 +++++++++++++++++++++++++++++----
  src/libssc-sensor-light.h |  2 ++
  tests/light.c             | 15 +++++++++++++++
- 4 files changed, 52 insertions(+), 7 deletions(-)
+ 5 files changed, 54 insertions(+), 7 deletions(-)
+
+diff --git a/libssc.map b/libssc.map
+index 6b4df10..ef991a4 100644
+--- a/libssc.map
++++ b/libssc.map
+@@ -28,6 +28,8 @@ LIBSSC_0.4.0 {
+ 		ssc_sensor_gyroscope_close_sync;
+ 		ssc_sensor_light_new;
+ 		ssc_sensor_light_new_finish;
++		ssc_sensor_light_new_for_data_type;
++		ssc_sensor_light_new_for_data_type_sync;
+ 		ssc_sensor_light_new_sync;
+ 		ssc_sensor_light_open;
+ 		ssc_sensor_light_open_finish;
 
 diff --git a/src/libssc-cli.c b/src/libssc-cli.c
 index a9e428f..adc16b8 100644

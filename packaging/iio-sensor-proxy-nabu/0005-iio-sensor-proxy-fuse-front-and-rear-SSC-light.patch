@@ -1,0 +1,232 @@
+From: mcc45tr <mcc45tr@gmail.com>
+Date: Sat, 5 Sep 2026 19:42:00 +0300
+Subject: [PATCH] iio-sensor-proxy: fuse front and rear SSC light
+
+Nabu has a front TCS3701 and a rear BU27030, but the SSC light driver only
+opens ambient_light. Open ambient_light_back as an optional second calibrated
+stream and publish the brighter fresh reading through the standard SensorProxy
+lux property. This prevents a hand or cover shadowing either tablet face from
+causing an unwanted dimming event, while retaining single-sensor fallback.
+---
+ src/drv-ssc-light.c | 164 ++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 123 insertions(+), 41 deletions(-)
+
+diff --git a/src/drv-ssc-light.c b/src/drv-ssc-light.c
+index 27c819f..a952c7d 100644
+--- a/src/drv-ssc-light.c
++++ b/src/drv-ssc-light.c
+@@ -18,10 +18,34 @@
+ #include <libssc-sensor.h>
+ #include <libssc-sensor-light.h>
+ 
+-typedef struct DrvData {
++typedef struct DrvData DrvData;
++
++typedef struct LightStream {
++	DrvData *owner;
+ 	SSCSensorLight *sensor;
+ 	gulong measurement_id;
+-} DrvData;
++	gfloat intensity;
++	gint64 updated_at;
++	gboolean opened;
++} LightStream;
++
++struct DrvData {
++	SensorDevice *sensor_device;
++	LightStream streams[2];
++};
++
++static const gchar *light_data_types[] = {
++	"ambient_light",
++	"ambient_light_back",
++};
++
++#define LIGHT_READING_MAX_AGE_USEC (5 * G_USEC_PER_SEC)
++
++static SSCSensorLight *
++new_light_sensor (const gchar *data_type, GError **error)
++{
++	return ssc_sensor_light_new_for_data_type_sync (data_type, NULL, error);
++}
+ 
+ static gboolean
+ ssc_light_discover (GUdevDevice *device)
+@@ -32,12 +56,17 @@ ssc_light_discover (GUdevDevice *device)
+ 	if (!drv_check_udev_sensor_type (device, "ssc-light", NULL))
+ 		return FALSE;
+ 
+-	/* Open and close SSC light sensor for discovering */
+-	sensor = ssc_sensor_light_new_sync (NULL, NULL);
+-	if (!sensor)
+-		return FALSE;
++	/* Either calibrated light path is sufficient for discovery. */
++	for (guint i = 0; i < G_N_ELEMENTS (light_data_types); i++) {
++		sensor = new_light_sensor (light_data_types[i], NULL);
++		if (!sensor)
++			continue;
+ 
+-	if (!ssc_sensor_light_close_sync (sensor, NULL, NULL))
++		if (ssc_sensor_light_close_sync (sensor, NULL, NULL))
++			break;
++		g_clear_object (&sensor);
++	}
++	if (!sensor)
+ 		return FALSE;
+ 
+ 	g_debug ("Found SSC light at %s", g_udev_device_get_sysfs_path (device));
+@@ -47,12 +76,40 @@ ssc_light_discover (GUdevDevice *device)
+ static void
+ measurement_cb (SSCSensorLight *sensor, gfloat intensity, gpointer user_data)
+ {
+-	SensorDevice *sensor_device = user_data;
++	LightStream *stream = user_data;
++	DrvData *drv_data = stream->owner;
+ 	LightReadings readings;
++	gint64 now = g_get_monotonic_time ();
++	gboolean have_reading = FALSE;
++	gfloat fused = 0.0;
++
++	stream->intensity = intensity;
++	stream->updated_at = now;
++
++	/*
++	 * Use the brighter fresh face. A hand or cover can occlude either side of
++	 * a tablet; taking the lower value would turn that local shadow into an
++	 * unwanted global dimming event. A stale or unavailable stream naturally
++	 * falls back to the other calibrated sensor.
++	 */
++	for (guint i = 0; i < G_N_ELEMENTS (drv_data->streams); i++) {
++		LightStream *candidate = &drv_data->streams[i];
++
++		if (candidate->updated_at == 0 ||
++		    now - candidate->updated_at > LIGHT_READING_MAX_AGE_USEC)
++			continue;
++		if (!have_reading || candidate->intensity > fused)
++			fused = candidate->intensity;
++		have_reading = TRUE;
++	}
++	if (!have_reading)
++		return;
+ 
+-	readings.level = intensity;
++	readings.level = fused;
+ 	readings.uses_lux = TRUE;
+-	sensor_device->callback_func (sensor_device, (gpointer) &readings, sensor_device->user_data);
++	drv_data->sensor_device->callback_func (drv_data->sensor_device,
++						(gpointer) &readings,
++						drv_data->sensor_device->user_data);
+ }
+ 
+ static SensorDevice *
+@@ -66,13 +123,28 @@ ssc_light_open (GUdevDevice *device)
+ 	sensor_device->priv = g_new0 (DrvData, 1);
+ 
+ 	drv_data = (DrvData *) sensor_device->priv;
+-	drv_data->sensor = ssc_sensor_light_new_sync (NULL, &error);
+-	if (!drv_data->sensor)
+-		g_warning ("Creating SSC light sensor failed: %s", error->message);
+-	else
+-		g_object_get (drv_data->sensor,
+-		              SSC_SENSOR_NAME, &sensor_device->name,
+-		              NULL);
++	drv_data->sensor_device = sensor_device;
++	for (guint i = 0; i < G_N_ELEMENTS (drv_data->streams); i++) {
++		LightStream *stream = &drv_data->streams[i];
++
++		stream->owner = drv_data;
++		stream->sensor = new_light_sensor (light_data_types[i], &error);
++		if (!stream->sensor) {
++			g_debug ("Creating SSC %s sensor failed: %s",
++				 light_data_types[i],
++				 error ? error->message : "unavailable");
++			g_clear_error (&error);
++		}
++	}
++
++	if (drv_data->streams[0].sensor && drv_data->streams[1].sensor)
++		sensor_device->name = g_strdup ("SSC dual ambient light");
++	else if (drv_data->streams[0].sensor)
++		g_object_get (drv_data->streams[0].sensor,
++			      SSC_SENSOR_NAME, &sensor_device->name, NULL);
++	else if (drv_data->streams[1].sensor)
++		g_object_get (drv_data->streams[1].sensor,
++			      SSC_SENSOR_NAME, &sensor_device->name, NULL);
+ 
+ 	return sensor_device;
+ }
+@@ -81,38 +153,48 @@ static void
+ ssc_light_set_polling (SensorDevice *sensor_device, gboolean state)
+ {
+ 	DrvData *drv_data = (DrvData *) sensor_device->priv;
+-	g_autoptr (GError) error = NULL;
+-	if (state) {
+-		if (drv_data->measurement_id)
+-			return;
+-		/* Start listening for measurements */
+-		drv_data->measurement_id = g_signal_connect (drv_data->sensor,
+-					                     "measurement",
+-							     G_CALLBACK (measurement_cb),
+-							     sensor_device);
+-		/* Enable sensor */
+-		if (!ssc_sensor_light_open_sync (drv_data->sensor, NULL, &error))
+-			g_warning ("Opening SSC light sensor failed: %s", error->message);
+-	} else {
+-		if (!drv_data->measurement_id)
+-			return;
+-
+-		/* Stop listening for measurements */
+-		g_clear_signal_handler (&drv_data->measurement_id, drv_data->sensor);
+-
+-		/* Disable sensor */
+-		if (!ssc_sensor_light_close_sync (drv_data->sensor, NULL, &error))
+-			g_warning ("Closing SSC light sensor failed: %s", error->message);
++
++	for (guint i = 0; i < G_N_ELEMENTS (drv_data->streams); i++) {
++		LightStream *stream = &drv_data->streams[i];
++		g_autoptr (GError) error = NULL;
++
++		if (!stream->sensor)
++			continue;
++		if (state) {
++			if (stream->opened)
++				continue;
++			stream->measurement_id = g_signal_connect (
++				stream->sensor, "measurement",
++				G_CALLBACK (measurement_cb), stream);
++			if (!ssc_sensor_light_open_sync (stream->sensor, NULL, &error)) {
++				g_warning ("Opening SSC %s sensor failed: %s",
++					   light_data_types[i], error->message);
++				g_clear_signal_handler (&stream->measurement_id,
++							stream->sensor);
++				continue;
++			}
++			stream->opened = TRUE;
++		} else {
++			if (!stream->opened)
++				continue;
++			g_clear_signal_handler (&stream->measurement_id,
++						stream->sensor);
++			if (!ssc_sensor_light_close_sync (stream->sensor, NULL, &error))
++				g_warning ("Closing SSC %s sensor failed: %s",
++					   light_data_types[i], error->message);
++			stream->opened = FALSE;
++			stream->updated_at = 0;
++		}
+ 	}
+ }
+ 
+ static void
+ ssc_light_close (SensorDevice *sensor_device)
+ {
+-	g_autoptr(GError) error = NULL;
+ 	DrvData *drv_data = (DrvData *) sensor_device->priv;
+ 
+-	g_clear_object (&drv_data->sensor);
++	for (guint i = 0; i < G_N_ELEMENTS (drv_data->streams); i++)
++		g_clear_object (&drv_data->streams[i].sensor);
+ 	g_clear_pointer (&sensor_device->priv, g_free);
+ 	g_free (sensor_device);
+ }
+-- 
+2.51.0

@@ -5,4 +5,4 @@ a9fd52f199d76cf7fc0949207710497df6805f149c0f8497c95760c7742708ac  0004-libssc-tr
 ec2c4aaae22e7e1dfde6a7d6a3375b086d109886a47712e653e318f45e6cf3b3  0005-libssc-add-TCS3701-CCT-sensor-support.patch
 afb0100ed3410e80f7b4aad0460994bb41d5212e6c607f250a97d48e5064d4a0  0006-libssc-use-standard-measurement-id-for-CCT.patch
 4973e69ba31400ec7cbae2ef15630724b71faa8ac1c11ca74e158c03e3db6063  0007-libssc-decode-packed-CCT-standard-event.patch
-b63ae86288f42a4ff0e7988f295ec4cfc8919b7378a5aaefb58c152b67f5038e  0008-libssc-address-named-light-sensor-data-types.patch
+5a013dd4d686f23a03721cb9c6fcde038869ebf573e67ab2c7365e68c8843090  0008-libssc-address-named-light-sensor-data-types.patch
