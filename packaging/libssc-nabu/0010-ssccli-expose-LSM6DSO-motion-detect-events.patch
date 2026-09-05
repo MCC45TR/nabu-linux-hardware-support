@@ -1,0 +1,74 @@
+From: mcc45tr <mcc45tr@gmail.com>
+Date: Sat, 5 Sep 2026 21:05:00 +0300
+Subject: [PATCH] ssccli: expose LSM6DSO motion-detect events
+
+Nabu's firmware advertises `motion_detect` as an available on-change stream.
+Expose it as a diagnostic CLI mode using the existing standard scalar-event
+decoder.  Since on-change sensors are enabled without a sample-rate payload,
+this preserves firmware policy and does not invent a threshold or polling
+rate.
+
+Signed-off-by: mcc45tr <mcc45tr@gmail.com>
+---
+ src/libssc-cli.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/src/libssc-cli.c b/src/libssc-cli.c
+index 52eb7d3..d02b27a 100644
+--- a/src/libssc-cli.c
++++ b/src/libssc-cli.c
+@@ -150,6 +150,12 @@ static void temperature_measurement (SSCSensorLight *sensor, gfloat temperature,
+ 	fflush(stdout);
+ }
+ 
++static void motion_detect_measurement (SSCSensorLight *sensor, gfloat state, gpointer user_data)
++{
++	g_printf ("LSM6DSO motion-detect event: %s (raw=%f)\n", state > 0.0 ? "motion" : "idle", state);
++	fflush(stdout);
++}
++
+ /*****************************************************************************/
+ 
+ static gboolean
+@@ -211,7 +217,7 @@ int main(int argc, char *argv[])
+ 	const GOptionEntry options[] = {
+ 		{ "version", 0, 0, G_OPTION_ARG_NONE, &print_version, "Print version information and exit.", NULL },
+ 		{ "debug", 'v', 0, G_OPTION_ARG_NONE, &debug, "Enable debug logs.", NULL },
+-		{ "sensor", 0, 0, G_OPTION_ARG_STRING, &sensor_str, "Enable a sensor. Supported sensors: 'proximity', 'light', 'light-back', 'temperature', 'accelerometer', 'magnetometer', 'compass', 'gyroscope'", NULL },
++		{ "sensor", 0, 0, G_OPTION_ARG_STRING, &sensor_str, "Enable a sensor. Supported sensors: 'proximity', 'light', 'light-back', 'temperature', 'motion-detect', 'accelerometer', 'magnetometer', 'compass', 'gyroscope'", NULL },
+ 		{ "probe-data-type", 0, 0, G_OPTION_ARG_STRING, &probe_data_type, "Discover an arbitrary SSC data type without enabling it", "DATA_TYPE" },
+ 		{ "timeout", 0, 0, G_OPTION_ARG_INT64, &timeout, "Number of seconds before this will timeout [default 10]", NULL },
+ 		{ NULL, 0, 0, G_OPTION_ARG_NONE, NULL, NULL, NULL }
+@@ -297,6 +303,21 @@ int main(int argc, char *argv[])
+ 			return OPEN_FAIL_EXIT_CODE;
+ 		}
+ 		g_timeout_add_seconds (timeout, (GSourceFunc)light_close_cb, temperature);
++	} else if (g_strcmp0 (sensor_str, "motion-detect") == 0) {
++		SSCSensorLight *motion = ssc_sensor_light_new_for_data_type_sync ("motion_detect", NULL, &err);
++		if (!motion) {
++			g_printf ("Unable to initialize motion-detect sensor: %s\n", err ? err->message : "UNKNOWN");
++			return INIT_FAIL_EXIT_CODE;
++		}
++		g_signal_connect (motion,
++				  "measurement",
++				  G_CALLBACK (motion_detect_measurement),
++				  NULL);
++		if (!ssc_sensor_light_open_sync (motion, NULL, &err)) {
++			g_printf ("Unable to open motion-detect sensor: %s\n", err ? err->message : "UNKNOWN");
++			return OPEN_FAIL_EXIT_CODE;
++		}
++		g_timeout_add_seconds (timeout, (GSourceFunc)light_close_cb, motion);
+ 	} else if (g_strcmp0 (sensor_str, "accelerometer") == 0) {
+ 		SSCSensorAccelerometer *accelerometer = ssc_sensor_accelerometer_new_sync (NULL, &err);
+ 		if (!accelerometer) {
+@@ -362,7 +383,7 @@ int main(int argc, char *argv[])
+ 		}
+ 		g_timeout_add_seconds (timeout, (GSourceFunc)gyroscope_close_cb, gyroscope);
+ 	} else {
+-		g_printf ("Specify a supported sensor: 'proximity', 'light', 'light-back', 'temperature', 'accelerometer', 'magnetometer', 'compass', 'gyroscope'\n");
++		g_printf ("Specify a supported sensor: 'proximity', 'light', 'light-back', 'temperature', 'motion-detect', 'accelerometer', 'magnetometer', 'compass', 'gyroscope'\n");
+ 		return GENERAL_FAIL_EXIT_CODE;
+ 	}
+ 
+-- 
+2.52.0

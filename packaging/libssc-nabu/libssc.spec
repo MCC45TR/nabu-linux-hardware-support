@@ -3,7 +3,7 @@
 
 Name:           libssc-nabu
 Version:        0.4.4
-Release:        12.nabu11.test%{?dist}
+Release:        13.nabu12.test%{?dist}
 Summary:        Qualcomm Sensor Core client library for Nabu sensor services
 
 License:        GPL-3.0-or-later
@@ -18,6 +18,7 @@ Patch5:         0006-libssc-use-standard-measurement-id-for-CCT.patch
 Patch6:         0007-libssc-decode-packed-CCT-standard-event.patch
 Patch7:         0008-libssc-address-named-light-sensor-data-types.patch
 Patch8:         0009-ssccli-expose-LSM6DSO-temperature-stream.patch
+Patch9:         0010-ssccli-expose-LSM6DSO-motion-detect-events.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -94,6 +95,8 @@ grep -F 'ssc_sensor_light_new_for_data_type_sync' src/libssc-sensor-light.c
 grep -F '"ambient_light_back"' src/libssc-cli.c
 grep -F '"sensor_temperature"' src/libssc-cli.c
 grep -F 'LSM6DSO temperature measurement:' src/libssc-cli.c
+grep -F '"motion_detect"' src/libssc-cli.c
+grep -F 'LSM6DSO motion-detect event:' src/libssc-cli.c
 
 %files
 %license LICENSE
@@ -117,6 +120,10 @@ if [ -x /usr/bin/systemctl ]; then
 fi
 
 %changelog
+* Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-13.nabu12.test
+- Expose the firmware-provided LSM6DSO motion-detect on-change stream without
+  inventing a polling rate, threshold or device-local policy.
+
 * Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-12.nabu11.test
 - Expose the LSM6DSO internal temperature stream under its actual Qualcomm SSC
   data type and print typed Celsius samples through ssccli.
