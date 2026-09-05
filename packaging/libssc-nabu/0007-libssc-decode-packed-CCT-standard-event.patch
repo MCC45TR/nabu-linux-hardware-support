@@ -1,0 +1,70 @@
+--- a/data/ssc-sensor-cct.proto
++++ b/data/ssc-sensor-cct.proto
+@@ -1,17 +1,7 @@
+-/* Qualcomm sns_cct_event response carried by the cct_front data type. */
++/* Qualcomm sns_cct_event carried in a standard sns_std_sensor_event. */
+ syntax = "proto2";
+ 
+ message SscCctResponse {
+-	required float cct = 1;
+-	required int32 red_raw = 2;
+-	required int32 green_raw = 3;
+-	required int32 blue_raw = 4;
+-	required int32 clear_raw = 5;
+-	required int32 wband_raw = 6;
+-	required float ir_ratio = 7;
+-	required float x = 8;
+-	required float y = 9;
+-	required float lux = 10;
+-	required float als_gain = 11;
+-	required float a_time = 12;
++	repeated float data = 1 [packed = true];
++	optional int32 accuracy = 2;
+ }
+--- a/src/libssc-sensor-cct.c
++++ b/src/libssc-sensor-cct.c
+@@ -29,7 +29,9 @@
+ 
+ typedef struct {
+ 	SSCSensorCct *sensor;
+-	SscCctResponse sample;
++	gfloat cct;
++	gfloat x;
++	gfloat y;
+ } SignalContext;
+ 
+ static void
+@@ -42,12 +44,10 @@
+ emit_signal (gpointer user_data)
+ {
+ 	SignalContext *ctx = user_data;
+-	SscCctResponse *s = &ctx->sample;
+ 
+ 	g_signal_emit (ctx->sensor, signals[SIGNAL_MEASUREMENT], 0,
+-		       s->cct, s->red_raw, s->green_raw, s->blue_raw,
+-		       s->clear_raw, s->wband_raw, s->ir_ratio, s->x, s->y,
+-		       s->lux, s->als_gain, s->a_time);
++		       ctx->cct, 0, 0, 0, 0, 0, 0.0f, ctx->x, ctx->y,
++		       0.0f, 0.0f, 0.0f);
+ 	return G_SOURCE_REMOVE;
+ }
+ 
+@@ -75,9 +75,17 @@
+ 		g_warning ("Failed to unpack CCT measurement message");
+ 		return;
+ 	}
++	if (msg->n_data < 3) {
++		g_warning ("CCT measurement has %zu values, expected at least 3",
++			   msg->n_data);
++		ssc_cct_response__free_unpacked (msg, NULL);
++		return;
++	}
+ 	ctx = g_slice_new0 (SignalContext);
+ 	ctx->sensor = sensor;
+-	ctx->sample = *msg;
++	ctx->cct = msg->data[0];
++	ctx->x = msg->data[1];
++	ctx->y = msg->data[2];
+ 	g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, emit_signal, ctx,
+ 			 (GDestroyNotify) signal_context_free);
+ 	ssc_cct_response__free_unpacked (msg, NULL);
