@@ -3,7 +3,7 @@
 
 Name:           libssc-nabu
 Version:        0.4.4
-Release:        11.nabu10.test%{?dist}
+Release:        12.nabu11.test%{?dist}
 Summary:        Qualcomm Sensor Core client library for Nabu sensor services
 
 License:        GPL-3.0-or-later
@@ -17,6 +17,7 @@ Patch4:         0005-libssc-add-TCS3701-CCT-sensor-support.patch
 Patch5:         0006-libssc-use-standard-measurement-id-for-CCT.patch
 Patch6:         0007-libssc-decode-packed-CCT-standard-event.patch
 Patch7:         0008-libssc-address-named-light-sensor-data-types.patch
+Patch8:         0009-ssccli-expose-LSM6DSO-temperature-stream.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -91,6 +92,8 @@ grep -F 'repeated float data = 1 [packed = true];' data/ssc-sensor-cct.proto
 grep -F 'ctx->cct = msg->data[0];' src/libssc-sensor-cct.c
 grep -F 'ssc_sensor_light_new_for_data_type_sync' src/libssc-sensor-light.c
 grep -F '"ambient_light_back"' src/libssc-cli.c
+grep -F '"sensor_temperature"' src/libssc-cli.c
+grep -F 'LSM6DSO temperature measurement:' src/libssc-cli.c
 
 %files
 %license LICENSE
@@ -114,6 +117,10 @@ if [ -x /usr/bin/systemctl ]; then
 fi
 
 %changelog
+* Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-12.nabu11.test
+- Expose the LSM6DSO internal temperature stream under its actual Qualcomm SSC
+  data type and print typed Celsius samples through ssccli.
+
 * Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-11.nabu10.test
 - Export the named light constructors through libssc's version script so
   consumers and the diagnostic CLI can link on all supported architectures.
