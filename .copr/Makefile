@@ -22,6 +22,7 @@ srpm:
 		xiaomi-nabu-firmware) url="https://gitlab.postmarketos.org/panpanpanpan/nabu-firmware/-/archive/$$version/nabu-firmware-$$version.tar.gz"; archive="nabu-firmware-$$version.tar.gz" ;; \
 	esac; \
 	command -v curl >/dev/null || dnf install -y curl; \
+	command -v git >/dev/null || dnf install -y git-core; \
 	command -v rpmbuild >/dev/null || dnf install -y rpm-build; \
 	curl -fsSL --retry 3 "$$url" -o "$$archive"; \
 	sha256sum -c UPSTREAM.sha256; \

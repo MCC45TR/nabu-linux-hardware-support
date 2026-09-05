@@ -117,6 +117,7 @@ for package in "${packages[@]}"; do
                 0002-implement-fremove.patch
                 0003-raise-listener-input-limit.patch
                 0004-support-extended-frename.patch
+				0005-keep-listener-alive-on-stale-requests.patch
             )
             ;;
 		libssc-nabu)
@@ -124,6 +125,12 @@ for package in "${packages[@]}"; do
 				0001-libssc-avoid-use-after-free-in-sensor-error-logging.patch
 				0002-libssc-accept-fractional-and-integer-mount-matrices.patch
 				0003-ssccli-probe-arbitrary-data-types.patch
+				0004-libssc-treat-zero-placement-as-unspecified.patch
+				0005-libssc-add-TCS3701-CCT-sensor-support.patch
+				0006-libssc-use-standard-measurement-id-for-CCT.patch
+				0007-libssc-decode-packed-CCT-standard-event.patch
+				0008-libssc-address-named-light-sensor-data-types.patch
+				0009-ssccli-expose-LSM6DSO-temperature-stream.patch
 			)
             ;;
         iio-sensor-proxy-nabu)
@@ -131,6 +138,8 @@ for package in "${packages[@]}"; do
                 0001-WIP-iio-sensor-proxy.c-Do-not-exit-based-on-sensor-e.patch
                 0002-start-initial-sensors-claimed-during-discovery.patch
                 0003-udev-standardize-Nabu-SDSP-orientation.patch
+				0004-iio-sensor-proxy-avoid-SSC-I-O-after-hot-unplug.patch
+				0005-iio-sensor-proxy-fuse-front-and-rear-SSC-light.patch
             )
             ;;
     esac
