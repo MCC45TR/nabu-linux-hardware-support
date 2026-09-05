@@ -11,16 +11,13 @@
 #define IIO_DEVICES_PATH "/sys/bus/iio/devices"
 #define CCT_MIN_KELVIN 1000.0f
 #define CCT_MAX_KELVIN 40000.0f
-#define CCT_STALE_USEC (3 * G_USEC_PER_SEC)
 #define CCT_INVALID_WARNING_USEC (30 * G_USEC_PER_SEC)
 
 typedef struct {
 	GMainLoop *loop;
 	SSCSensorCct *sensor;
 	gchar *iio_cct_path;
-	guint stale_timer_id;
 	gint exit_status;
-	gint64 last_sample_usec;
 	gint64 last_invalid_warning_usec;
 	guint invalid_samples_suppressed;
 } Bridge;
@@ -104,25 +101,6 @@ measurement(SSCSensorCct *sensor, gfloat kelvin,
 	}
 	if (!publish_kelvin(bridge->iio_cct_path, (gint)lroundf(kelvin), &error))
 		g_warning("cannot publish CCT through IIO: %s", error->message);
-	else
-		bridge->last_sample_usec = g_get_monotonic_time();
-}
-
-static gboolean
-check_freshness(gpointer user_data)
-{
-	Bridge *bridge = user_data;
-	g_autoptr(GError) error = NULL;
-
-	if (!bridge->last_sample_usec ||
-	    g_get_monotonic_time() - bridge->last_sample_usec <= CCT_STALE_USEC)
-		return G_SOURCE_CONTINUE;
-	if (!publish_kelvin(bridge->iio_cct_path, 0, &error))
-		g_warning("cannot invalidate stale CCT measurement: %s", error->message);
-	else
-		g_warning("CCT stream became stale; standard IIO value invalidated");
-	bridge->last_sample_usec = 0;
-	return G_SOURCE_CONTINUE;
 }
 
 static void
@@ -179,15 +157,12 @@ main(void)
 		return 1;
 	}
 	bridge.loop = g_main_loop_new(NULL, FALSE);
-	bridge.stale_timer_id = g_timeout_add_seconds(1, check_freshness, &bridge);
 	g_unix_signal_add(SIGTERM, quit_signal, &bridge);
 	g_unix_signal_add(SIGINT, quit_signal, &bridge);
 	g_async_initable_new_async(SSC_TYPE_SENSOR_CCT, G_PRIORITY_DEFAULT,
 		NULL, sensor_ready, &bridge,
 		SSC_SENSOR_DATA_TYPE, "cct_front", NULL);
 	g_main_loop_run(bridge.loop);
-	if (bridge.stale_timer_id)
-		g_source_remove(bridge.stale_timer_id);
 	publish_kelvin(bridge.iio_cct_path, 0, NULL);
 	if (bridge.sensor) {
 		ssc_sensor_cct_close_sync(bridge.sensor, NULL, NULL);

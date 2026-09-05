@@ -20,5 +20,6 @@ separable thresholds on every intended grip edge.
 The companion CCT bridge opens the firmware `cct_front` endpoint through
 libssc, rejects non-finite and out-of-range data, and feeds Kelvin values into
 the kernel's `IIO_COLORTEMP` endpoint. Consumers therefore read the standard
-`in_colortemp_raw` ABI instead of a desktop-specific interface. A three-second
-stream outage invalidates the channel instead of retaining a stale Kelvin value.
+`in_colortemp_raw` ABI instead of a desktop-specific interface. The firmware
+stream is on-change, so the bridge retains the last valid sample until it stops;
+startup and shutdown invalidate the channel explicitly.
