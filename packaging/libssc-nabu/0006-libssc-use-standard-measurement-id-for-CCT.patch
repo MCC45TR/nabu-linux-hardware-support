@@ -1,0 +1,25 @@
+diff --git a/src/libssc-sensor-cct.c b/src/libssc-sensor-cct.c
+index be42f35..aad1801 100644
+--- a/src/libssc-sensor-cct.c
++++ b/src/libssc-sensor-cct.c
+@@ -51,7 +51,7 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high,
+ 		      SSC_SENSOR_UID_LOW, &sensor_uid_low,
+ 		      NULL);
+ 	if (sensor_uid_high != uid_high || sensor_uid_low != uid_low ||
+-	    msg_id != SSC_MSG_REPORT_MEASUREMENT_CCT)
++	    msg_id != SSC_MSG_REPORT_MEASUREMENT)
+ 		return;
+ 
+ 	msg = ssc_cct_response__unpack (NULL, buf->len,
+diff --git a/src/libssc-common-private.h b/src/libssc-common-private.h
+index 4e0adb2..ef20776 100644
+--- a/src/libssc-common-private.h
++++ b/src/libssc-common-private.h
+@@ -34,7 +34,6 @@
+ #define SSC_MSG_REQUEST_GET_ATTRIBUTES			1
+ #define SSC_MSG_RESPONSE_GET_ATTRIBUTES			128
+ #define SSC_MSG_REPORT_MEASUREMENT_PROXIMITY		769
+-#define SSC_MSG_REPORT_MEASUREMENT_CCT			882
+ #define SSC_MSG_REPORT_MEASUREMENT			1025
+ 
+ #define SSC_ACCURACY_UNRELIABLE				0
