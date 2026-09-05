@@ -3,7 +3,7 @@
 
 Name:           libssc-nabu
 Version:        0.4.4
-Release:        7.nabu6.test%{?dist}
+Release:        8.nabu7.test%{?dist}
 Summary:        Qualcomm Sensor Core client library for Nabu sensor services
 
 License:        GPL-3.0-or-later
@@ -103,7 +103,15 @@ grep -F 'required float cct = 1;' data/ssc-sensor-cct.proto
 %dir %{_libexecdir}/installed-tests/%{upstream_name}
 %{_libexecdir}/installed-tests/%{upstream_name}/ssc-server
 
+%posttrans
+if [ -x /usr/bin/systemctl ]; then
+    /usr/bin/systemctl try-restart nabu-cct-iio-bridge.service iio-sensor-proxy.service >/dev/null 2>&1 || :
+fi
+
 %changelog
+* Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-8.nabu7.test
+- Restart Nabu sensor consumers after the corrected CCT decoder is installed.
+
 * Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-7.nabu6.test
 - Decode TCS3701 cct_front reports carried by Qualcomm SSC's standard
   measurement event ID instead of waiting for a non-existent CCT-specific ID.
