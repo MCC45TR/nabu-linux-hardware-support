@@ -1,0 +1,61 @@
+From 31d3ef59ae4b5f5dfc32e5855dd4fe8f10fc7507 Mon Sep 17 00:00:00 2001
+From: mcc45tr <mcc45tr@gmail.com>
+Date: Sat, 5 Sep 2026 11:02:00 +0300
+Subject: [PATCH] iio-sensor-proxy: avoid sensor I/O after hot unplug
+
+FastRPC removal means the remote SSC endpoint has already disappeared.  The
+normal driver_close() path first asks the sensor to stop polling, which issues
+a synchronous RPC and can either crash or block indefinitely after an SLPI
+reset.  Release only local driver resources for a udev remove event; retain the
+normal stop-polling path for orderly service shutdown.
+---
+ src/drivers.h          | 17 +++++++++++++++++
+ src/iio-sensor-proxy.c |  2 +-
+ 2 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/src/drivers.h b/src/drivers.h
+index e42b1b2..8a11f67 100644
+--- a/src/drivers.h
++++ b/src/drivers.h
+@@ -153,6 +153,23 @@ driver_close (SensorDevice *sensor_device)
+ 	driver->close (sensor_device);
+ }
+ 
++/*
++ * A udev remove notification means the backing device is already gone.  In
++ * particular, SSC drivers must not issue a synchronous close RPC to a vanished
++ * FastRPC endpoint.  Driver close methods release their local objects and file
++ * descriptors, which is all that remains useful on this path.
++ */
++static inline void
++driver_close_removed (SensorDevice *sensor_device)
++{
++	SensorDriver *driver;
++
++	g_return_if_fail (sensor_device);
++	g_clear_pointer (&sensor_device->name, g_free);
++	driver = sensor_device->drv;
++	g_return_if_fail (driver);
++	g_return_if_fail (driver->close);
++	driver->close (sensor_device);
++}
++
+ extern SensorDriver iio_buffer_accel;
+ extern SensorDriver iio_poll_accel;
+ extern SensorDriver input_accel;
+diff --git a/src/iio-sensor-proxy.c b/src/iio-sensor-proxy.c
+index b785703..7c40bd9 100644
+--- a/src/iio-sensor-proxy.c
++++ b/src/iio-sensor-proxy.c
+@@ -1035,7 +1035,7 @@ sensor_changes (GUdevClient *client,
+ 					 driver_type_to_str (i),
+ 					 g_udev_device_get_sysfs_path (dev));
+ 
+ 				g_clear_object (&UDEV_DEVICE_FOR_TYPE(i));
+-				driver_close (DEVICE_FOR_TYPE(i));
++				driver_close_removed (DEVICE_FOR_TYPE(i));
+ 				DEVICE_FOR_TYPE(i) = NULL;
+ 				DRIVER_FOR_TYPE(i) = NULL;
+ 
+-- 
+2.55.0

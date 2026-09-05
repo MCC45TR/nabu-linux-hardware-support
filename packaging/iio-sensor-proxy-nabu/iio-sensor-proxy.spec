@@ -3,7 +3,7 @@
 
 Name:           iio-sensor-proxy-nabu
 Version:        3.9
-Release:        113.nabu11.test%{?dist}
+Release:        114.nabu12.test%{?dist}
 Summary:        Nabu IIO sensor service for orientation-aware desktops
 
 # tests/unittest_inspector.py is LGPL-2.1-or-later but it is not packaged
@@ -14,6 +14,7 @@ Source0:        %{url}/-/archive/%{version}/%{upstream_name}-%{version}.tar.gz
 Patch0001:      0001-WIP-iio-sensor-proxy.c-Do-not-exit-based-on-sensor-e.patch
 Patch0002:      0002-start-initial-sensors-claimed-during-discovery.patch
 Patch0003:      0003-udev-standardize-Nabu-SDSP-orientation.patch
+Patch0004:      0004-iio-sensor-proxy-avoid-SSC-I-O-after-hot-unplug.patch
 
 BuildRequires:  meson
 BuildRequires:  gcc
@@ -61,6 +62,15 @@ integration.
 %install
 %meson_install
 
+# Bound shutdown if Qualcomm firmware stops answering synchronous SSC calls.
+# Healthy exits remain graceful and normally complete well below this limit.
+install -d %{buildroot}%{_unitdir}/%{upstream_name}.service.d
+cat > %{buildroot}%{_unitdir}/%{upstream_name}.service.d/30-nabu-bounded-stop.conf <<'EOF'
+[Service]
+TimeoutStopSec=5s
+TimeoutStopFailureMode=terminate
+EOF
+
 %check
 %meson_test
 
@@ -91,6 +101,10 @@ udevadm verify data/80-iio-sensor-proxy.rules
 grep -F 'Finish initial discovery before returning from the bus-acquired' \
     src/iio-sensor-proxy.c
 grep -F 'if (find_sensors (data->client, data))' src/iio-sensor-proxy.c
+grep -F 'driver_close_removed (DEVICE_FOR_TYPE(i));' src/iio-sensor-proxy.c
+grep -F 'FastRPC endpoint' src/drivers.h
+grep -F 'TimeoutStopSec=5s' \
+    %{buildroot}%{_unitdir}/%{upstream_name}.service.d/30-nabu-bounded-stop.conf
 
 %post
 %systemd_post %{upstream_name}.service
@@ -121,6 +135,8 @@ fi
 %{_bindir}/monitor-sensor
 %{_libexecdir}/%{upstream_name}
 %{_unitdir}/%{upstream_name}.service
+%dir %{_unitdir}/%{upstream_name}.service.d
+%{_unitdir}/%{upstream_name}.service.d/30-nabu-bounded-stop.conf
 %{_udevrulesdir}/*-%{upstream_name}.rules
 %{_datadir}/dbus-1/system.d/net.hadess.SensorProxy.conf
 %{_datadir}/polkit-1/actions/net.hadess.SensorProxy.policy
@@ -131,6 +147,10 @@ fi
 %{_datadir}/gtk-doc/html/%{upstream_name}/
 
 %changelog
+* Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-114.nabu12.test
+- Avoid synchronous SSC I/O after a FastRPC hot-unplug event.
+- Bound service shutdown when remote sensor firmware no longer responds.
+
 * Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 3.9-113.nabu11.test
 - Read the Nabu mount matrix directly from the FastRPC kernel sysfs attribute.
 - Remove the lossy udev environment copy that escaped matrix separators.
