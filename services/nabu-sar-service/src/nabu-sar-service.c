@@ -171,9 +171,10 @@ load_configuration(Service *service)
 	g_autoptr(GError) error = NULL;
 
 	service->classifier.enabled = FALSE;
-	service->classifier.channel_mask = 0x5;
-	service->classifier.held_threshold = 500.0f;
-	service->classifier.released_threshold = 250.0f;
+	/* Physical CH0/CH1/CH2 mapping and thresholds are not calibrated. */
+	service->classifier.channel_mask = 0;
+	service->classifier.held_threshold = 0.0f;
+	service->classifier.released_threshold = 0.0f;
 	service->classifier.debounce_samples = 3;
 	service->classifier.candidate_count = 0;
 	service->classifier.state = NABU_SAR_STATE_UNKNOWN;
