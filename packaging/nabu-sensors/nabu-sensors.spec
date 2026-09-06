@@ -2,7 +2,7 @@
 
 Name:           nabu-sensors
 Version:        2026.9.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Unified Qualcomm sensor stack for Xiaomi Pad 5
 License:        GPL-3.0-or-later AND GFDL-1.1-or-later
 URL:            https://github.com/MCC45TR/nabu-linux-hardware-support
@@ -22,6 +22,7 @@ Patch0008:      libssc-0008-libssc-address-named-light-sensor-data-types.patch
 Patch0009:      libssc-0009-ssccli-expose-LSM6DSO-temperature-stream.patch
 Patch0010:      libssc-0010-ssccli-expose-LSM6DSO-motion-detect-events.patch
 Patch0011:      libssc-0011-libssc-support-single-output-sensor-streams.patch
+Patch0012:      libssc-0012-libssc-decode-LSM6DSO-motion-detect-events.patch
 Patch0101:      iio-0001-WIP-iio-sensor-proxy.c-Do-not-exit-based-on-sensor-e.patch
 Patch0102:      iio-0002-start-initial-sensors-claimed-during-discovery.patch
 Patch0103:      iio-0003-udev-standardize-Nabu-SDSP-orientation.patch
@@ -121,6 +122,7 @@ pushd libssc
 %patch -P 9 -p1
 %patch -P 10 -p1
 %patch -P 11 -p1
+%patch -P 12 -p1
 popd
 pushd iio-sensor-proxy-3.9
 git init -q
@@ -186,6 +188,8 @@ EOF
 meson test -C libssc/build --print-errorlogs
 meson test -C iio-sensor-proxy-3.9/build --print-errorlogs
 grep -F 'SSC_STREAM_TYPE_SINGLE_OUTPUT' libssc/src/libssc-sensor.c
+grep -F 'SSC_MSG_REPORT_MOTION_DETECT' libssc/src/libssc-sensor-light.c
+grep -F 'ssc_motion_detect_event__unpack' libssc/src/libssc-sensor-light.c
 grep -F '"ambient_light_back"' iio-sensor-proxy-3.9/src/drv-ssc-light.c
 grep -F 'MIN (rear->intensity, drv_data->published)' iio-sensor-proxy-3.9/src/drv-ssc-light.c
 udevadm verify iio-sensor-proxy-3.9/data/80-iio-sensor-proxy.rules
@@ -240,6 +244,9 @@ fi
 %{_datadir}/gtk-doc/html/iio-sensor-proxy/
 
 %changelog
+* Sun Sep 06 2026 mcc45tr <mcc45tr@gmail.com> - 2026.9.6-2
+- Decode dedicated Qualcomm motion-detect events and expose their true state.
+
 * Sun Sep 06 2026 mcc45tr <mcc45tr@gmail.com> - 2026.9.6-1
 - Consolidate libssc, Python SSC bindings and SensorProxy into one COPR source.
 - Preserve all existing binary package names for transaction-safe DNF updates.

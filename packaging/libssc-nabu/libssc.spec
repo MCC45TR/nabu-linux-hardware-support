@@ -3,7 +3,7 @@
 
 Name:           libssc-nabu
 Version:        0.4.4
-Release:        14.nabu13.test%{?dist}
+Release:        15.nabu14.test%{?dist}
 Summary:        Qualcomm Sensor Core client library for Nabu sensor services
 
 License:        GPL-3.0-or-later
@@ -20,6 +20,7 @@ Patch7:         0008-libssc-address-named-light-sensor-data-types.patch
 Patch8:         0009-ssccli-expose-LSM6DSO-temperature-stream.patch
 Patch9:         0010-ssccli-expose-LSM6DSO-motion-detect-events.patch
 Patch10:        0011-libssc-support-single-output-sensor-streams.patch
+Patch11:        0012-libssc-decode-LSM6DSO-motion-detect-events.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -99,6 +100,8 @@ grep -F 'LSM6DSO temperature measurement:' src/libssc-cli.c
 grep -F '"motion_detect"' src/libssc-cli.c
 grep -F 'LSM6DSO motion-detect event:' src/libssc-cli.c
 grep -F 'SSC_STREAM_TYPE_SINGLE_OUTPUT' src/libssc-sensor.c
+grep -F 'SSC_MSG_REPORT_MOTION_DETECT' src/libssc-sensor-light.c
+grep -F 'ssc_motion_detect_event__unpack' src/libssc-sensor-light.c
 
 %files
 %license LICENSE
@@ -122,6 +125,9 @@ if [ -x /usr/bin/systemctl ]; then
 fi
 
 %changelog
+* Sun Sep 06 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-15.nabu14.test
+- Decode Qualcomm message 771 and publish the LSM6DSO motion-detect state.
+
 * Sat Sep 05 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-14.nabu13.test
 - Support Qualcomm SSC single-output streams and open motion-detect with the
   standard empty on-change configuration request.

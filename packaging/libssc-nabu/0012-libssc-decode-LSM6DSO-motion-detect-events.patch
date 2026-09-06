@@ -1,0 +1,148 @@
+From 9bb07127a30ff559713b269981b2623627414b64 Mon Sep 17 00:00:00 2001
+From: mcc45tr <mcc45tr@gmail.com>
+Date: Sun, 6 Sep 2026 16:10:00 +0300
+Subject: [PATCH] libssc: decode LSM6DSO motion-detect events
+
+The Qualcomm motion-detect service reports its state with message ID 771,
+not the standard sensor measurement ID 1025 used by light sensors.  Decode
+the dedicated protobuf payload and expose disabled, enabled and fired states
+through the existing named sensor callback.
+---
+ data/meson.build                    |  1 +
+ data/ssc-sensor-motion-detect.proto | 13 +++++++++++++
+ src/libssc-cli.c                    | 19 ++++++++++++++++++-
+ src/libssc-common-private.h         |  1 +
+ src/libssc-sensor-light.c           | 25 +++++++++++++++++++++++++
+ 5 files changed, 58 insertions(+), 1 deletion(-)
+ create mode 100644 data/ssc-sensor-motion-detect.proto
+
+diff --git a/data/meson.build b/data/meson.build
+index 152a04f..9afb4d2 100644
+--- a/data/meson.build
++++ b/data/meson.build
+@@ -23,6 +23,7 @@ msgs = [
+   'sensor-suid',
+   'sensor-proximity',
+   'sensor-light',
++  'sensor-motion-detect',
+   'sensor-cct',
+   'sensor-accelerometer',
+   'sensor-magnetometer',
+diff --git a/data/ssc-sensor-motion-detect.proto b/data/ssc-sensor-motion-detect.proto
+new file mode 100644
+index 0000000..d8e4e30
+--- /dev/null
++++ b/data/ssc-sensor-motion-detect.proto
+@@ -0,0 +1,13 @@
++/*
++ * Qualcomm SSC LSM6DSO motion-detect event payload.
++ *
++ * State values used by the firmware are:
++ *   0 - disabled
++ *   1 - enabled
++ *   2 - fired
++ */
++syntax = "proto2";
++
++message SscMotionDetectEvent {
++	required uint32 state = 1;
++}
+diff --git a/src/libssc-cli.c b/src/libssc-cli.c
+index c520b56..693fa1f 100644
+--- a/src/libssc-cli.c
++++ b/src/libssc-cli.c
+@@ -151,7 +151,24 @@ static void temperature_measurement (SSCSensorLight *sensor, gfloat temperature,
+ 
+ static void motion_detect_measurement (SSCSensorLight *sensor, gfloat state, gpointer user_data)
+ {
+-	g_printf ("LSM6DSO motion-detect event: %s (raw=%f)\n", state > 0.0 ? "motion" : "idle", state);
++	const gchar *name;
++
++	switch ((guint)state) {
++	case 0:
++		name = "disabled";
++		break;
++	case 1:
++		name = "enabled";
++		break;
++	case 2:
++		name = "fired";
++		break;
++	default:
++		name = "unknown";
++		break;
++	}
++
++	g_printf ("LSM6DSO motion-detect event: %s (raw=%.0f)\n", name, state);
+ 	fflush(stdout);
+ }
+ 
+diff --git a/src/libssc-common-private.h b/src/libssc-common-private.h
+index 33bcfe6..777fa61 100644
+--- a/src/libssc-common-private.h
++++ b/src/libssc-common-private.h
+@@ -34,6 +34,7 @@
+ #define SSC_MSG_REQUEST_GET_ATTRIBUTES			1
+ #define SSC_MSG_RESPONSE_GET_ATTRIBUTES			128
+ #define SSC_MSG_REPORT_MEASUREMENT_PROXIMITY		769
++#define SSC_MSG_REPORT_MOTION_DETECT			771
+ #define SSC_MSG_REPORT_MEASUREMENT			1025
+ 
+ #define SSC_ACCURACY_UNRELIABLE				0
+diff --git a/src/libssc-sensor-light.c b/src/libssc-sensor-light.c
+index 103ed6b..6f865e5 100644
+--- a/src/libssc-sensor-light.c
++++ b/src/libssc-sensor-light.c
+@@ -20,6 +20,7 @@
+ #include "libssc-common-private.h"
+ #include "ssc-common.pb-c.h"
+ #include "ssc-sensor-light.pb-c.h"
++#include "ssc-sensor-motion-detect.pb-c.h"
+ #include "libssc-sensor-light.h"
+ 
+ enum {
+@@ -61,8 +62,10 @@ static void
+ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid_low, GArray *buf, gpointer user_data)
+ {
+ 	SscLightResponse *msg = NULL;
++	SscMotionDetectEvent *motion_msg = NULL;
+ 	SSCSensorLight *sensor = SSC_SENSOR_LIGHT (user_data);
+ 	SignalContext *ctx = NULL;
++	g_autofree gchar *data_type = NULL;
+ 	guint64 sensor_uid_low;
+ 	guint64 sensor_uid_high;
+ 	gfloat intensity;
+@@ -70,8 +73,30 @@ report_received (SSCClient *self, guint32 msg_id, guint64 uid_high, guint64 uid_
+ 	g_object_get (sensor,
+ 		      SSC_SENSOR_UID_HIGH, &sensor_uid_high,
+ 		      SSC_SENSOR_UID_LOW, &sensor_uid_low,
++		      SSC_SENSOR_DATA_TYPE, &data_type,
+ 		      NULL);
+ 
++	if (sensor_uid_high == uid_high && sensor_uid_low == uid_low &&
++	    g_strcmp0 (data_type, "motion_detect") == 0 &&
++	    msg_id == SSC_MSG_REPORT_MOTION_DETECT) {
++		motion_msg = ssc_motion_detect_event__unpack (
++			NULL, buf->len, (const uint8_t *) buf->data);
++
++		if (motion_msg == NULL) {
++			g_warning ("Failed to unpack motion-detect event message");
++			return;
++		}
++
++		ctx = g_slice_new0 (SignalContext);
++		ctx->sensor = sensor;
++		ctx->intensity = motion_msg->state;
++		g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, emit_signal, ctx,
++				 (GDestroyNotify)signal_context_free);
++
++		ssc_motion_detect_event__free_unpacked (motion_msg, NULL);
++		return;
++	}
++
+ 	if (sensor_uid_high == uid_high && sensor_uid_low == uid_low && msg_id == SSC_MSG_REPORT_MEASUREMENT) {
+ 		msg = ssc_light_response__unpack (NULL, buf->len, (const uint8_t *) buf->data);
+ 
+-- 
+2.53.0
+
