@@ -151,9 +151,16 @@ meson compile -C build %{?_smp_mflags}
 DESTDIR="$PWD/../libssc-stage" meson install -C build
 popd
 
+# Expose the just-built libssc to the second Meson project without applying a
+# global pkg-config sysroot.  A global sysroot also rewrites native GLib tools
+# such as glib-compile-resources into the staging tree.
+install -d libssc-pkgconfig
+cp libssc-stage%{_libdir}/pkgconfig/libssc.pc libssc-pkgconfig/
+sed -i "s|^prefix=.*|prefix=$PWD/libssc-stage%{_prefix}|" \
+    libssc-pkgconfig/libssc.pc
+
 pushd iio-sensor-proxy-3.9
-PKG_CONFIG_SYSROOT_DIR="$PWD/../libssc-stage" \
-PKG_CONFIG_PATH="$PWD/../libssc-stage%{_libdir}/pkgconfig" \
+PKG_CONFIG_PATH="$PWD/../libssc-pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}" \
 CFLAGS='%{optflags}' LDFLAGS='%{build_ldflags}' \
     meson setup build "${common_options[@]}" \
         -Dgtk_doc=true -Dgtk-tests=false -Dssc-support=enabled
