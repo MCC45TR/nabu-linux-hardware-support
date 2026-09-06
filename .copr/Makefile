@@ -7,7 +7,7 @@ srpm:
 	repo_root="$$(cd -- "$$(dirname -- "$$(realpath "$(lastword $(MAKEFILE_LIST))")")/.." && pwd)"; \
 	package_dir="$$(pwd)"; \
 	case "$$(basename "$$package_dir")" in \
-		nabu-sensors) exec ./build-srpm.sh "$(outdir)/rpmbuild" ;; \
+		nabu-sensors) ./build-srpm.sh "$(outdir)/rpmbuild"; cp "$(outdir)"/rpmbuild/SRPMS/*.src.rpm "$(outdir)/"; exit 0 ;; \
 		libssc-nabu) package=libssc-nabu; spec_file=libssc.spec ;; \
 		hexagonrpc-nabu) package=hexagonrpc-nabu; spec_file=hexagonrpc.spec ;; \
 		iio-sensor-proxy-nabu) package=iio-sensor-proxy-nabu; spec_file=iio-sensor-proxy.spec ;; \
