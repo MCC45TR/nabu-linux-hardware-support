@@ -123,11 +123,12 @@ pushd libssc
 %patch -P 11 -p1
 popd
 pushd iio-sensor-proxy-3.9
-%patch -P 101 -p1
-%patch -P 102 -p1
-%patch -P 103 -p1
-%patch -P 104 -p1
-%patch -P 105 -p1
+git init -q
+git config user.name rpm-build
+git config user.email rpm-build@localhost
+git add -A
+git commit -qm 'Upstream baseline'
+git am -q %{PATCH101} %{PATCH102} %{PATCH103} %{PATCH104} %{PATCH105}
 popd
 
 %build
