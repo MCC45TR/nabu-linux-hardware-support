@@ -1,0 +1,70 @@
+From: mcc45tr <mcc45tr@gmail.com>
+Subject: [PATCH] hexagonrpcd: clear listener buffers between requests
+
+The SDSP can submit an invalid-handle request immediately after resume.  The
+existing Nabu listener support returns the protocol error and continues, but
+the successful-request path leaves freed input and output pointers visible to
+the next transaction.  Track the actual returned-buffer count and clear every
+consumed pointer so a stale resume request cannot encode or free old storage.
+
+--- a/hexagonrpcd/listener.c
++++ b/hexagonrpcd/listener.c
+@@ -141,6 +141,7 @@ static int return_for_next_invoke(int fd,
+ 				  uint32_t *rctx,
+ 				  uint32_t *handle,
+ 				  uint32_t *sc,
++				  uint32_t returned_count,
+ 				  const struct fastrpc_io_buffer *returned,
+ 				  struct fastrpc_io_buffer **decoded)
+ {
+@@ -157,7 +158,7 @@ static int return_for_next_invoke(int fd,
+ 		return -1;
+ 	}
+ 
+-	outbufs_len = outbufs_calculate_size(REMOTE_SCALARS_OUTBUFS(*sc), returned);
++	outbufs_len = outbufs_calculate_size(returned_count, returned);
+ 
+ 	if (outbufs_len) {
+ 		outbufs = malloc(outbufs_len);
+@@ -167,7 +168,7 @@ static int return_for_next_invoke(int fd,
+ 			goto err_free_inbufs;
+ 		}
+ 
+-		outbufs_encode(REMOTE_SCALARS_OUTBUFS(*sc), returned, outbufs);
++		outbufs_encode(returned_count, returned, outbufs);
+ 	}
+ 
+ 	ret = adsp_listener_next2(fd,
+@@ -328,12 +329,16 @@ int run_fastrpc_listener(int fd,
+ 	while (!ret) {
+ 		ret = return_for_next_invoke(fd,
+ 					     result, &rctx, &handle, &sc,
++					     n_outbufs,
+ 					     returned, &decoded);
+ 		if (ret)
+ 			break;
+ 
+-		if (returned != NULL)
++		if (returned != NULL) {
+ 			iobuf_free(n_outbufs, returned);
++			returned = NULL;
++			n_outbufs = 0;
++		}
+ 
+ 		ret = invoke_requested_procedure(n_ifaces, ifaces,
+ 						 handle, sc, &result,
+@@ -357,10 +362,12 @@ int run_fastrpc_listener(int fd,
+ 			continue;
+ 		}
+ 
+-		if (decoded != NULL)
++		if (decoded != NULL) {
+ 			iobuf_free(REMOTE_SCALARS_INBUFS(sc), decoded);
++			decoded = NULL;
++		}
+ 
+-		n_outbufs = REMOTE_SCALARS_OUTBUFS(sc);
++		n_outbufs = returned ? REMOTE_SCALARS_OUTBUFS(sc) : 0;
+ 	}
+ 
+ 	return ret;
