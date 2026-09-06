@@ -188,10 +188,13 @@ load_configuration(Service *service)
 	service->classifier.held_threshold = g_key_file_get_double(key_file, "Mapping", "HeldThreshold", NULL);
 	service->classifier.released_threshold = g_key_file_get_double(key_file, "Mapping", "ReleasedThreshold", NULL);
 	service->classifier.debounce_samples = g_key_file_get_uint64(key_file, "Mapping", "DebounceSamples", NULL);
-	if (service->classifier.held_threshold <= service->classifier.released_threshold ||
-	    !service->classifier.channel_mask) {
+	if (service->classifier.enabled &&
+	    (service->classifier.held_threshold <= service->classifier.released_threshold ||
+	     !service->classifier.channel_mask)) {
 		g_warning("invalid SAR mapping; disabling classifier");
 		service->classifier.enabled = FALSE;
+	} else if (!service->classifier.enabled) {
+		g_message("SAR mapping disabled by configuration; raw telemetry remains available");
 	}
 }
 

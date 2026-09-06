@@ -1,6 +1,12 @@
 #!/usr/bin/bash
 set -euo pipefail
 
+# The phase and duration fields are a machine-readable interface.  In locales
+# with non-English collation (notably tr_TR.UTF-8), Bash's [a-z] range does not
+# necessarily contain every ASCII letter.  Keep validation and CSV formatting
+# deterministic regardless of the desktop language.
+export LC_ALL=C
+
 phase=${1:-}
 seconds=${2:-10}
 output=${3:-/dev/stdout}
