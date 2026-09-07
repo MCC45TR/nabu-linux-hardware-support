@@ -6,6 +6,13 @@ the kernel LED-class `max_brightness` value for the two fixed Nabu torch
 channels. The helper cannot select another sysfs path and does not expose the
 high-current camera strobe operation.
 
+If a camera service has the kernel flash subdevice open, the LED class rejects
+sysfs writes with `EBUSY`. In that case the helper discovers only the fixed
+`white:flash` and `yellow:flash` V4L2 subdevices and applies the low-current
+torch controls through V4L2. It refuses to replace a flash mode already armed
+by a camera and always rolls all matched torch channels back off after a
+partial failure.
+
 USB-C role status is available with `nabu-usb-role status`. Role changes use
 `pkexec /usr/libexec/nabu-usb-role set data host|device` or
 `pkexec /usr/libexec/nabu-usb-role set power source|sink`; the kernel TCPM

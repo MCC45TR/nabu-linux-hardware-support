@@ -3,6 +3,18 @@
 set -euo pipefail
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+flashlight_test_bin="$(mktemp)"
+trap 'rm -f -- "$flashlight_test_bin"' EXIT
+
+"${CC:-cc}" -std=c11 -Wall -Wextra -Werror -D_GNU_SOURCE \
+    -o "$flashlight_test_bin" \
+    "$repo_root/desktop/nabu-tablet-controls/src/nabu-flashlight.c"
+grep -Fq 'V4L2_CID_FLASH_TORCH_INTENSITY' \
+    "$repo_root/desktop/nabu-tablet-controls/src/nabu-flashlight.c"
+grep -Fq 'mode == V4L2_FLASH_LED_MODE_FLASH' \
+    "$repo_root/desktop/nabu-tablet-controls/src/nabu-flashlight.c"
+grep -Fq 'v4l2_errno == ENODEV ? sysfs_errno : v4l2_errno' \
+    "$repo_root/desktop/nabu-tablet-controls/src/nabu-flashlight.c"
 
 for profile in \
     "$repo_root/plasma/rotation-60hz/user/kwinoutputconfig.json" \

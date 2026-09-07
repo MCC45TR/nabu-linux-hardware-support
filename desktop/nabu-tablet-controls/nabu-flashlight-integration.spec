@@ -1,6 +1,6 @@
 Name:           nabu-flashlight-integration
 Version:        1.0.0
-Release:        15%{?dist}
+Release:        16%{?dist}
 Summary:        Xiaomi Pad 5 tablet controls for Plasma and GNOME
 License:        GPL-3.0-or-later
 URL:            https://copr.fedorainfracloud.org/coprs/mcc45tr/nabu-linux/
@@ -138,6 +138,8 @@ grep -Fq '/usr/libexec/nabu-usb-role' \
     %{buildroot}%{_datadir}/polkit-1/actions/org.senemos.nabu.tablet-control.policy
 python3 -m json.tool plasma/metadata.json >/dev/null
 python3 -m json.tool gnome/metadata.json >/dev/null
+grep -Fq 'V4L2_CID_FLASH_TORCH_INTENSITY' src/nabu-flashlight.c
+grep -Fq 'mode == V4L2_FLASH_LED_MODE_FLASH' src/nabu-flashlight.c
 glib-compile-schemas --strict --dry-run gnome/schemas
 sh -n gnome/integration/nabu-gnome-extension-enable
 find translations -name '*.po' -exec msgfmt --check --check-format -o /dev/null {} \;
@@ -183,6 +185,10 @@ test "$(find translations -name '*.po' | wc -l)" = 27
 %{_userunitdir}/graphical-session.target.wants/nabu-gnome-extension-enable.service
 
 %changelog
+* Mon Sep 07 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-16
+- Fall back to V4L2 torch controls while camera discovery owns the LED sysfs node.
+- Preserve camera flash mode and roll back coordinated channels on partial failure.
+
 * Wed Sep 02 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-15
 - Use one-column native Quick Settings tiles and place sound below brightness.
 - Apply flashlight levels on redraw, remember the last level while off and animate its slider.
