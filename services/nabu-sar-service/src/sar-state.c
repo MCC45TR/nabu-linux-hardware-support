@@ -54,3 +54,16 @@ nabu_sar_should_inhibit(gboolean hold_awake_enabled,
 	return hold_awake_enabled && mapping_enabled && sample_fresh &&
 		state == NABU_SAR_STATE_HELD;
 }
+
+gboolean
+nabu_sar_should_publish(gboolean was_sample_fresh,
+			NabuSarState previous_state,
+			NabuSarState state,
+			gint64 now_usec,
+			gint64 last_publish_usec,
+			gint64 interval_usec)
+{
+	return !was_sample_fresh || previous_state != state ||
+		last_publish_usec <= 0 || interval_usec <= 0 ||
+		now_usec - last_publish_usec >= interval_usec;
+}

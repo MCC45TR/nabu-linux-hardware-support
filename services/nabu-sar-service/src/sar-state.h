@@ -25,3 +25,9 @@ gboolean nabu_sar_should_inhibit(gboolean hold_awake_enabled,
 				 gboolean mapping_enabled,
 				 gboolean sample_fresh,
 				 NabuSarState state);
+gboolean nabu_sar_should_publish(gboolean was_sample_fresh,
+				 NabuSarState previous_state,
+				 NabuSarState state,
+				 gint64 now_usec,
+				 gint64 last_publish_usec,
+				 gint64 interval_usec);

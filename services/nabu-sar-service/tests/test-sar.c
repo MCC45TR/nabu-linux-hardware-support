@@ -57,6 +57,19 @@ test_inhibitor_gate_requires_every_condition(void)
 	g_assert_true(nabu_sar_should_inhibit(TRUE, TRUE, TRUE, NABU_SAR_STATE_HELD));
 }
 
+static void
+test_publish_gate_bounds_unchanged_telemetry(void)
+{
+	g_assert_true(nabu_sar_should_publish(FALSE, NABU_SAR_STATE_UNKNOWN,
+			NABU_SAR_STATE_UNKNOWN, 100, 90, 1000));
+	g_assert_true(nabu_sar_should_publish(TRUE, NABU_SAR_STATE_RELEASED,
+			NABU_SAR_STATE_HELD, 100, 90, 1000));
+	g_assert_false(nabu_sar_should_publish(TRUE, NABU_SAR_STATE_HELD,
+			NABU_SAR_STATE_HELD, 1099, 100, 1000));
+	g_assert_true(nabu_sar_should_publish(TRUE, NABU_SAR_STATE_HELD,
+			NABU_SAR_STATE_HELD, 1100, 100, 1000));
+}
+
 int
 main(int argc, char **argv)
 {
@@ -64,5 +77,7 @@ main(int argc, char **argv)
 	g_test_add_func("/nabu-sar/parser/live-shape", test_parse_live_shape);
 	g_test_add_func("/nabu-sar/classifier/fail-closed", test_classifier_is_fail_closed);
 	g_test_add_func("/nabu-sar/inhibitor/all-gates", test_inhibitor_gate_requires_every_condition);
+	g_test_add_func("/nabu-sar/publish/bounded-unchanged-telemetry",
+			test_publish_gate_bounds_unchanged_telemetry);
 	return g_test_run();
 }

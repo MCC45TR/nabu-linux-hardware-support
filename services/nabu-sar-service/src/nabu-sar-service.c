@@ -14,6 +14,7 @@
 #define HOLD_AWAKE_STATE_PATH "/var/lib/nabu-sar/hold-awake-enabled"
 #define SAMPLE_STALE_USEC (3 * G_USEC_PER_SEC)
 #define INHIBITOR_RETRY_USEC (5 * G_USEC_PER_SEC)
+#define PROPERTIES_EMIT_INTERVAL_USEC G_USEC_PER_SEC
 
 typedef struct {
 	GMainLoop *loop;
@@ -35,6 +36,7 @@ typedef struct {
 	gint inhibitor_fd;
 	gint64 last_sample_usec;
 	gint64 last_inhibitor_attempt_usec;
+	gint64 last_properties_emit_usec;
 	NabuSarSample sample;
 	NabuSarClassifier classifier;
 } Service;
@@ -91,6 +93,7 @@ emit_properties_changed(Service *service)
 	g_dbus_connection_emit_signal(service->bus, NULL, OBJECT_PATH,
 		"org.freedesktop.DBus.Properties", "PropertiesChanged",
 		g_variant_new("(sa{sv}as)", INTERFACE_NAME, &changed, &invalidated), NULL);
+	service->last_properties_emit_usec = g_get_monotonic_time();
 }
 
 static void
@@ -258,17 +261,23 @@ report_received(gpointer client, guint32 msg_id, guint64 uid_high,
 {
 	Service *s = user_data;
 	g_autoptr(GError) error = NULL;
+	gboolean was_sample_fresh = s->sample_fresh;
+	NabuSarState previous_state = s->classifier.state;
 	if (msg_id != SSC_MSG_REPORT_MEASUREMENT || uid_high != s->uid_high || uid_low != s->uid_low)
 		return;
 	if (!nabu_sar_parse_report((const guint8 *)buffer->data, buffer->len, &s->sample, &error)) {
 		g_warning("cannot decode ADUX1050 report: %s", error->message);
 		return;
 	}
-	s->last_sample_usec = g_get_monotonic_time();
+	gint64 now_usec = g_get_monotonic_time();
+	s->last_sample_usec = now_usec;
 	s->sample_fresh = TRUE;
 	nabu_sar_classifier_update(&s->classifier, &s->sample);
 	update_inhibitor(s);
-	emit_properties_changed(s);
+	if (nabu_sar_should_publish(was_sample_fresh, previous_state,
+		    s->classifier.state, now_usec, s->last_properties_emit_usec,
+		    PROPERTIES_EMIT_INTERVAL_USEC))
+		emit_properties_changed(s);
 }
 
 static gboolean

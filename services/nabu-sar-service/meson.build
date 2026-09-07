@@ -1,4 +1,4 @@
-project('nabu-sar-service', 'c', version: '0.2.4',
+project('nabu-sar-service', 'c', version: '0.2.5',
   default_options: ['c_std=gnu11', 'warning_level=3'])
 
 glib = dependency('glib-2.0')
