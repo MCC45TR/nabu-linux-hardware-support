@@ -7,9 +7,17 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#ifndef SYSTEMCTL_PATH
+#define SYSTEMCTL_PATH "/usr/bin/systemctl"
+#endif
+#ifndef NABU_EFFECTIVE_UID
+#define NABU_EFFECTIVE_UID() geteuid()
+#endif
+
 static const char *const data_role = "/sys/class/typec/port0/data_role";
 static const char *const power_role = "/sys/class/typec/port0/power_role";
 static const char *const port_type = "/sys/class/typec/port0/port_type";
+static const char *const gadget_unit = "nabu-usb-gadget.service";
 
 static int read_value(const char *path, char *value, size_t size)
 {
@@ -42,7 +50,7 @@ static int write_role(const char *path, const char *role)
 	int fd;
 	ssize_t length = (ssize_t)strlen(role);
 
-	if (geteuid() != 0) {
+	if (NABU_EFFECTIVE_UID() != 0) {
 		fprintf(stderr, "USB role changes require polkit authorization\n");
 		return 1;
 	}
@@ -86,23 +94,66 @@ static int set_power_policy(const char *role)
 	return 2;
 }
 
+static int gadget_unit_load_state(char *value, size_t size)
+{
+	int pipefd[2];
+	int status;
+	pid_t child;
+	ssize_t len;
+
+	if (size < 2 || pipe(pipefd) < 0)
+		return -1;
+	child = fork();
+	if (child < 0) {
+		close(pipefd[0]);
+		close(pipefd[1]);
+		return -1;
+	}
+	if (child == 0) {
+		close(pipefd[0]);
+		if (dup2(pipefd[1], STDOUT_FILENO) < 0)
+			_exit(127);
+		close(pipefd[1]);
+		execl(SYSTEMCTL_PATH, "systemctl", "show",
+		      "--property=LoadState", "--value", "--",
+		      gadget_unit, (char *)NULL);
+		_exit(127);
+	}
+	close(pipefd[1]);
+	len = read(pipefd[0], value, size - 1);
+	close(pipefd[0]);
+	if (waitpid(child, &status, 0) < 0 || !WIFEXITED(status) ||
+	    WEXITSTATUS(status) != 0 || len <= 0)
+		return -1;
+	while (len > 0 && (value[len - 1] == '\n' || value[len - 1] == '\r'))
+		len--;
+	value[len] = '\0';
+	return 0;
+}
+
 static int gadget_service(const char *action)
 {
+	char load_state[32];
 	pid_t child;
 	int status;
 
-	if (geteuid() != 0) {
+	if (NABU_EFFECTIVE_UID() != 0) {
 		fprintf(stderr, "USB mode changes require polkit authorization\n");
 		return 1;
 	}
+	/* A host-only installation has nothing to tear down.  Keep every other
+	 * systemctl failure fatal so an active gadget is never ignored. */
+	if (!strcmp(action, "stop") &&
+	    gadget_unit_load_state(load_state, sizeof(load_state)) == 0 &&
+	    !strcmp(load_state, "not-found"))
+		return 0;
 	child = fork();
 	if (child < 0) {
 		fprintf(stderr, "cannot start the USB mode manager: %s\n", strerror(errno));
 		return 1;
 	}
 	if (child == 0) {
-		execl("/usr/bin/systemctl", "systemctl", action,
-		      "nabu-usb-gadget.service", (char *)NULL);
+		execl(SYSTEMCTL_PATH, "systemctl", action, gadget_unit, (char *)NULL);
 		_exit(127);
 	}
 	if (waitpid(child, &status, 0) < 0 || !WIFEXITED(status) ||

@@ -1,6 +1,6 @@
 Name:           nabu-flashlight-integration
 Version:        1.0.0
-Release:        16%{?dist}
+Release:        17%{?dist}
 Summary:        Xiaomi Pad 5 tablet controls for Plasma and GNOME
 License:        GPL-3.0-or-later
 URL:            https://copr.fedorainfracloud.org/coprs/mcc45tr/nabu-linux/
@@ -140,6 +140,7 @@ python3 -m json.tool plasma/metadata.json >/dev/null
 python3 -m json.tool gnome/metadata.json >/dev/null
 grep -Fq 'V4L2_CID_FLASH_TORCH_INTENSITY' src/nabu-flashlight.c
 grep -Fq 'mode == V4L2_FLASH_LED_MODE_FLASH' src/nabu-flashlight.c
+bash tests/test-usb-role.sh
 glib-compile-schemas --strict --dry-run gnome/schemas
 sh -n gnome/integration/nabu-gnome-extension-enable
 find translations -name '*.po' -exec msgfmt --check --check-format -o /dev/null {} \;
@@ -185,6 +186,10 @@ test "$(find translations -name '*.po' | wc -l)" = 27
 %{_userunitdir}/graphical-session.target.wants/nabu-gnome-extension-enable.service
 
 %changelog
+* Tue Sep 08 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-17
+- Allow USB host and off modes when the optional gadget service is not installed.
+- Keep failures fatal when an installed gadget service cannot be stopped.
+
 * Mon Sep 07 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-16
 - Fall back to V4L2 torch controls while camera discovery owns the LED sysfs node.
 - Preserve camera flash mode and roll back coordinated channels on partial failure.

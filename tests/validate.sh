@@ -15,6 +15,7 @@ grep -Fq 'mode == V4L2_FLASH_LED_MODE_FLASH' \
     "$repo_root/desktop/nabu-tablet-controls/src/nabu-flashlight.c"
 grep -Fq 'v4l2_errno == ENODEV ? sysfs_errno : v4l2_errno' \
     "$repo_root/desktop/nabu-tablet-controls/src/nabu-flashlight.c"
+bash "$repo_root/desktop/nabu-tablet-controls/tests/test-usb-role.sh"
 
 for profile in \
     "$repo_root/plasma/rotation-60hz/user/kwinoutputconfig.json" \

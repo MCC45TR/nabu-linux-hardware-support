@@ -25,7 +25,10 @@ at `10.55.0.1`, and a login-protected ACM serial console. It starts OpenSSH for
 the normal shell channel over USB and stops it again when sharing is disabled
 if the service was not already running. `set mode host` stops and removes
 the owned `senemos-nabu` ConfigFS gadget before requesting the host data role;
-it does not change the independently controlled USB power role.
+it does not change the independently controlled USB power role. On host-only
+installations where `nabu-usb-gadget.service` is not shipped, host and off mode
+treat the already-absent gadget as stopped. An installed gadget service that
+fails to stop remains a hard error and blocks the role change.
 
 The profile reserves a FunctionFS ADB function, but enables it only when a
 Linux `/usr/sbin/adbd` is installed and `/adb_keys` contains at least one
