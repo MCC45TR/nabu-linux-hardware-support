@@ -1,6 +1,6 @@
 Name:           nabu-flashlight-integration
 Version:        1.0.0
-Release:        17%{?dist}
+Release:        18%{?dist}
 Summary:        Xiaomi Pad 5 tablet controls for Plasma and GNOME
 License:        GPL-3.0-or-later
 URL:            https://copr.fedorainfracloud.org/coprs/mcc45tr/nabu-linux/
@@ -186,6 +186,10 @@ test "$(find translations -name '*.po' | wc -l)" = 27
 %{_userunitdir}/graphical-session.target.wants/nabu-gnome-extension-enable.service
 
 %changelog
+* Tue Sep 08 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-18
+- Apply source, sink and automatic USB power choices as Type-C port policy.
+- Show the selected policy in Plasma even before a peripheral is attached.
+
 * Tue Sep 08 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-17
 - Allow USB host and off modes when the optional gadget service is not installed.
 - Keep failures fatal when an installed gadget service cannot be stopped.

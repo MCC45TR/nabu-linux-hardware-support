@@ -10,6 +10,8 @@ fake_systemctl="$test_root/systemctl"
 test_binary="$test_root/nabu-usb-role"
 call_log="$test_root/calls"
 
+grep -Fq 'return write_role(port_type, role);' "$source_root/src/nabu-usb-role.c"
+
 printf '%s\n' \
     '#!/usr/bin/env bash' \
     'set -u' \

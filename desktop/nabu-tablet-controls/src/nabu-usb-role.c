@@ -89,7 +89,7 @@ static int set_power_policy(const char *role)
 	if (!strcmp(role, "auto"))
 		return write_role(port_type, "dual");
 	if (!strcmp(role, "source") || !strcmp(role, "sink"))
-		return write_role(power_role, role);
+		return write_role(port_type, role);
 	fprintf(stderr, "unsupported USB power policy\n");
 	return 2;
 }

@@ -15,8 +15,10 @@ partial failure.
 
 USB-C role status is available with `nabu-usb-role status`. Role changes use
 `pkexec /usr/libexec/nabu-usb-role set data host|device` or
-`pkexec /usr/libexec/nabu-usb-role set power source|sink`; the kernel TCPM
-driver and the connected partner may reject a role swap.
+`pkexec /usr/libexec/nabu-usb-role set power auto|source|sink`. These choices
+write the Type-C `port_type` policy, so source mode can be prepared before an
+ESP32 or other peripheral is attached. The kernel TCPM driver may still reject
+a policy that the port hardware cannot support.
 
 `pkexec /usr/libexec/nabu-usb-role set mode gadget` switches the data role to
 device and starts `nabu-usb-gadget.service`. The composite gadget exports the

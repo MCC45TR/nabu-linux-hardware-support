@@ -18,6 +18,7 @@ PlasmoidItem {
     property bool lidClosed: false
     property string usbDataRole: "unknown"
     property string usbPowerRole: "unknown"
+    property string usbPowerPolicy: "dual"
     property string usbGadgetState: "inactive"
     property string usbMtpState: "unavailable"
     property string usbAdbState: "unavailable"
@@ -219,6 +220,7 @@ PlasmoidItem {
             if (succeeded) {
                 usbDataRole = selectedRole(output, "data")
                 usbPowerRole = selectedRole(output, "power")
+                usbPowerPolicy = selectedRole(output, "type")
             }
         } else if (kind === "usb-gadget-status" && succeeded) {
             usbGadgetState = statusValue(output, "gadget", "inactive")
@@ -656,15 +658,16 @@ PlasmoidItem {
 
             ControlRow {
                 title: i18n("USB power role")
-                description: root.usbPowerRole === "source" ? i18n("Supplying power") : i18n("Power sink")
+                description: root.usbPowerPolicy === "source" ? i18n("Power source")
+                    : root.usbPowerPolicy === "sink" ? i18n("Power sink") : i18n("Automatic")
                 iconName: "battery-charging"
                 capabilityKnown: root.usbKnown
                 available: root.usbAvailable
                 busy: root.usbPowerBusy
                 action: Component {
                     PlasmaComponents.Button {
-                        text: root.usbPowerRole === "source" ? i18n("Use sink") : i18n("Supply power")
-                        onClicked: root.setUsbPowerRole(root.usbPowerRole === "source" ? "sink" : "source")
+                        text: root.usbPowerPolicy === "source" ? i18n("Use sink") : i18n("Supply power")
+                        onClicked: root.setUsbPowerRole(root.usbPowerPolicy === "source" ? "sink" : "source")
                     }
                 }
             }
