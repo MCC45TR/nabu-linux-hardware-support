@@ -1,6 +1,6 @@
 Name:           nabu-hardware-provenance
 Version:        1.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Privacy-preserving hardware provenance for Xiaomi Pad 5
 License:        MIT
 URL:            https://github.com/MCC45TR/nabu-linux-hardware-support
@@ -48,6 +48,8 @@ grep -F 'DeviceAllow=block-blkext r' nabu-hardware-provenance.service
 grep -F 'CapabilityBoundingSet=' nabu-hardware-provenance.service
 grep -F 'User=nabu-provenance' nabu-hardware-provenance.service
 udevadm verify --resolve-names=late 70-nabu-hardware-provenance.rules
+grep -F 'ENV{SYSTEMD_WANTS}+="nabu-hardware-provenance.service"' \
+    70-nabu-hardware-provenance.rules
 
 %pre
 %sysusers_create_package nabu-hardware-provenance %{SOURCE1}
@@ -78,6 +80,11 @@ fi
 %{_udevrulesdir}/70-nabu-hardware-provenance.rules
 
 %changelog
+* Sun Sep 13 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-2
+- Trigger the bounded read-only inventory when the complete DTBO A/B pair is
+  enumerated, while retaining the Linux-only multi-user fallback.
+- Admit Nabu's blkext partition major read-only beneath the per-node DAC gate.
+
 * Sun Sep 13 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-1
 - Add fail-closed Android DTBO A/B inventory and explicit slot confidence.
 - Report packaged DSP/radio firmware and camera NVMEM metadata without secrets.

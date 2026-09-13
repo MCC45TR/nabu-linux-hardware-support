@@ -1,4 +1,6 @@
 # SPDX-License-Identifier: MIT
 # Only the dedicated inventory account may read Android DTBO references.
 ACTION!="remove", SUBSYSTEM=="block", ENV{DEVTYPE}=="partition", ENV{ID_PART_ENTRY_NAME}=="dtbo_a", OWNER="root", GROUP="nabu-provenance", MODE="0640"
-ACTION!="remove", SUBSYSTEM=="block", ENV{DEVTYPE}=="partition", ENV{ID_PART_ENTRY_NAME}=="dtbo_b", OWNER="root", GROUP="nabu-provenance", MODE="0640"
+# On Nabu, dtbo_b is enumerated after dtbo_a.  Start the bounded inventory as
+# soon as the pair is present; multi-user.target remains the Linux-only fallback.
+ACTION!="remove", SUBSYSTEM=="block", ENV{DEVTYPE}=="partition", ENV{ID_PART_ENTRY_NAME}=="dtbo_b", OWNER="root", GROUP="nabu-provenance", MODE="0640", TAG+="systemd", ENV{SYSTEMD_WANTS}+="nabu-hardware-provenance.service"
