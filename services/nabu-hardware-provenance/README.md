@@ -23,12 +23,16 @@ Android partition importer, or a device-tree overlay loader.
 
 The system service adds independent enforcement layers.  A dedicated
 `nabu-provenance` account receives Unix read permission only for DTBO A/B.  The
-device cgroup allows every Nabu SCSI/UFS `sd` major for reads only; this covers
-the observed `sda`-`sdf` LUNs without recording unstable raw paths or numeric
-major/minor values.  Capabilities are empty, the filesystem is protected,
+device cgroup allows both the Nabu SCSI/UFS `sd` LUN class and its dynamic
+`blkext` partition class for reads only.  Capabilities are empty, the filesystem is protected,
 networking is denied, and mount/reboot interfaces are outside the syscall
 allow-list.  The broad device-class read gate is therefore narrowed by the
 dedicated account's per-node permissions.
+
+On Android-capable layouts, udev requests the service as soon as `dtbo_b` is
+enumerated (after `dtbo_a` on Nabu).  The normal multi-user preset remains a
+fallback, so Linux-only installations still inventory packaged firmware and
+kernel NVMEM providers without requiring Android partitions.
 
 ## Slot decision
 

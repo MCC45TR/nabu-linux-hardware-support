@@ -36,6 +36,8 @@ grep -Fq 'IPAddressDeny=any' \
     "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
 udevadm verify --resolve-names=late \
     "$repo_root/services/nabu-hardware-provenance/70-nabu-hardware-provenance.rules"
+grep -Fq 'ENV{SYSTEMD_WANTS}+="nabu-hardware-provenance.service"' \
+    "$repo_root/services/nabu-hardware-provenance/70-nabu-hardware-provenance.rules"
 
 for profile in \
     "$repo_root/plasma/rotation-60hz/user/kwinoutputconfig.json" \
