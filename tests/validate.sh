@@ -4,7 +4,8 @@ set -euo pipefail
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 flashlight_test_bin="$(mktemp)"
-trap 'rm -f -- "$flashlight_test_bin"' EXIT
+provenance_test_bin="$(mktemp)"
+trap 'rm -f -- "$flashlight_test_bin" "$provenance_test_bin"' EXIT
 
 "${CC:-cc}" -std=c11 -Wall -Wextra -Werror -D_GNU_SOURCE \
     -o "$flashlight_test_bin" \
@@ -16,12 +17,14 @@ grep -Fq 'mode == V4L2_FLASH_LED_MODE_FLASH' \
 grep -Fq 'v4l2_errno == ENODEV ? sysfs_errno : v4l2_errno' \
     "$repo_root/desktop/nabu-tablet-controls/src/nabu-flashlight.c"
 bash "$repo_root/desktop/nabu-tablet-controls/tests/test-usb-role.sh"
-python3 -m unittest discover \
+"${CXX:-c++}" -std=c++20 -Wall -Wextra -Werror \
+    $(pkg-config --cflags Qt6Core) \
+    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.cpp" \
+    -o "$provenance_test_bin" $(pkg-config --libs Qt6Core)
+NABU_PROVENANCE_BINARY="$provenance_test_bin" python3 -m unittest discover \
     -s "$repo_root/services/nabu-hardware-provenance/tests" -v
-python3 -m py_compile \
-    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance"
-grep -Fq 'os.O_RDONLY | os.O_CLOEXEC' \
-    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance"
+grep -Fq 'O_RDONLY | O_CLOEXEC | O_NOFOLLOW' \
+    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.cpp"
 grep -Fq 'DevicePolicy=closed' \
     "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
 grep -Fq 'DeviceAllow=block-sd r' \

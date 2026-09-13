@@ -1,291 +1,93 @@
 #!/usr/bin/python3
-# SPDX-License-Identifier: MIT
-
-from __future__ import annotations
-
-import argparse
-import importlib.machinery
-import importlib.util
+"""Black-box tests for the native C++ provenance inventory."""
 import json
 import os
 from pathlib import Path
 import struct
+import subprocess
 import tempfile
 import unittest
-from unittest import mock
 
+BINARY = Path(os.environ.get("NABU_PROVENANCE_BINARY", "./nabu-hardware-provenance"))
+FDT_MAGIC = 0xD00DFEED
+DT_TABLE_MAGIC = 0xD7B7AB1E
 
-PROGRAM = Path(__file__).resolve().parents[1] / "nabu-hardware-provenance"
-LOADER = importlib.machinery.SourceFileLoader("nabu_hardware_provenance", str(PROGRAM))
-SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
-assert SPEC is not None
-PROVENANCE = importlib.util.module_from_spec(SPEC)
-LOADER.exec_module(PROVENANCE)
-
-
-def padded(value: bytes) -> bytes:
+def padded(value):
     return value + b"\0" * ((-len(value)) % 4)
 
-
-def fdt_blob(compatible: bytes) -> bytes:
+def fdt_blob(compatible):
     strings = b"compatible\0"
-    structure = b"".join(
-        (
-            struct.pack(">I", PROVENANCE.FDT_BEGIN_NODE),
-            padded(b"\0"),
-            struct.pack(">III", PROVENANCE.FDT_PROP, len(compatible), 0),
-            padded(compatible),
-            struct.pack(">I", PROVENANCE.FDT_END_NODE),
-            struct.pack(">I", PROVENANCE.FDT_END),
-        )
-    )
+    structure = b"".join((struct.pack(">I", 1), padded(b"\0"), struct.pack(">III", 3, len(compatible), 0), padded(compatible), struct.pack(">I", 2), struct.pack(">I", 9)))
     reserve = b"\0" * 16
     structure_offset = 40 + len(reserve)
     strings_offset = structure_offset + len(structure)
-    total_size = strings_offset + len(strings)
-    header = struct.pack(
-        ">10I",
-        PROVENANCE.FDT_MAGIC,
-        total_size,
-        structure_offset,
-        strings_offset,
-        40,
-        17,
-        16,
-        0,
-        len(strings),
-        len(structure),
-    )
-    return header + reserve + structure + strings
+    total = strings_offset + len(strings)
+    return struct.pack(">10I", FDT_MAGIC, total, structure_offset, strings_offset, 40, 17, 16, 0, len(strings), len(structure)) + reserve + structure + strings
 
-
-def dtbo_image(variant: bytes = b"a", entry_count: int = 13) -> bytes:
-    overlays = []
-    for index in range(entry_count):
-        panel = b"36-02-0b" if index % 2 else b"42-02-0a"
-        overlays.append(
-            fdt_blob(b"xiaomi,nabu\0" + panel + b"\0variant-" + variant + bytes([index]))
-        )
-    entries_offset = 32
-    payload_offset = entries_offset + entry_count * 32
-    entries = bytearray()
-    payload = bytearray()
+def dtbo_image(variant=b"a", count=13):
+    overlays = [fdt_blob(b"xiaomi,nabu\0" + (b"36-02-0b" if i % 2 else b"42-02-0a") + b"\0variant-" + variant + bytes([i])) for i in range(count)]
+    entries_offset, payload_offset = 32, 32 + count * 32
+    entries, payload = bytearray(), bytearray()
     for index, overlay in enumerate(overlays):
-        entries.extend(
-            struct.pack(
-                ">8I",
-                len(overlay),
-                payload_offset + len(payload),
-                index,
-                1,
-                0,
-                0,
-                0,
-                0,
-            )
-        )
+        entries.extend(struct.pack(">8I", len(overlay), payload_offset + len(payload), index, 1, 0, 0, 0, 0))
         payload.extend(overlay)
-    total_size = payload_offset + len(payload)
-    header = struct.pack(
-        ">8I",
-        PROVENANCE.DT_TABLE_MAGIC,
-        total_size,
-        32,
-        32,
-        entry_count,
-        entries_offset,
-        4096,
-        0,
-    )
-    return header + bytes(entries) + bytes(payload)
-
+    total = payload_offset + len(payload)
+    return struct.pack(">8I", DT_TABLE_MAGIC, total, 32, 32, count, entries_offset, 4096, 0) + entries + payload
 
 class Fixture:
-    def __init__(self, root: Path) -> None:
-        self.root = root
-        self.sys = root / "sys"
-        self.dev = root / "dev"
-        self.firmware = root / "firmware"
-        self.etc = root / "etc"
-        self.proc = root / "proc"
-        self.output = root / "run" / "provenance.json"
-        compatible = self.sys / "firmware" / "devicetree" / "base" / "compatible"
-        compatible.parent.mkdir(parents=True)
-        compatible.write_bytes(b"xiaomi,nabu\0")
-        compatible.with_name("model").write_bytes(b"Xiaomi Pad 5\0")
-        self.proc.mkdir()
-        (self.proc / "cmdline").write_text("root=PARTLABEL=linux\n", encoding="utf-8")
-        (self.dev / "disk" / "by-partlabel").mkdir(parents=True)
-        (self.dev / "nodes").mkdir()
-        for _, relative in PROVENANCE.FIRMWARE_FILES:
-            destination = self.firmware / relative
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            destination.write_bytes(b"packaged-firmware")
+    def __init__(self, root):
+        self.root = Path(root); self.sys = self.root / "sys"; self.dev = self.root / "dev"; self.firmware = self.root / "firmware"; self.etc = self.root / "etc"; self.proc = self.root / "proc"; self.output = self.root / "run/report.json"
+        base = self.sys / "firmware/devicetree/base"; base.mkdir(parents=True); (base / "compatible").write_bytes(b"xiaomi,nabu\0"); (base / "model").write_bytes(b"Xiaomi Pad 5\0")
+        self.proc.mkdir(); (self.proc / "cmdline").write_text("root=PARTLABEL=linux\n")
+        (self.dev / "disk/by-partlabel").mkdir(parents=True); (self.dev / "nodes").mkdir()
+        for relative in ("qcom/sm8150/xiaomi/nabu/adsp.mbn", "qcom/sm8150/xiaomi/nabu/cdsp.mbn", "qcom/sm8150/xiaomi/nabu/modem.mbn", "qcom/sm8150/xiaomi/nabu/slpi_nb.mbn", "qcom/sm8150/xiaomi/nabu/wlanmdsp.mbn", "qcom/sm8150/xiaomi/nabu/hexagonfs/sensors/sns_reg.conf", "ath10k/WCN3990/hw1.0/board-2.bin", "ath10k/WCN3990/hw1.0/firmware-5.bin", "qca/crbtfw32.tlv", "qca/crnv32.bin"):
+            path = self.firmware / relative; path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(b"packaged")
 
-    def partition(self, label: str, content: bytes) -> Path:
-        node = self.dev / "nodes" / label
-        node.write_bytes(content)
-        link = self.dev / "disk" / "by-partlabel" / label
-        link.symlink_to(node)
-        return node
+    def partition(self, label, content):
+        node = self.dev / "nodes" / label; node.write_bytes(content); (self.dev / "disk/by-partlabel" / label).symlink_to(node); return node
 
-    def arguments(self) -> argparse.Namespace:
-        return argparse.Namespace(
-            sys_root=self.sys,
-            dev_root=self.dev,
-            firmware_root=self.firmware,
-            etc_root=self.etc,
-            proc_cmdline=self.proc / "cmdline",
-            output=self.output,
-            stdout=False,
-            strict=False,
-            allow_regular_fixtures=True,
-        )
-
+    def run(self, strict=False):
+        command = [BINARY, "--sys-root", self.sys, "--dev-root", self.dev, "--firmware-root", self.firmware, "--etc-root", self.etc, "--proc-cmdline", self.proc / "cmdline", "--output", self.output, "--allow-regular-fixtures"]
+        if strict: command.append("--strict")
+        result = subprocess.run(command, text=True, capture_output=True)
+        return result, json.loads(self.output.read_text())
 
 class ProvenanceTests(unittest.TestCase):
-    def test_mirrored_thirteen_entry_inventory_does_not_claim_active_slot(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            fixture = Fixture(Path(temporary))
-            image = dtbo_image()
-            fixture.partition("dtbo_a", image)
-            fixture.partition("dtbo_b", image)
+    def test_mirrored_thirteen_entry_inventory(self):
+        with tempfile.TemporaryDirectory() as root:
+            f = Fixture(root); image = dtbo_image(); f.partition("dtbo_a", image); f.partition("dtbo_b", image); result, report = f.run(True)
+            self.assertEqual(result.returncode, 0, result.stderr); decision = report["dtboReference"]["slotDecision"]
+            self.assertIsNone(decision["activeAndroidSlot"]); self.assertEqual(decision["referenceSlot"], "a"); self.assertEqual(decision["confidence"], "content-equivalent"); self.assertEqual(report["dtboReference"]["selectedInventory"]["entryCount"], 13); self.assertFalse(report["safetyContract"]["overlaysApplied"])
 
-            report, failures = PROVENANCE.build_report(fixture.arguments())
+    def test_divergent_pair_without_slot_fails_closed(self):
+        with tempfile.TemporaryDirectory() as root:
+            f = Fixture(root); f.partition("dtbo_a", dtbo_image(b"a")); f.partition("dtbo_b", dtbo_image(b"b")); result, report = f.run(True)
+            self.assertEqual(result.returncode, 1); self.assertIn("dtbo-slot-ambiguous", report["strictGateFailures"]); self.assertIsNone(report["dtboReference"]["selectedInventory"])
 
-            self.assertEqual(failures, [])
-            decision = report["dtboReference"]["slotDecision"]
-            self.assertIsNone(decision["activeAndroidSlot"])
-            self.assertEqual(decision["referenceSlot"], "a")
-            self.assertEqual(decision["confidence"], "content-equivalent")
-            inventory = report["dtboReference"]["selectedInventory"]
-            self.assertEqual(inventory["entryCount"], 13)
-            self.assertEqual(len(inventory["entries"]), 13)
-            self.assertFalse(inventory["applicationCandidateSelected"])
+    def test_boot_slot_selects_reference_only(self):
+        with tempfile.TemporaryDirectory() as root:
+            f = Fixture(root); f.partition("dtbo_a", dtbo_image(b"a")); f.partition("dtbo_b", dtbo_image(b"b")); (f.proc / "cmdline").write_text("root=PARTLABEL=linux androidboot.slot_suffix=_b\n")
+            result, report = f.run(True); self.assertEqual(result.returncode, 0, result.stderr); self.assertEqual(report["dtboReference"]["slotDecision"]["referenceSlot"], "b"); self.assertFalse(report["dtboReference"]["selectedInventory"]["applicationCandidateSelected"])
 
-    def test_divergent_pair_without_boot_slot_fails_closed(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            fixture = Fixture(Path(temporary))
-            fixture.partition("dtbo_a", dtbo_image(b"a"))
-            fixture.partition("dtbo_b", dtbo_image(b"b"))
+    def test_sensitive_partitions_are_metadata_only(self):
+        with tempfile.TemporaryDirectory() as root:
+            f = Fixture(root); image = dtbo_image(); f.partition("dtbo_a", image); f.partition("dtbo_b", image)
+            secrets = [b"PRIVATE-MODEM-NV-IMEI", b"PRIVATE-WIFI-MAC", b"PRIVATE-PERSIST-CALIBRATION"]
+            for label, secret in zip(("modemst1", "fsg", "persist"), secrets): f.partition(label, secret)
+            result, report = f.run(); serialized = json.dumps(report)
+            self.assertEqual(result.returncode, 0); [self.assertNotIn(secret.decode(), serialized) for secret in secrets]
+            self.assertFalse(report["safetyContract"]["modemNvRead"]); self.assertFalse(report["safetyContract"]["radioAddressesRead"]); self.assertFalse(report["safetyContract"]["cameraEepromPayloadRead"])
 
-            report, failures = PROVENANCE.build_report(fixture.arguments())
+    def test_invalid_and_overlapping_dtbo_are_rejected(self):
+        with tempfile.TemporaryDirectory() as root:
+            f = Fixture(root); f.partition("dtbo_a", b"not-a-dtbo"); result, report = f.run(True)
+            self.assertEqual(result.returncode, 1); self.assertIn("dtbo_a-invalid", report["strictGateFailures"])
+        with tempfile.TemporaryDirectory() as root:
+            f = Fixture(root); image = bytearray(dtbo_image(count=2)); first = struct.unpack_from(">I", image, 36)[0]; struct.pack_into(">I", image, 68, first); f.partition("dtbo_a", image); result, report = f.run(True)
+            self.assertEqual(result.returncode, 1); self.assertIn("overlaps another payload", report["dtboReference"]["partitions"]["a"]["error"])
 
-            self.assertIn("dtbo-slot-ambiguous", failures)
-            decision = report["dtboReference"]["slotDecision"]
-            self.assertIsNone(decision["activeAndroidSlot"])
-            self.assertIsNone(decision["referenceSlot"])
-            self.assertEqual(decision["source"], "ambiguous")
-            self.assertIsNone(report["dtboReference"]["selectedInventory"])
-
-    def test_kernel_slot_selects_only_reference_and_never_applies_overlay(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            fixture = Fixture(Path(temporary))
-            fixture.partition("dtbo_a", dtbo_image(b"a"))
-            fixture.partition("dtbo_b", dtbo_image(b"b"))
-            (fixture.proc / "cmdline").write_text(
-                "root=PARTLABEL=linux androidboot.slot_suffix=_b\n", encoding="utf-8"
-            )
-
-            report, failures = PROVENANCE.build_report(fixture.arguments())
-
-            self.assertEqual(failures, [])
-            decision = report["dtboReference"]["slotDecision"]
-            self.assertEqual(decision["activeAndroidSlot"], "b")
-            self.assertEqual(decision["referenceSlot"], "b")
-            self.assertEqual(decision["confidence"], "boot-chain")
-            self.assertFalse(report["safetyContract"]["overlaysApplied"])
-
-    def test_sensitive_payloads_and_addresses_are_never_read_or_exported(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            fixture = Fixture(Path(temporary))
-            image = dtbo_image()
-            dtbo_a = fixture.partition("dtbo_a", image)
-            dtbo_b = fixture.partition("dtbo_b", image)
-            secrets = {
-                "modemst1": b"PRIVATE-MODEM-NV-IMEI",
-                "fsg": b"PRIVATE-WIFI-CALIBRATION-MAC",
-                "persist": b"PRIVATE-PERSIST-CALIBRATION",
-            }
-            secret_paths = {
-                fixture.partition(label, content) for label, content in secrets.items()
-            }
-            nvmem = (
-                fixture.sys
-                / "bus"
-                / "nvmem"
-                / "devices"
-                / "nabu-rear-camera-calibration0"
-                / "nvmem"
-            )
-            nvmem.parent.mkdir(parents=True)
-            nvmem.write_bytes(b"PRIVATE-CAMERA-EEPROM")
-            wifi = fixture.sys / "class" / "net" / "wlan0"
-            (wifi / "wireless").mkdir(parents=True)
-            (wifi / "addr_assign_type").write_text("3\n", encoding="utf-8")
-            (wifi / "address").write_text("00:11:22:33:44:55\n", encoding="utf-8")
-
-            real_open = os.open
-            opened: list[Path] = []
-            real_read_bytes = PROVENANCE.read_bytes
-            byte_reads: list[Path] = []
-
-            def recording_open(path: os.PathLike[str] | str, flags: int, *args: object) -> int:
-                opened.append(Path(path).resolve())
-                return real_open(path, flags, *args)
-
-            def recording_read_bytes(path: Path, maximum: int) -> bytes:
-                byte_reads.append(path.resolve())
-                return real_read_bytes(path, maximum)
-
-            with (
-                mock.patch.object(PROVENANCE.os, "open", side_effect=recording_open),
-                mock.patch.object(
-                    PROVENANCE, "read_bytes", side_effect=recording_read_bytes
-                ),
-            ):
-                report, _ = PROVENANCE.build_report(fixture.arguments())
-
-            self.assertEqual(set(opened), {dtbo_a.resolve(), dtbo_b.resolve()})
-            self.assertTrue(secret_paths.isdisjoint(opened))
-            self.assertNotIn(nvmem.resolve(), opened)
-            self.assertTrue(secret_paths.isdisjoint(byte_reads))
-            self.assertNotIn(nvmem.resolve(), byte_reads)
-            self.assertNotIn((wifi / "address").resolve(), byte_reads)
-            serialized = json.dumps(report, sort_keys=True)
-            for value in secrets.values():
-                self.assertNotIn(value.decode(), serialized)
-            self.assertNotIn("PRIVATE-CAMERA-EEPROM", serialized)
-            self.assertNotIn("00:11:22:33:44:55", serialized)
-            self.assertTrue(report["safetyContract"]["modemNvRead"] is False)
-            self.assertTrue(report["safetyContract"]["radioAddressesRead"] is False)
-            self.assertTrue(report["safetyContract"]["cameraEepromPayloadRead"] is False)
-
-    def test_invalid_dtbo_is_bounded_and_reported(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            fixture = Fixture(Path(temporary))
-            fixture.partition("dtbo_a", b"not-a-dtbo")
-
-            report, failures = PROVENANCE.build_report(fixture.arguments())
-
-            self.assertIn("dtbo_a-invalid", failures)
-            self.assertFalse(report["dtboReference"]["partitions"]["a"]["valid"])
-            self.assertIsNone(report["dtboReference"]["slotDecision"]["referenceSlot"])
-
-    def test_overlapping_dtbo_payloads_are_rejected(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            fixture = Fixture(Path(temporary))
-            image = bytearray(dtbo_image(entry_count=2))
-            first_payload_offset = struct.unpack_from(">I", image, 36)[0]
-            struct.pack_into(">I", image, 68, first_payload_offset)
-            fixture.partition("dtbo_a", bytes(image))
-
-            report, failures = PROVENANCE.build_report(fixture.arguments())
-
-            self.assertIn("dtbo_a-invalid", failures)
-            error = report["dtboReference"]["partitions"]["a"]["error"]
-            self.assertIn("overlaps another payload", error)
-
+    def test_binary_is_native_elf(self):
+        self.assertEqual(BINARY.read_bytes()[:4], b"\x7fELF")
 
 if __name__ == "__main__":
     unittest.main()

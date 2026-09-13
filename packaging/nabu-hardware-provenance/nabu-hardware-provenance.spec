@@ -1,17 +1,16 @@
 Name:           nabu-hardware-provenance
 Version:        1.0.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Privacy-preserving hardware provenance for Xiaomi Pad 5
 License:        MIT
 URL:            https://github.com/MCC45TR/nabu-linux-hardware-support
 Source0:        %{name}-%{version}.tar.gz
 Source1:        nabu-hardware-provenance.sysusers
-BuildArch:      noarch
-
+BuildRequires:  gcc-c++
 BuildRequires:  python3
+BuildRequires:  pkgconfig(Qt6Core)
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  systemd-udev
-Requires:       python3
 Requires:       systemd-udev
 Recommends:     xiaomi-nabu-firmware
 
@@ -26,6 +25,9 @@ device identities, addresses, calibration bytes or EEPROM contents.
 %autosetup
 
 %build
+%{__cxx} -std=c++20 %{optflags} %{build_ldflags} \
+    $(pkg-config --cflags Qt6Core) nabu-hardware-provenance.cpp \
+    -o nabu-hardware-provenance $(pkg-config --libs Qt6Core)
 
 %install
 install -Dpm0755 nabu-hardware-provenance \
@@ -40,8 +42,9 @@ install -Dpm0644 70-nabu-hardware-provenance.rules \
     %{buildroot}%{_udevrulesdir}/70-nabu-hardware-provenance.rules
 
 %check
-python3 -m unittest discover -s tests -v
-python3 -m py_compile nabu-hardware-provenance
+NABU_PROVENANCE_BINARY="$PWD/nabu-hardware-provenance" \
+    python3 -m unittest discover -s tests -v
+test "$(od -An -tx1 -N4 nabu-hardware-provenance | tr -d ' \n')" = 7f454c46
 grep -F 'DevicePolicy=closed' nabu-hardware-provenance.service
 grep -F 'DeviceAllow=block-sd r' nabu-hardware-provenance.service
 grep -F 'DeviceAllow=block-blkext r' nabu-hardware-provenance.service
@@ -80,6 +83,10 @@ fi
 %{_udevrulesdir}/70-nabu-hardware-provenance.rules
 
 %changelog
+* Sun Sep 13 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-3
+- Replace the production Python inventory with a hardened C++20/QtCore binary;
+  retain Python only for isolated black-box package tests.
+
 * Sun Sep 13 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-2
 - Trigger the bounded read-only inventory when the complete DTBO A/B pair is
   enumerated, while retaining the Linux-only multi-user fallback.

@@ -64,8 +64,10 @@ Strict mode is deliberately not used by the boot service.  Linux-only systems
 without Android partitions remain supported, while any partitions that are
 present are still validated conservatively.
 
-Run the isolated fixture tests with:
+The installed service is a C++20/QtCore ELF binary. Python is confined to the
+isolated black-box fixture tests:
 
 ```sh
-python3 -m unittest discover -s services/nabu-hardware-provenance/tests -v
+NABU_PROVENANCE_BINARY=./nabu-hardware-provenance \
+  python3 -m unittest discover -s services/nabu-hardware-provenance/tests -v
 ```

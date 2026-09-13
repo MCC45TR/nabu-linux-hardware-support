@@ -16,7 +16,7 @@ trap 'rm -rf -- "$staging"' EXIT
 mkdir -p "$topdir"/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
 archive_root="$staging/nabu-hardware-provenance-$version"
 install -d "$archive_root/tests"
-install -m0755 "$service_root/nabu-hardware-provenance" "$archive_root/"
+install -m0644 "$service_root/nabu-hardware-provenance.cpp" "$archive_root/"
 install -m0644 \
     "$service_root/nabu-hardware-provenance.service" \
     "$service_root/60-nabu-hardware-provenance.preset" \
