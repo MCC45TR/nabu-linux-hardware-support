@@ -2,7 +2,7 @@
 
 Name:           nabu-sensors
 Version:        2026.9.6
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Unified Qualcomm sensor stack for Xiaomi Pad 5
 License:        GPL-3.0-or-later AND GFDL-1.1-or-later
 URL:            https://github.com/MCC45TR/nabu-linux-hardware-support
@@ -249,6 +249,10 @@ fi
 %{_datadir}/gtk-doc/html/iio-sensor-proxy/
 
 %changelog
+* Sun Sep 13 2026 mcc45tr <mcc45tr@gmail.com> - 2026.9.6-4
+- Correct the typed public-property patch hunk count so it applies with
+  zero fuzz in RPM builds.
+
 * Sun Sep 13 2026 mcc45tr <mcc45tr@gmail.com> - 2026.9.6-3
 - Correct libssc public GObject property types for safe generic SSC monitoring.
 
