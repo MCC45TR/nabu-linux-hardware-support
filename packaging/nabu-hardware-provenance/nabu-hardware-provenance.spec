@@ -44,6 +44,7 @@ python3 -m unittest discover -s tests -v
 python3 -m py_compile nabu-hardware-provenance
 grep -F 'DevicePolicy=closed' nabu-hardware-provenance.service
 grep -F 'DeviceAllow=block-sd r' nabu-hardware-provenance.service
+grep -F 'DeviceAllow=block-blkext r' nabu-hardware-provenance.service
 grep -F 'CapabilityBoundingSet=' nabu-hardware-provenance.service
 grep -F 'User=nabu-provenance' nabu-hardware-provenance.service
 udevadm verify --resolve-names=late 70-nabu-hardware-provenance.rules

@@ -15,11 +15,12 @@ RuntimeDirectoryMode=0755
 UMask=0022
 
 # The udev rule gives this dedicated user read access only to dtbo_a/dtbo_b.
-# At the device-cgroup layer, every SCSI/UFS block major named "sd" is
-# independently restricted to reads, covering Nabu's sda-sdf LUN layout
-# without embedding unstable device paths or numeric major/minor assignments.
+# At the device-cgroup layer, both whole SCSI/UFS LUNs (sd) and dynamically
+# allocated partitions (blkext) are restricted to reads.  DAC below this layer
+# still grants the service account access only to dtbo_a and dtbo_b.
 DevicePolicy=closed
 DeviceAllow=block-sd r
+DeviceAllow=block-blkext r
 CapabilityBoundingSet=
 AmbientCapabilities=
 NoNewPrivileges=yes

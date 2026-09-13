@@ -26,6 +26,8 @@ grep -Fq 'DevicePolicy=closed' \
     "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
 grep -Fq 'DeviceAllow=block-sd r' \
     "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
+grep -Fq 'DeviceAllow=block-blkext r' \
+    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
 grep -Fq 'CapabilityBoundingSet=' \
     "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
 grep -Fq 'User=nabu-provenance' \
