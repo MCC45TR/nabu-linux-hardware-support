@@ -4,3 +4,7 @@ ACTION!="remove", SUBSYSTEM=="block", ENV{DEVTYPE}=="partition", ENV{ID_PART_ENT
 # On Nabu, dtbo_b is enumerated after dtbo_a.  Start the bounded inventory as
 # soon as the pair is present; multi-user.target remains the Linux-only fallback.
 ACTION!="remove", SUBSYSTEM=="block", ENV{DEVTYPE}=="partition", ENV{ID_PART_ENTRY_NAME}=="dtbo_b", OWNER="root", GROUP="nabu-provenance", MODE="0640", TAG+="systemd", ENV{SYSTEMD_WANTS}+="nabu-hardware-provenance.service"
+# Refresh the metadata-only report after the late Wi-Fi device is registered.
+# The oneshot remains inactive after completion, so this does not create a
+# daemon or polling loop and driver re-probes can refresh stale interface state.
+ACTION!="remove", SUBSYSTEM=="net", KERNEL=="wld0", TAG+="systemd", ENV{SYSTEMD_WANTS}+="nabu-hardware-provenance.service"

@@ -34,6 +34,11 @@ enumerated (after `dtbo_a` on Nabu).  The normal multi-user preset remains a
 fallback, so Linux-only installations still inventory packaged firmware and
 kernel NVMEM providers without requiring Android partitions.
 
+The service is a re-runnable oneshot rather than a resident daemon.  A later
+`wld0` udev event refreshes the same atomic report after the Wi-Fi driver is
+ready; this records only interface name and kernel assignment type, never an
+address.  There is no polling or network access.
+
 ## Slot decision
 
 The report distinguishes an **active Android slot** from a **reference slot**.

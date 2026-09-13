@@ -35,11 +35,15 @@ grep -Fq 'CapabilityBoundingSet=' \
     "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
 grep -Fq 'User=nabu-provenance' \
     "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
+! grep -Fq 'RemainAfterExit=yes' \
+    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
 grep -Fq 'IPAddressDeny=any' \
     "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
 udevadm verify --resolve-names=late \
     "$repo_root/services/nabu-hardware-provenance/70-nabu-hardware-provenance.rules"
-grep -Fq 'ENV{SYSTEMD_WANTS}+="nabu-hardware-provenance.service"' \
+test "$(grep -Fc 'ENV{SYSTEMD_WANTS}+="nabu-hardware-provenance.service"' \
+    "$repo_root/services/nabu-hardware-provenance/70-nabu-hardware-provenance.rules")" -eq 2
+grep -Fq 'SUBSYSTEM=="net", KERNEL=="wld0"' \
     "$repo_root/services/nabu-hardware-provenance/70-nabu-hardware-provenance.rules"
 
 for profile in \

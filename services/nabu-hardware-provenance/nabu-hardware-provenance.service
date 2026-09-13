@@ -7,7 +7,6 @@ After=local-fs.target
 [Service]
 Type=oneshot
 ExecStart=/usr/libexec/senemos-nabu/nabu-hardware-provenance
-RemainAfterExit=yes
 User=nabu-provenance
 Group=nabu-provenance
 RuntimeDirectory=nabu-hardware
