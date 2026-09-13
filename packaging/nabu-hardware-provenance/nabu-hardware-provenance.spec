@@ -1,6 +1,6 @@
 Name:           nabu-hardware-provenance
 Version:        1.0.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Privacy-preserving hardware provenance for Xiaomi Pad 5
 License:        MIT
 URL:            https://github.com/MCC45TR/nabu-linux-hardware-support
@@ -51,6 +51,7 @@ grep -F 'DeviceAllow=block-blkext r' nabu-hardware-provenance.service
 grep -F 'CapabilityBoundingSet=' nabu-hardware-provenance.service
 grep -F 'User=nabu-provenance' nabu-hardware-provenance.service
 ! grep -F 'RemainAfterExit=yes' nabu-hardware-provenance.service
+grep -F 'RuntimeDirectoryPreserve=yes' nabu-hardware-provenance.service
 udevadm verify --resolve-names=late 70-nabu-hardware-provenance.rules
 test "$(grep -Fc 'ENV{SYSTEMD_WANTS}+="nabu-hardware-provenance.service"' \
     70-nabu-hardware-provenance.rules)" -eq 2
@@ -87,6 +88,10 @@ fi
 %{_udevrulesdir}/70-nabu-hardware-provenance.rules
 
 %changelog
+* Sun Sep 13 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-5
+- Preserve the volatile runtime report after each retriggerable oneshot exits;
+  systemd still discards it naturally across reboot.
+
 * Sun Sep 13 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-4
 - Re-run the bounded C++ inventory when wld0 appears so late radio metadata is
   present without a daemon, polling loop, network access, or address export.

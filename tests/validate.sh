@@ -37,6 +37,8 @@ grep -Fq 'User=nabu-provenance' \
     "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
 ! grep -Fq 'RemainAfterExit=yes' \
     "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
+grep -Fq 'RuntimeDirectoryPreserve=yes' \
+    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
 grep -Fq 'IPAddressDeny=any' \
     "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
 udevadm verify --resolve-names=late \
