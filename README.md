@@ -21,6 +21,7 @@ consumed by
 | Sensor session gate | Static candidate | Waits for SSC accelerometer enumeration and performs at most one bounded iio-sensor-proxy restart without blocking graphical fallback. |
 | Colour temperature | Static candidate | TCS3701 `cct_front` is decoded by libssc and published as standard IIO `in_colortemp_raw`; kernel/COPR/HIL gates remain. |
 | SAR hold-awake | Static candidate | Existing Plasma/GNOME controls use calibrated ADUX1050 state and a fail-closed logind inhibitor; physical thresholds remain to be calibrated. |
+| Hardware provenance | Static candidate | A hardened service inventories Android DTBO A/B and Linux firmware/NVMEM sources read-only without exporting identities or calibration payloads. Device HIL remains. |
 
 The default Plasma profile keeps automatic brightness disabled. The measured
 curve is retained under `plasma/experimental/` for continued calibration.
@@ -37,6 +38,9 @@ curve is retained under `plasma/experimental/` for continued calibration.
   forks.
 - `services/nabu-sar-service/`: the ADUX1050 D-Bus service, guided calibration
   capture tool, fail-closed logind inhibitor and TCS3701-to-IIO bridge.
+- `services/nabu-hardware-provenance/`: a bounded, read-only DTBO and firmware
+  provenance report.  Android radio/NV partitions and camera EEPROM payloads
+  remain opaque by design.
 - `packaging/hexagonrpc-nabu/`: current upstream HexagonRPC plus the pinned,
   checksummed Hotdog/Nabu FastRPC merge layer.
 - `packaging/libssc-nabu/`: current upstream libssc plus the Nabu SLPI failure
@@ -47,6 +51,8 @@ curve is retained under `plasma/experimental/` for continued calibration.
   an update only when every Nabu patch still applies in sequence.
 - `packaging/build-srpms.sh`: verifies source locks and produces reproducible
   SRPM inputs for COPR.
+- `packaging/nabu-hardware-provenance/`: standalone noarch RPM and hardened
+  systemd service for the runtime report.
 - `udev/`: Qualcomm RMTFS activation rule.
 - `tests/`: static validation for profiles and scripts.
 

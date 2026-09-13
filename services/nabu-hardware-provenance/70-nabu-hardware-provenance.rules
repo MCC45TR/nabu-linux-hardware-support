@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: MIT
+# Only the dedicated inventory account may read Android DTBO references.
+ACTION!="remove", SUBSYSTEM=="block", ENV{DEVTYPE}=="partition", ENV{ID_PART_ENTRY_NAME}=="dtbo_a", OWNER="root", GROUP="nabu-provenance", MODE="0640"
+ACTION!="remove", SUBSYSTEM=="block", ENV{DEVTYPE}=="partition", ENV{ID_PART_ENTRY_NAME}=="dtbo_b", OWNER="root", GROUP="nabu-provenance", MODE="0640"

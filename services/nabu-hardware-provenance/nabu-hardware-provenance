@@ -1,0 +1,797 @@
+#!/usr/bin/python3
+# SPDX-License-Identifier: MIT
+
+"""Build a privacy-preserving, read-only Nabu hardware provenance report.
+
+The program intentionally never mounts Android partitions, parses modem NV,
+exports radio addresses, reads camera EEPROM payloads, or applies a DTBO.  Its
+only raw block-device reads are bounded O_RDONLY reads of the two allow-listed
+DTBO partitions.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+from pathlib import Path
+import re
+import stat
+import struct
+import subprocess
+import sys
+import tempfile
+from typing import Any
+
+
+DT_TABLE_MAGIC = 0xD7B7AB1E
+FDT_MAGIC = 0xD00DFEED
+FDT_BEGIN_NODE = 1
+FDT_END_NODE = 2
+FDT_PROP = 3
+FDT_NOP = 4
+FDT_END = 9
+MAX_DTBO_SIZE = 64 * 1024 * 1024
+MAX_DTBO_ENTRIES = 64
+
+KNOWN_PANEL_REVISIONS = ("36-02-0b", "42-02-0a")
+FEATURE_MARKERS: tuple[tuple[str, tuple[bytes, ...]], ...] = (
+    ("xiaomi-nabu", (b"xiaomi,nabu", b"xiaomi nabu")),
+    ("panel-36-02-0b", (b"36_02_0b", b"36-02-0b")),
+    ("panel-42-02-0a", (b"42_02_0a", b"42-02-0a")),
+    ("cs35l41-speakers", (b"cs35l41",)),
+    ("k82-sunwoda-battery", (b"k82_sunwoda", b"sunwoda_8720")),
+    ("xiaomi-keyboard", (b"xiaomi-keyboard", b"xiaomi_keyboard")),
+    ("ov13b10-rear-camera", (b"ov13b10",)),
+    ("ov8856-front-camera", (b"ov8856",)),
+    ("nt36523-touch-display", (b"nt36523",)),
+    ("usb-power-delivery", (b"usbpd", b"usb-pd", b"typec")),
+)
+
+FIRMWARE_FILES: tuple[tuple[str, str], ...] = (
+    ("adsp", "qcom/sm8150/xiaomi/nabu/adsp.mbn"),
+    ("cdsp", "qcom/sm8150/xiaomi/nabu/cdsp.mbn"),
+    ("modem", "qcom/sm8150/xiaomi/nabu/modem.mbn"),
+    ("slpi", "qcom/sm8150/xiaomi/nabu/slpi_nb.mbn"),
+    ("wlan-mcu", "qcom/sm8150/xiaomi/nabu/wlanmdsp.mbn"),
+    ("sensor-registry", "qcom/sm8150/xiaomi/nabu/hexagonfs/sensors/sns_reg.conf"),
+    ("wifi-board", "ath10k/WCN3990/hw1.0/board-2.bin"),
+    ("wifi-firmware", "ath10k/WCN3990/hw1.0/firmware-5.bin"),
+    ("bluetooth-patch", "qca/crbtfw32.tlv"),
+    ("bluetooth-nv-template", "qca/crnv32.bin"),
+)
+
+REFERENCE_PARTITION_GROUPS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("dsp", ("dsp_a", "dsp_b")),
+    ("modem", ("modem_a", "modem_b")),
+    ("bluetooth", ("bluetooth_a", "bluetooth_b")),
+    # Android commonly stores radio calibration below persist, but its layout
+    # is not a stable Linux ABI.  Presence is useful; contents are deliberately
+    # opaque to this tool.
+    ("wifi-calibration-container", ("persist",)),
+)
+MODEM_NV_PARTITIONS: tuple[str, ...] = ("modemst1", "modemst2", "fsg", "fsc")
+
+
+class AuditError(ValueError):
+    """A bounded input failed structural validation."""
+
+
+def align4(value: int) -> int:
+    return (value + 3) & ~3
+
+
+def read_bytes(path: Path, maximum: int) -> bytes:
+    with path.open("rb") as stream:
+        return stream.read(maximum)
+
+
+def read_text(path: Path, maximum: int = 4096) -> str:
+    try:
+        return read_bytes(path, maximum).decode("utf-8", errors="replace").rstrip("\0\n")
+    except OSError:
+        return ""
+
+
+def read_string_list(path: Path) -> list[str]:
+    try:
+        raw = read_bytes(path, 4096)
+    except OSError:
+        return []
+    return [item.decode("utf-8", errors="replace") for item in raw.split(b"\0") if item]
+
+
+def safe_mode(path: Path) -> str | None:
+    try:
+        return f"{stat.S_IMODE(path.stat().st_mode):04o}"
+    except OSError:
+        return None
+
+
+def block_size_bytes(sys_root: Path, device_path: Path) -> int | None:
+    sectors_path = sys_root / "class" / "block" / device_path.name / "size"
+    try:
+        sectors = int(read_text(sectors_path, 64))
+    except ValueError:
+        return None
+    return sectors * 512
+
+
+def partition_path(dev_root: Path, label: str) -> Path | None:
+    link = dev_root / "disk" / "by-partlabel" / label
+    try:
+        target = link.resolve(strict=True)
+        target.relative_to(dev_root.resolve(strict=True))
+    except (OSError, ValueError):
+        return None
+    return target
+
+
+def partition_metadata(
+    sys_root: Path, dev_root: Path, label: str, allow_regular: bool
+) -> dict[str, Any]:
+    target = partition_path(dev_root, label)
+    if target is None:
+        return {"present": False}
+    try:
+        target_stat = target.stat()
+    except OSError:
+        return {"present": False}
+    is_block = stat.S_ISBLK(target_stat.st_mode)
+    if not is_block and not (allow_regular and stat.S_ISREG(target_stat.st_mode)):
+        return {"present": True, "readable": False, "reason": "unexpected-node-type"}
+    size = block_size_bytes(sys_root, target) if is_block else target_stat.st_size
+    result: dict[str, Any] = {
+        "present": True,
+        "readable": os.access(target, os.R_OK),
+        "deviceNodeMode": f"{stat.S_IMODE(target_stat.st_mode):04o}",
+        "deviceNodeHasWriteBits": bool(stat.S_IMODE(target_stat.st_mode) & 0o222),
+    }
+    if size is not None:
+        result["sizeBytes"] = size
+    return result
+
+
+def pread_exact(file_descriptor: int, count: int, offset: int) -> bytes:
+    output = bytearray()
+    while len(output) < count:
+        chunk = os.pread(file_descriptor, count - len(output), offset + len(output))
+        if not chunk:
+            break
+        output.extend(chunk)
+    if len(output) != count:
+        raise AuditError(f"short read at offset {offset}")
+    return bytes(output)
+
+
+def fdt_properties(blob: bytes) -> list[tuple[str, bytes]]:
+    if len(blob) < 40:
+        raise AuditError("FDT header is truncated")
+    (
+        magic,
+        total_size,
+        structure_offset,
+        strings_offset,
+        reserve_offset,
+        version,
+        compatible_version,
+        _boot_cpu,
+        strings_size,
+        structure_size,
+    ) = struct.unpack_from(">10I", blob, 0)
+    if magic != FDT_MAGIC:
+        raise AuditError("DTBO entry is not a flattened device tree")
+    if not 40 <= total_size <= len(blob):
+        raise AuditError("FDT total size is out of range")
+    if version < 16 or compatible_version > version:
+        raise AuditError("unsupported FDT version")
+    if reserve_offset < 40 or reserve_offset >= total_size:
+        raise AuditError("FDT reservation offset is out of range")
+    if reserve_offset % 8 or structure_offset % 4:
+        raise AuditError("FDT block alignment is invalid")
+    structure_end = structure_offset + structure_size
+    strings_end = strings_offset + strings_size
+    if structure_offset < 40 or structure_end > total_size:
+        raise AuditError("FDT structure block is out of range")
+    if strings_offset < 40 or strings_end > total_size:
+        raise AuditError("FDT strings block is out of range")
+    if max(structure_offset, strings_offset) < min(structure_end, strings_end):
+        raise AuditError("FDT structure and strings blocks overlap")
+
+    reservation_end: int | None = None
+    position = reserve_offset
+    while position + 16 <= total_size:
+        address, size = struct.unpack_from(">2Q", blob, position)
+        position += 16
+        if address == 0 and size == 0:
+            reservation_end = position
+            break
+    if reservation_end is None:
+        raise AuditError("FDT reservation map has no terminator")
+    for block_start, block_end in (
+        (structure_offset, structure_end),
+        (strings_offset, strings_end),
+    ):
+        if max(reserve_offset, block_start) < min(reservation_end, block_end):
+            raise AuditError("FDT reservation map overlaps another block")
+
+    def property_name(name_offset: int) -> str:
+        if name_offset >= strings_size:
+            raise AuditError("FDT property-name offset is out of range")
+        start = strings_offset + name_offset
+        end = blob.find(b"\0", start, strings_end)
+        if end < 0:
+            raise AuditError("unterminated FDT property name")
+        return blob[start:end].decode("ascii", errors="replace")
+
+    properties: list[tuple[str, bytes]] = []
+    position = structure_offset
+    depth = 0
+    saw_end = False
+    while position + 4 <= structure_end:
+        token = struct.unpack_from(">I", blob, position)[0]
+        position += 4
+        if token == FDT_BEGIN_NODE:
+            end = blob.find(b"\0", position, structure_end)
+            if end < 0:
+                raise AuditError("unterminated FDT node name")
+            position = align4(end + 1)
+            depth += 1
+        elif token == FDT_END_NODE:
+            depth -= 1
+            if depth < 0:
+                raise AuditError("unbalanced FDT node")
+        elif token == FDT_PROP:
+            if position + 8 > structure_end:
+                raise AuditError("truncated FDT property header")
+            value_size, name_offset = struct.unpack_from(">2I", blob, position)
+            position += 8
+            value_end = position + value_size
+            if value_end > structure_end:
+                raise AuditError("FDT property value is out of range")
+            properties.append((property_name(name_offset), blob[position:value_end]))
+            position = align4(value_end)
+        elif token == FDT_NOP:
+            continue
+        elif token == FDT_END:
+            saw_end = True
+            break
+        else:
+            raise AuditError(f"unknown FDT token {token}")
+    if not saw_end or depth != 0:
+        raise AuditError("FDT structure is incomplete")
+    return properties
+
+
+def entry_features(blob: bytes) -> list[str]:
+    lowered = blob.lower()
+    return [
+        feature
+        for feature, needles in FEATURE_MARKERS
+        if any(needle in lowered for needle in needles)
+    ]
+
+
+def parse_dtbo(path: Path, allow_regular: bool) -> tuple[dict[str, Any], bytes]:
+    target_stat = path.stat()
+    if not stat.S_ISBLK(target_stat.st_mode) and not (
+        allow_regular and stat.S_ISREG(target_stat.st_mode)
+    ):
+        raise AuditError("DTBO source is not a block device")
+    flags = os.O_RDONLY | os.O_CLOEXEC
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    descriptor = os.open(path, flags)
+    try:
+        header = pread_exact(descriptor, 32, 0)
+        (
+            magic,
+            total_size,
+            header_size,
+            entry_size,
+            entry_count,
+            entries_offset,
+            page_size,
+            version,
+        ) = struct.unpack(">8I", header)
+        if magic != DT_TABLE_MAGIC:
+            raise AuditError("invalid Android DT table magic")
+        if version != 0:
+            raise AuditError(f"unsupported Android DT table version {version}")
+        if header_size != 32 or entry_size != 32:
+            raise AuditError("unexpected Android DT table structure size")
+        if not 1 <= entry_count <= MAX_DTBO_ENTRIES:
+            raise AuditError("Android DT table entry count is out of range")
+        if not 32 <= total_size <= MAX_DTBO_SIZE:
+            raise AuditError("Android DT table total size is out of range")
+        entries_end = entries_offset + entry_count * entry_size
+        if entries_offset < header_size or entries_end > total_size:
+            raise AuditError("Android DT table entries are out of range")
+        if page_size < 512 or page_size > 65536 or page_size & (page_size - 1):
+            raise AuditError("Android DT table page size is invalid")
+        raw = pread_exact(descriptor, total_size, 0)
+    finally:
+        os.close(descriptor)
+
+    entries: list[dict[str, Any]] = []
+    payload_ranges: list[tuple[int, int]] = []
+    for index in range(entry_count):
+        offset = entries_offset + index * entry_size
+        fields = struct.unpack_from(">8I", raw, offset)
+        dt_size, dt_offset, image_id, revision, *custom = fields
+        dt_end = dt_offset + dt_size
+        if dt_size < 40 or dt_offset < entries_end or dt_end > total_size:
+            raise AuditError(f"DTBO entry {index} payload is out of range")
+        for previous_start, previous_end in payload_ranges:
+            if max(dt_offset, previous_start) < min(dt_end, previous_end):
+                raise AuditError(f"DTBO entry {index} overlaps another payload")
+        payload_ranges.append((dt_offset, dt_end))
+        overlay = raw[dt_offset:dt_end]
+        fdt_properties(overlay)
+        features = entry_features(overlay)
+        panels = [
+            revision_name
+            for revision_name in KNOWN_PANEL_REVISIONS
+            if f"panel-{revision_name}" in features
+        ]
+        entries.append(
+            {
+                "index": index,
+                "sizeBytes": dt_size,
+                "id": f"0x{image_id:08x}",
+                "revision": f"0x{revision:08x}",
+                "custom": [f"0x{value:08x}" for value in custom],
+                "features": features,
+                "panelRevisions": panels,
+            }
+        )
+    return (
+        {
+            "format": "android-dtbo-v0",
+            "valid": True,
+            "entryCount": entry_count,
+            "pageSize": page_size,
+            "totalSizeBytes": total_size,
+            "entries": entries,
+        },
+        raw,
+    )
+
+
+def detect_panel_revision(sys_root: Path) -> str | None:
+    for path in sorted((sys_root / "bus" / "mipi-dsi" / "devices").glob("*/panel_revision")):
+        text = read_text(path, 128).lower().replace("_", "-")
+        for revision in KNOWN_PANEL_REVISIONS:
+            if revision in text:
+                return revision
+    panel_root = sys_root / "firmware" / "devicetree" / "base"
+    for path in sorted(panel_root.glob("**/panel@*/compatible")):
+        lowered = read_bytes(path, 1024).lower() if path.is_file() else b""
+        for revision in KNOWN_PANEL_REVISIONS:
+            if revision.encode() in lowered or revision.replace("-", "_").encode() in lowered:
+                return revision
+    return None
+
+
+def requested_slot(cmdline_path: Path) -> str | None:
+    cmdline = read_text(cmdline_path, 16384)
+    match = re.search(
+        r"(?:^|\s)(?:androidboot\.slot_suffix|androidboot\.slot|slot_suffix)=_?([ab])(?:\s|$)",
+        cmdline,
+    )
+    return match.group(1) if match else None
+
+
+def inspect_dtbo(
+    sys_root: Path,
+    dev_root: Path,
+    cmdline_path: Path,
+    allow_regular: bool,
+) -> tuple[dict[str, Any], list[str]]:
+    failures: list[str] = []
+    private_images: dict[str, bytes] = {}
+    partitions: dict[str, dict[str, Any]] = {}
+    for slot in ("a", "b"):
+        label = f"dtbo_{slot}"
+        metadata = partition_metadata(sys_root, dev_root, label, allow_regular)
+        partitions[slot] = metadata
+        target = partition_path(dev_root, label)
+        if not metadata.get("present") or target is None:
+            continue
+        try:
+            parsed, raw = parse_dtbo(target, allow_regular)
+            partitions[slot] = {**metadata, **parsed}
+            private_images[slot] = raw
+        except (OSError, AuditError) as error:
+            partitions[slot]["valid"] = False
+            partitions[slot]["error"] = str(error)
+            failures.append(f"{label}-invalid")
+
+    requested = requested_slot(cmdline_path)
+    active_slot: str | None = None
+    reference_slot: str | None = None
+    confidence = "none"
+    decision_source = "none"
+    decision_reason = (
+        "no Android DTBO partition is present; packaged Linux data remains "
+        "authoritative"
+    )
+    valid_slots = [slot for slot in ("a", "b") if slot in private_images]
+    present_slots = [slot for slot in ("a", "b") if partitions[slot].get("present")]
+    if requested is not None:
+        active_slot = requested
+        if requested in private_images:
+            reference_slot = requested
+            confidence = "boot-chain"
+            decision_source = "kernel-command-line"
+            decision_reason = "slot suffix was supplied by the boot chain"
+        else:
+            confidence = "boot-chain-reference-invalid"
+            decision_source = "kernel-command-line-rejected"
+            decision_reason = "the boot-selected slot has no structurally valid DTBO"
+            failures.append("boot-selected-dtbo-unavailable")
+    elif len(valid_slots) == 2 and private_images["a"] == private_images["b"]:
+        reference_slot = "a"
+        confidence = "content-equivalent"
+        decision_source = "mirrored-pair"
+        decision_reason = (
+            "A and B DTBO images are byte-identical; active Android slot remains "
+            "unknown but either image is an equivalent reference"
+        )
+    elif len(present_slots) == 1 and len(valid_slots) == 1:
+        reference_slot = valid_slots[0]
+        confidence = "single-reference-only"
+        decision_source = "single-partition"
+        decision_reason = (
+            "only one Android DTBO partition exists; it is usable as a reference "
+            "but does not identify the active Android slot"
+        )
+    elif present_slots:
+        decision_source = "ambiguous"
+        decision_reason = (
+            "A/B images differ and the boot chain did not publish a trustworthy "
+            "slot suffix"
+        )
+        failures.append("dtbo-slot-ambiguous")
+
+    runtime_panel = detect_panel_revision(sys_root)
+    selected_inventory: dict[str, Any] | None = None
+    if reference_slot is not None:
+        entries = partitions[reference_slot]["entries"]
+        panel_compatible = []
+        for entry in entries:
+            panels = entry["panelRevisions"]
+            if runtime_panel is None or not panels or runtime_panel in panels:
+                panel_compatible.append(entry["index"])
+        selected_inventory = {
+            "referenceSlot": reference_slot,
+            "entryCount": partitions[reference_slot]["entryCount"],
+            "entries": entries,
+            "runtimePanelRevision": runtime_panel,
+            "panelCompatibleEntryIndices": panel_compatible,
+            "applicationCandidateSelected": False,
+            "selectionPolicy": "inventory-only; never apply Android overlays at runtime",
+        }
+
+    for slot in ("a", "b"):
+        partitions[slot].pop("entries", None)
+    return (
+        {
+            "policy": "bounded read-only inventory; no mount and no overlay application",
+            "slotDecision": {
+                "activeAndroidSlot": active_slot,
+                "referenceSlot": reference_slot,
+                "confidence": confidence,
+                "source": decision_source,
+                "reason": decision_reason,
+            },
+            "partitions": partitions,
+            "selectedInventory": selected_inventory,
+        },
+        failures,
+    )
+
+
+def camera_calibration(sys_root: Path, etc_root: Path) -> dict[str, Any]:
+    nvmem_root = sys_root / "bus" / "nvmem" / "devices"
+    definitions = (
+        ("rear", "nabu-rear-camera-calibration*", "ov13b10.yaml"),
+        ("front", "nabu-front-camera-calibration*", "ov8856.yaml"),
+    )
+    sensors: dict[str, Any] = {}
+    for role, pattern, profile_name in definitions:
+        providers = sorted(nvmem_root.glob(pattern))
+        entry: dict[str, Any] = {"providerCount": len(providers)}
+        if len(providers) == 1:
+            payload = providers[0] / "nvmem"
+            try:
+                payload_stat = payload.stat()
+                mode = stat.S_IMODE(payload_stat.st_mode)
+                entry.update(
+                    {
+                        "provider": providers[0].name,
+                        "sizeBytes": payload_stat.st_size,
+                        "mode": f"{mode:04o}",
+                        "kernelExportReadOnly": not bool(mode & 0o222),
+                    }
+                )
+            except OSError:
+                entry["metadataReadable"] = False
+        profile = etc_root / "libcamera" / "ipa" / "simple" / profile_name
+        entry["generatedProfilePresent"] = profile.is_file()
+        entry["generatedProfileMode"] = safe_mode(profile)
+        if profile.is_file():
+            header = read_bytes(profile, 512)
+            entry["consumerProfileContainsModuleDigest"] = b"SHA256" in header
+        sensors[role] = entry
+    return {
+        "policy": (
+            "kernel NVMEM is inspected only for provider metadata; EEPROM bytes "
+            "and digests are never exported"
+        ),
+        "sensors": sensors,
+    }
+
+
+def installed_firmware(firmware_root: Path) -> tuple[dict[str, Any], list[str]]:
+    payloads: dict[str, Any] = {}
+    missing: list[str] = []
+    for role, relative_path in FIRMWARE_FILES:
+        path = firmware_root / relative_path
+        try:
+            payload_stat = path.stat()
+            regular = stat.S_ISREG(payload_stat.st_mode)
+            present = regular and payload_stat.st_size > 0
+            payloads[role] = {
+                "present": present,
+                "path": f"/usr/lib/firmware/{relative_path}",
+                "sizeBytes": payload_stat.st_size if regular else 0,
+                "mode": f"{stat.S_IMODE(payload_stat.st_mode):04o}",
+            }
+        except OSError:
+            present = False
+            payloads[role] = {
+                "present": False,
+                "path": f"/usr/lib/firmware/{relative_path}",
+            }
+        if not present:
+            missing.append(role)
+    return payloads, missing
+
+
+def remote_processors(sys_root: Path) -> list[dict[str, Any]]:
+    processors: list[dict[str, Any]] = []
+    for directory in sorted((sys_root / "class" / "remoteproc").glob("remoteproc*")):
+        name = read_text(directory / "name", 128)
+        state_text = read_text(directory / "state", 128)
+        firmware = read_text(directory / "firmware", 512)
+        if not re.fullmatch(r"[A-Za-z0-9_.@/+-]*", firmware):
+            firmware = "invalid-sysfs-value"
+        processors.append(
+            {
+                "name": name,
+                "state": state_text,
+                "firmware": firmware,
+            }
+        )
+    return processors
+
+
+def unit_active(unit: str, live_system: bool) -> str:
+    if not live_system:
+        return "not-checked"
+    try:
+        completed = subprocess.run(
+            ["/usr/bin/systemctl", "is-active", "--quiet", unit],
+            check=False,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=2.0,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return "unavailable"
+    return "active" if completed.returncode == 0 else "inactive"
+
+
+def android_partition_inventory(
+    sys_root: Path, dev_root: Path, allow_regular: bool, live_system: bool
+) -> dict[str, Any]:
+    references = {
+        role: {
+            label: partition_metadata(sys_root, dev_root, label, allow_regular)
+            for label in labels
+        }
+        for role, labels in REFERENCE_PARTITION_GROUPS
+    }
+    nv = {
+        label: {"present": partition_metadata(sys_root, dev_root, label, allow_regular)["present"]}
+        for label in MODEM_NV_PARTITIONS
+    }
+    return {
+        "firmwareReferences": {
+            "policy": (
+                "availability and device-node metadata only; contents are never "
+                "mounted, read, hashed, parsed, or auto-extracted"
+            ),
+            "partitionGroups": references,
+        },
+        "modemNv": {
+            "policy": "owned by rmtfs; never mounted, parsed, copied, hashed, or logged",
+            "partitions": nv,
+            "rmtfsService": unit_active("rmtfs.service", live_system),
+            "tqftpservService": unit_active("tqftpserv.service", live_system),
+        },
+    }
+
+
+def device_tree_has_property(sys_root: Path, node_fragment: str, names: set[str]) -> bool:
+    root = sys_root / "firmware" / "devicetree" / "base"
+    try:
+        paths = root.glob("**/*")
+        for path in paths:
+            if not path.is_file() or node_fragment not in str(path.parent).lower():
+                continue
+            if path.name in names:
+                return True
+    except OSError:
+        return False
+    return False
+
+
+def radio_identity(sys_root: Path) -> dict[str, Any]:
+    wifi_interfaces = []
+    assignment_names = {
+        0: "permanent",
+        1: "random",
+        2: "stolen",
+        3: "userspace-set",
+    }
+    for interface in sorted((sys_root / "class" / "net").glob("*")):
+        if not (interface / "wireless").exists():
+            continue
+        try:
+            assignment = int(read_text(interface / "addr_assign_type", 32))
+        except ValueError:
+            assignment = -1
+        wifi_interfaces.append(
+            {
+                "interface": interface.name,
+                "assignmentType": assignment_names.get(assignment, "unknown"),
+            }
+        )
+    identity_properties = {"local-mac-address", "mac-address", "nvmem-cells", "nvmem-cell-names"}
+    wifi_dt_source = device_tree_has_property(sys_root, "wifi@", identity_properties)
+    bluetooth_dt_source = device_tree_has_property(sys_root, "bluetooth", identity_properties)
+    return {
+        "policy": (
+            "addresses are neither read nor exported; raw modem NV is never used "
+            "as an address parser input"
+        ),
+        "wifi": {
+            "interfaces": wifi_interfaces,
+            "factoryIdentityDescribedByDeviceTree": wifi_dt_source,
+        },
+        "bluetooth": {
+            "factoryIdentityDescribedByDeviceTree": bluetooth_dt_source,
+        },
+        "factoryAdoptionGate": (
+            "requires a documented kernel or firmware identity ABI, validation "
+            "of address type and uniqueness, and rollback; otherwise retain the "
+            "existing stable Linux address"
+        ),
+    }
+
+
+def build_report(args: argparse.Namespace) -> tuple[dict[str, Any], list[str]]:
+    sys_root = args.sys_root.resolve()
+    dev_root = args.dev_root.resolve()
+    firmware_root = args.firmware_root.resolve()
+    etc_root = args.etc_root.resolve()
+    cmdline_path = args.proc_cmdline.resolve()
+    compatible = read_string_list(sys_root / "firmware" / "devicetree" / "base" / "compatible")
+    model = read_text(sys_root / "firmware" / "devicetree" / "base" / "model", 256)
+    eligible = "xiaomi,nabu" in compatible
+    failures: list[str] = []
+    if not eligible:
+        failures.append("not-xiaomi-nabu")
+
+    dtbo, dtbo_failures = inspect_dtbo(
+        sys_root, dev_root, cmdline_path, args.allow_regular_fixtures
+    )
+    failures.extend(dtbo_failures)
+    firmware, missing_firmware = installed_firmware(firmware_root)
+    failures.extend(f"missing-firmware-{role}" for role in missing_firmware)
+    live_system = sys_root == Path("/sys") and dev_root == Path("/dev")
+    report = {
+        "schemaVersion": 1,
+        "device": {
+            "model": model,
+            "compatible": compatible,
+            "eligible": eligible,
+        },
+        "safetyContract": {
+            "blockDeviceOpenMode": "O_RDONLY",
+            "blockDeviceContentReadAllowlist": ["dtbo_a", "dtbo_b"],
+            "mountsPerformed": False,
+            "overlaysApplied": False,
+            "androidFirmwarePartitionContentRead": False,
+            "modemNvRead": False,
+            "radioAddressesRead": False,
+            "cameraEepromPayloadRead": False,
+        },
+        "cameraCalibration": camera_calibration(sys_root, etc_root),
+        "dtboReference": dtbo,
+        "linuxFirmware": {
+            "authority": "packaged root filesystem; also works without Android partitions",
+            "payloads": firmware,
+            "remoteProcessors": remote_processors(sys_root),
+        },
+        "androidStorage": android_partition_inventory(
+            sys_root, dev_root, args.allow_regular_fixtures, live_system
+        ),
+        "radioIdentity": radio_identity(sys_root),
+        "strictGateFailures": sorted(set(failures)),
+    }
+    return report, failures
+
+
+def write_report(path: Path, report: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True, mode=0o755)
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=path.parent, delete=False
+    ) as temporary:
+        json.dump(report, temporary, indent=2, sort_keys=True)
+        temporary.write("\n")
+        temporary.flush()
+        os.fsync(temporary.fileno())
+        os.fchmod(temporary.fileno(), 0o644)
+        temporary_path = Path(temporary.name)
+    os.replace(temporary_path, path)
+
+
+def parse_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Generate the safe, read-only Xiaomi Nabu hardware provenance report"
+    )
+    parser.add_argument("--sys-root", type=Path, default=Path("/sys"))
+    parser.add_argument("--dev-root", type=Path, default=Path("/dev"))
+    parser.add_argument("--firmware-root", type=Path, default=Path("/usr/lib/firmware"))
+    parser.add_argument("--etc-root", type=Path, default=Path("/etc"))
+    parser.add_argument("--proc-cmdline", type=Path, default=Path("/proc/cmdline"))
+    parser.add_argument(
+        "--output", type=Path, default=Path("/run/nabu-hardware/provenance.json")
+    )
+    parser.add_argument("--stdout", action="store_true")
+    parser.add_argument("--strict", action="store_true")
+    parser.add_argument(
+        "--allow-regular-fixtures",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_arguments()
+    try:
+        report, failures = build_report(args)
+        write_report(args.output, report)
+        if args.stdout:
+            json.dump(report, sys.stdout, indent=2, sort_keys=True)
+            sys.stdout.write("\n")
+    except (OSError, AuditError, ValueError) as error:
+        print(f"nabu-hardware-provenance: {error}", file=sys.stderr)
+        return 2
+    if args.strict and failures:
+        print(
+            "nabu-hardware-provenance: strict gate failed: "
+            + ", ".join(sorted(set(failures))),
+            file=sys.stderr,
+        )
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
