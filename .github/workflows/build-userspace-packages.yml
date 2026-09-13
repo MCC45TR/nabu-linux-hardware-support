@@ -4,9 +4,7 @@ on:
   pull_request:
     paths:
       - '.copr/**'
-      - 'desktop/**'
       - 'packaging/**'
-      - 'services/**'
       - 'tests/**'
       - '.github/workflows/build-userspace-packages.yml'
   push:
@@ -14,9 +12,7 @@ on:
       - main
     paths:
       - '.copr/**'
-      - 'desktop/**'
       - 'packaging/**'
-      - 'services/**'
       - 'tests/**'
       - '.github/workflows/build-userspace-packages.yml'
   workflow_dispatch:
