@@ -6,6 +6,7 @@ on:
       - '.copr/**'
       - 'desktop/**'
       - 'packaging/**'
+      - 'services/**'
       - 'tests/**'
       - '.github/workflows/build-userspace-packages.yml'
   push:
@@ -15,6 +16,7 @@ on:
       - '.copr/**'
       - 'desktop/**'
       - 'packaging/**'
+      - 'services/**'
       - 'tests/**'
       - '.github/workflows/build-userspace-packages.yml'
   workflow_dispatch:

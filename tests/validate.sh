@@ -16,6 +16,24 @@ grep -Fq 'mode == V4L2_FLASH_LED_MODE_FLASH' \
 grep -Fq 'v4l2_errno == ENODEV ? sysfs_errno : v4l2_errno' \
     "$repo_root/desktop/nabu-tablet-controls/src/nabu-flashlight.c"
 bash "$repo_root/desktop/nabu-tablet-controls/tests/test-usb-role.sh"
+python3 -m unittest discover \
+    -s "$repo_root/services/nabu-hardware-provenance/tests" -v
+python3 -m py_compile \
+    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance"
+grep -Fq 'os.O_RDONLY | os.O_CLOEXEC' \
+    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance"
+grep -Fq 'DevicePolicy=closed' \
+    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
+grep -Fq 'DeviceAllow=block-sd r' \
+    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
+grep -Fq 'CapabilityBoundingSet=' \
+    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
+grep -Fq 'User=nabu-provenance' \
+    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
+grep -Fq 'IPAddressDeny=any' \
+    "$repo_root/services/nabu-hardware-provenance/nabu-hardware-provenance.service"
+udevadm verify --resolve-names=late \
+    "$repo_root/services/nabu-hardware-provenance/70-nabu-hardware-provenance.rules"
 
 for profile in \
     "$repo_root/plasma/rotation-60hz/user/kwinoutputconfig.json" \
@@ -58,6 +76,8 @@ grep -Fxq 'wifi.wake-on-wlan=12' \
     "$repo_root/networkmanager/20-nabu-wifi-wowlan.conf"
 grep -Fq '%meson_test' \
     "$repo_root/packaging/hexagonrpc-nabu/hexagonrpc.spec"
+grep -Fq '%systemd_post nabu-hardware-provenance.service' \
+    "$repo_root/packaging/nabu-hardware-provenance/nabu-hardware-provenance.spec"
 (cd "$repo_root/packaging/hexagonrpc-nabu" && sha256sum -c SOURCES.sha256)
 grep -Eq '^Version:[[:space:]]+[0-9]+\.[0-9]+\.[0-9]+$' \
     "$repo_root/packaging/hexagonrpc-nabu/hexagonrpc.spec"

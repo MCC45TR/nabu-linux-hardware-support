@@ -58,4 +58,10 @@ for package in libssc-nabu hexagonrpc-nabu iio-sensor-proxy-nabu xiaomi-nabu-fir
         --define "_srcrpmdir $output_dir"
 done
 
+provenance_topdir="$work_dir/nabu-hardware-provenance"
+"$repo_root/packaging/nabu-hardware-provenance/build-srpm.sh" \
+    "$provenance_topdir"
+cp "$provenance_topdir"/SRPMS/nabu-hardware-provenance-*.src.rpm \
+    "$output_dir/"
+
 printf 'SRPMs written to %s\n' "$output_dir"
