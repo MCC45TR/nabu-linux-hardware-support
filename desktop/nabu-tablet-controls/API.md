@@ -65,3 +65,17 @@ while a calibrated, fresh sample says the tablet is held.
 
 The feature is disabled when the mapping is uncalibrated, unavailable, stale,
 or unknown. SAR is not exposed as display proximity.
+
+# Motion, gesture, and grip diagnostics
+
+The Plasma widget reads the same unprivileged status command to show three
+different SSC gates: a data type advertised by firmware, an event-driven stream
+whose enable request was accepted, and a known data report actually observed
+for that SUID. An advertised endpoint is never labelled as event delivery.
+Continuous or unknown-rate endpoints are listed but not enabled by the
+background daemon.
+
+The grip row exposes fresh CH0/CH1/CH2 delta, raw, and baseline values together
+with the configured mask, thresholds, and debounce count. These values are
+diagnostics only. The classifier and logind inhibitor remain disabled until
+controlled uncovered/held HIL establishes device-specific thresholds.

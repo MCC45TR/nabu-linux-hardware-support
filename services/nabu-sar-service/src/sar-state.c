@@ -2,6 +2,24 @@
 
 #include <math.h>
 
+gboolean
+nabu_sar_classifier_configuration_is_valid(const NabuSarClassifier *classifier)
+{
+	g_return_val_if_fail(classifier != NULL, FALSE);
+
+	if (!classifier->enabled)
+		return TRUE;
+	return isfinite(classifier->held_threshold) &&
+		isfinite(classifier->released_threshold) &&
+		classifier->released_threshold >= 0.0f &&
+		classifier->held_threshold > classifier->released_threshold &&
+		classifier->channel_mask != 0 &&
+		!(classifier->channel_mask &
+		  ~((1U << NABU_SAR_CHANNEL_COUNT) - 1U)) &&
+		classifier->debounce_samples > 0 &&
+		classifier->debounce_samples <= 100;
+}
+
 NabuSarState
 nabu_sar_classifier_update(NabuSarClassifier *classifier,
 			   const NabuSarSample *sample)
@@ -11,6 +29,10 @@ nabu_sar_classifier_update(NabuSarClassifier *classifier,
 
 	if (!classifier->enabled)
 		return classifier->state = NABU_SAR_STATE_UNKNOWN;
+	if (!nabu_sar_classifier_configuration_is_valid(classifier)) {
+		classifier->enabled = FALSE;
+		return classifier->state = NABU_SAR_STATE_UNKNOWN;
+	}
 
 	for (guint i = 0; i < NABU_SAR_CHANNEL_COUNT; i++) {
 		if (classifier->channel_mask & (1U << i))

@@ -1,4 +1,4 @@
-# Nabu ADUX1050 SAR service
+# Nabu SAR and SSC algorithm service
 
 This service publishes the real three-channel ADUX1050 SSC stream on the
 system D-Bus. It never maps SAR to the screen-proximity API.
@@ -16,6 +16,21 @@ toggle is performed through the root-only D-Bus method by a polkit-launched
 Use `nabu-sar-capture PHASE SECONDS OUTPUT.csv` for controlled HIL calibration.
 Do not enable `Mapping.Enabled` until uncovered and held samples have produced
 separable thresholds on every intended grip edge.
+
+The same daemon publishes a read-only `org.senemos.Nabu.Sensors1` inventory at
+`/org/senemos/Nabu/Sensors`. It discovers the device's motion and gesture data
+types one at a time, and enables only firmware endpoints explicitly reported as
+on-change or single-output. Continuous or unknown-rate streams remain
+discovery-only so a background service cannot silently create a permanent
+high-rate workload. Firmware discovery, enable acknowledgement, and an observed
+known sensor-data message are separate properties; none is reported as proof of
+another.
+
+Generic monitoring requires libssc with correctly typed `stream-type` and
+`available` GObject properties. With an older ABI the daemon detects the type
+mismatch before reading either property and safely leaves that endpoint at
+`incompatible-libssc-abi` instead of risking a pointer-sized write into scalar
+memory.
 
 The companion CCT bridge opens the firmware `cct_front` endpoint through
 libssc, rejects non-finite and out-of-range data, and feeds Kelvin values into

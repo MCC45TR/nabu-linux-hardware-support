@@ -2,6 +2,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 23:22+0300\n"
 "PO-Revision-Date: 2026-08-29 20:00+0300\n"
 "Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
 "Language-Team: fa\n"
@@ -10,71 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Checking hardware support…"
-msgstr "در حال بررسی پشتیبانی سخت افزاری…"
+msgid " · ADB"
+msgstr "· ADB"
 
-msgid "Not supported by this device"
-msgstr "توسط این دستگاه پشتیبانی نمی شود"
-
-msgid "Default brightness:"
-msgstr "روشنایی پیش فرض:"
-
-msgid "Default flashlight brightness"
-msgstr "روشنایی پیش فرض چراغ قوه"
-
-msgid "Current value:"
-msgstr "ارزش فعلی:"
-
-msgid "The requested change could not be applied."
-msgstr "تغییر درخواستی قابل اعمال نیست."
-
-msgid "The flashlight brightness could not be applied."
-msgstr "روشنایی چراغ قوه اعمال نشد."
-
-msgid "Connected"
-msgstr "متصل شد"
-
-msgid "Paired"
-msgstr "جفت شد"
-
-#, javascript-format
-msgid "Battery: %1%"
-msgstr "باتری: %1%"
-
-msgid "Charging"
-msgstr "شارژ کردن"
-
-#, javascript-format
-msgid "Charge limit: %1%"
-msgstr "محدودیت شارژ: %1%"
-
-msgid "Tablet Control"
-msgstr "کنترل تبلت"
-
-msgid "Flashlight on"
-msgstr "چراغ قوه روشن"
-
-msgid "Nabu hardware controls"
-msgstr "کنترل های سخت افزاری Nabu"
-
-msgid "Refresh hardware state"
-msgstr "وضعیت سخت افزار را به روز کنید"
-
-msgid "Device"
-msgstr "دستگاه"
-
-msgid "Flashlight"
-msgstr "چراغ قوه"
-
-#, javascript-format
-msgid "On at %1%"
-msgstr "در %1% روشن است"
-
-msgid "Off"
-msgstr "خاموش"
-
-msgid "Flashlight brightness"
-msgstr "روشنایی چراغ قوه"
+msgid " · SSH"
+msgstr "· SSH"
 
 msgid "%1 percent"
 msgstr "درصد %1"
@@ -83,29 +25,241 @@ msgstr "درصد %1"
 msgid "%1%"
 msgstr "%1%"
 
-msgid "Display and cover"
-msgstr "نمایش و پوشش"
+msgid "%1/%2 available · %3 monitored · data from %4"
+msgstr ""
 
-msgid "Automatic rotation"
-msgstr "چرخش خودکار"
+msgid "%1/%2 available · %3 monitored · no data report yet"
+msgstr ""
+
+msgid "3D signature"
+msgstr ""
 
 msgid "Active"
 msgstr "فعال"
 
-msgid "Inactive"
-msgstr "غیر فعال"
+msgid "Attached"
+msgstr "پیوست شده است"
+
+msgid "Automatic"
+msgstr ""
 
 msgid "Automatic brightness"
 msgstr "روشنایی خودکار"
 
-msgid "Magnetic cover"
-msgstr "پوشش مغناطیسی"
+msgid "Automatic rotation"
+msgstr "چرخش خودکار"
+
+msgid "Available but not monitored by the safe power policy: %1"
+msgstr ""
+
+msgid "Baseline: %1"
+msgstr ""
+
+msgid "Basic gestures"
+msgstr ""
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "باتری: %1%"
+
+msgid "Bring to ear"
+msgstr ""
+
+msgid "CH0 %1 · CH1 %2 · CH2 %3"
+msgstr ""
+
+msgid "Calibration required"
+msgstr ""
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "محدودیت شارژ: %1%"
+
+msgid "Charging"
+msgstr "شارژ کردن"
+
+msgid "Checking hardware support…"
+msgstr "در حال بررسی پشتیبانی سخت افزاری…"
+
+msgid "Classifier disabled until controlled HIL calibration"
+msgstr ""
+
+msgid "Classifier: mask %1 · held ≥ %2 · released ≤ %3 · debounce %4"
+msgstr ""
 
 msgid "Closed"
 msgstr "بسته شد"
 
+msgid "Connect"
+msgstr "اتصال"
+
+msgid "Connected"
+msgstr "متصل شد"
+
+msgid "Current value:"
+msgstr "ارزش فعلی:"
+
+msgid "Data reports observed: %1"
+msgstr ""
+
+msgid "Default brightness:"
+msgstr "روشنایی پیش فرض:"
+
+msgid "Default flashlight brightness"
+msgstr "روشنایی پیش فرض چراغ قوه"
+
+msgid "Delta: %1"
+msgstr ""
+
+msgid "Device"
+msgstr "دستگاه"
+
+msgid "Device mode"
+msgstr "حالت دستگاه"
+
+msgid "Device orientation"
+msgstr ""
+
+msgid "Discovering firmware endpoints…"
+msgstr ""
+
+msgid ""
+"Discovery and enable acknowledgement do not prove event delivery. Only a "
+"known sensor data message is counted; use Refresh after each physical test."
+msgstr ""
+
+msgid "Display and cover"
+msgstr "نمایش و پوشش"
+
+msgid "Facing"
+msgstr ""
+
+msgid "Firmware available: %1"
+msgstr ""
+
+msgid "Flashlight"
+msgstr "چراغ قوه"
+
+msgid "Flashlight brightness"
+msgstr "روشنایی چراغ قوه"
+
+msgid "Flashlight on"
+msgstr "چراغ قوه روشن"
+
+msgid "Fresh reports: %1"
+msgstr ""
+
+msgid "Fresh sample %1 · delta: %2"
+msgstr ""
+
+msgid "Gravity"
+msgstr ""
+
+msgid "Grip sensor channels"
+msgstr ""
+
+msgid "Held · acquiring inhibitor"
+msgstr ""
+
+msgid "Held · sleep blocked"
+msgstr ""
+
+msgid "Host mode"
+msgstr "حالت میزبان"
+
+msgid "Inactive"
+msgstr "غیر فعال"
+
+msgid "Keep awake while held"
+msgstr ""
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · سریال%2"
+
+msgid "Magnetic cover"
+msgstr "پوشش مغناطیسی"
+
+msgid "Magnetic cover sleep action"
+msgstr "عملکرد خواب پوشش مغناطیسی"
+
+msgid "Motion and gesture algorithms"
+msgstr ""
+
+msgid "Motion detect"
+msgstr ""
+
+msgid "Multi-shake"
+msgstr ""
+
+msgid "Nabu hardware controls"
+msgstr "کنترل های سخت افزاری Nabu"
+
+msgid "None"
+msgstr ""
+
+msgid "Not supported by this device"
+msgstr "توسط این دستگاه پشتیبانی نمی شود"
+
+msgid "OEM step detector"
+msgstr ""
+
+msgid "Off"
+msgstr "خاموش"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "در %1% روشن است"
+
 msgid "Open"
 msgstr "باز کنید"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 خاص"
+
+msgid "Paired"
+msgstr "جفت شد"
+
+msgid "Pedometer"
+msgstr ""
+
+msgid "Pen battery"
+msgstr "باتری قلمی"
+
+msgid "Persistent significant motion"
+msgstr ""
+
+msgid "Pickup"
+msgstr ""
+
+msgid "Pogo keyboard"
+msgstr "صفحه کلید Pogo"
+
+msgid "Power sink"
+msgstr "سینک برق"
+
+msgid "Power source"
+msgstr ""
+
+msgid "Raw: %1"
+msgstr ""
+
+msgid "Refresh hardware state"
+msgstr "وضعیت سخت افزار را به روز کنید"
+
+msgid "SAR algorithm"
+msgstr ""
+
+msgid "Safely monitored: %1"
+msgstr ""
+
+msgid "Screen down"
+msgstr ""
+
+msgid "Sensors"
+msgstr ""
+
+msgid "Significant motion"
+msgstr ""
 
 msgid "Sleep action active"
 msgstr "Sleep action فعال است"
@@ -113,50 +267,38 @@ msgstr "Sleep action فعال است"
 msgid "Sleep action inactive"
 msgstr "عملکرد خواب غیرفعال است"
 
-msgid "Magnetic cover sleep action"
-msgstr "عملکرد خواب پوشش مغناطیسی"
+msgid "Supply power"
+msgstr "تامین برق"
 
-msgid "Pad 5 Specific"
-msgstr "Pad 5 خاص"
+msgid "Tablet Control"
+msgstr "کنترل تبلت"
 
-msgid "Xiaomi Smart Pen"
-msgstr "Xiaomi Smart Pen"
+msgid "The flashlight brightness could not be applied."
+msgstr "روشنایی چراغ قوه اعمال نشد."
 
-msgid "Connect"
-msgstr "اتصال"
+msgid "The requested change could not be applied."
+msgstr "تغییر درخواستی قابل اعمال نیست."
 
-msgid "Pen battery"
-msgstr "باتری قلمی"
+msgid "Tilt"
+msgstr ""
 
-msgid "Pogo keyboard"
-msgstr "صفحه کلید Pogo"
-
-msgid "Attached"
-msgstr "پیوست شده است"
-
-msgid "USB-C"
-msgstr "USB-C"
-
-msgid "USB device sharing"
-msgstr "اشتراک گذاری دستگاه USB"
-
-msgid " · SSH"
-msgstr "· SSH"
-
-msgid " · ADB"
-msgstr "· ADB"
-
-msgid "MTP%1 · Serial%2"
-msgstr "MTP%1 · سریال%2"
+msgid "Tilt to wake"
+msgstr ""
 
 msgid "USB data role"
 msgstr "نقش داده USB"
 
-msgid "Host mode"
-msgstr "حالت میزبان"
+msgid "USB device sharing"
+msgstr "اشتراک گذاری دستگاه USB"
 
-msgid "Device mode"
-msgstr "حالت دستگاه"
+msgid "USB power role"
+msgstr "نقش قدرت USB"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "Unavailable or incompatible: %1"
+msgstr ""
 
 msgid "Use device"
 msgstr "از دستگاه استفاده کنید"
@@ -164,17 +306,23 @@ msgstr "از دستگاه استفاده کنید"
 msgid "Use host"
 msgstr "از هاست استفاده کنید"
 
-msgid "USB power role"
-msgstr "نقش قدرت USB"
-
-msgid "Supplying power"
-msgstr "تامین برق"
-
-msgid "Power sink"
-msgstr "سینک برق"
-
 msgid "Use sink"
 msgstr "از سینک استفاده کنید"
 
-msgid "Supply power"
-msgstr "تامین برق"
+msgid "Waiting for a fresh sample"
+msgstr ""
+
+msgid "Waiting for a physical event: %1"
+msgstr ""
+
+msgid "Waiting for sensor data"
+msgstr ""
+
+msgid "Waiting until held"
+msgstr ""
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+#~ msgid "Supplying power"
+#~ msgstr "تامین برق"

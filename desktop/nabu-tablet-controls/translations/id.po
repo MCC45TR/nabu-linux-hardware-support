@@ -2,6 +2,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 23:22+0300\n"
 "PO-Revision-Date: 2026-08-29 20:00+0300\n"
 "Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
 "Language-Team: id\n"
@@ -10,71 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Checking hardware support…"
-msgstr "Memeriksa dukungan perangkat keras…"
+msgid " · ADB"
+msgstr "· ADB"
 
-msgid "Not supported by this device"
-msgstr "Tidak didukung oleh perangkat ini"
-
-msgid "Default brightness:"
-msgstr "Kecerahan bawaan:"
-
-msgid "Default flashlight brightness"
-msgstr "Kecerahan senter default"
-
-msgid "Current value:"
-msgstr "Nilai saat ini:"
-
-msgid "The requested change could not be applied."
-msgstr "Perubahan yang diminta tidak dapat diterapkan."
-
-msgid "The flashlight brightness could not be applied."
-msgstr "Kecerahan senter tidak dapat diterapkan."
-
-msgid "Connected"
-msgstr "Terhubung"
-
-msgid "Paired"
-msgstr "Dipasangkan"
-
-#, javascript-format
-msgid "Battery: %1%"
-msgstr "Baterai: %1%"
-
-msgid "Charging"
-msgstr "Mengisi daya"
-
-#, javascript-format
-msgid "Charge limit: %1%"
-msgstr "Batas pengisian daya: %1%"
-
-msgid "Tablet Control"
-msgstr "Kontrol Tablet"
-
-msgid "Flashlight on"
-msgstr "Senter menyala"
-
-msgid "Nabu hardware controls"
-msgstr "Kontrol perangkat keras Nabu"
-
-msgid "Refresh hardware state"
-msgstr "Segarkan status perangkat keras"
-
-msgid "Device"
-msgstr "Perangkat"
-
-msgid "Flashlight"
-msgstr "Senter"
-
-#, javascript-format
-msgid "On at %1%"
-msgstr "Aktif di %1%"
-
-msgid "Off"
-msgstr "Mati"
-
-msgid "Flashlight brightness"
-msgstr "Kecerahan senter"
+msgid " · SSH"
+msgstr "· SSH"
 
 msgid "%1 percent"
 msgstr "%1 persen"
@@ -83,29 +25,241 @@ msgstr "%1 persen"
 msgid "%1%"
 msgstr "%1%"
 
-msgid "Display and cover"
-msgstr "Tampilan dan penutup"
+msgid "%1/%2 available · %3 monitored · data from %4"
+msgstr ""
 
-msgid "Automatic rotation"
-msgstr "Rotasi otomatis"
+msgid "%1/%2 available · %3 monitored · no data report yet"
+msgstr ""
+
+msgid "3D signature"
+msgstr ""
 
 msgid "Active"
 msgstr "Aktif"
 
-msgid "Inactive"
-msgstr "Tidak aktif"
+msgid "Attached"
+msgstr "Terlampir"
+
+msgid "Automatic"
+msgstr ""
 
 msgid "Automatic brightness"
 msgstr "Kecerahan otomatis"
 
-msgid "Magnetic cover"
-msgstr "Penutup magnetik"
+msgid "Automatic rotation"
+msgstr "Rotasi otomatis"
+
+msgid "Available but not monitored by the safe power policy: %1"
+msgstr ""
+
+msgid "Baseline: %1"
+msgstr ""
+
+msgid "Basic gestures"
+msgstr ""
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Baterai: %1%"
+
+msgid "Bring to ear"
+msgstr ""
+
+msgid "CH0 %1 · CH1 %2 · CH2 %3"
+msgstr ""
+
+msgid "Calibration required"
+msgstr ""
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Batas pengisian daya: %1%"
+
+msgid "Charging"
+msgstr "Mengisi daya"
+
+msgid "Checking hardware support…"
+msgstr "Memeriksa dukungan perangkat keras…"
+
+msgid "Classifier disabled until controlled HIL calibration"
+msgstr ""
+
+msgid "Classifier: mask %1 · held ≥ %2 · released ≤ %3 · debounce %4"
+msgstr ""
 
 msgid "Closed"
 msgstr "Tertutup"
 
+msgid "Connect"
+msgstr "Hubungkan"
+
+msgid "Connected"
+msgstr "Terhubung"
+
+msgid "Current value:"
+msgstr "Nilai saat ini:"
+
+msgid "Data reports observed: %1"
+msgstr ""
+
+msgid "Default brightness:"
+msgstr "Kecerahan bawaan:"
+
+msgid "Default flashlight brightness"
+msgstr "Kecerahan senter default"
+
+msgid "Delta: %1"
+msgstr ""
+
+msgid "Device"
+msgstr "Perangkat"
+
+msgid "Device mode"
+msgstr "Modus perangkat"
+
+msgid "Device orientation"
+msgstr ""
+
+msgid "Discovering firmware endpoints…"
+msgstr ""
+
+msgid ""
+"Discovery and enable acknowledgement do not prove event delivery. Only a "
+"known sensor data message is counted; use Refresh after each physical test."
+msgstr ""
+
+msgid "Display and cover"
+msgstr "Tampilan dan penutup"
+
+msgid "Facing"
+msgstr ""
+
+msgid "Firmware available: %1"
+msgstr ""
+
+msgid "Flashlight"
+msgstr "Senter"
+
+msgid "Flashlight brightness"
+msgstr "Kecerahan senter"
+
+msgid "Flashlight on"
+msgstr "Senter menyala"
+
+msgid "Fresh reports: %1"
+msgstr ""
+
+msgid "Fresh sample %1 · delta: %2"
+msgstr ""
+
+msgid "Gravity"
+msgstr ""
+
+msgid "Grip sensor channels"
+msgstr ""
+
+msgid "Held · acquiring inhibitor"
+msgstr ""
+
+msgid "Held · sleep blocked"
+msgstr ""
+
+msgid "Host mode"
+msgstr "Modus tuan rumah"
+
+msgid "Inactive"
+msgstr "Tidak aktif"
+
+msgid "Keep awake while held"
+msgstr ""
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Serial%2"
+
+msgid "Magnetic cover"
+msgstr "Penutup magnetik"
+
+msgid "Magnetic cover sleep action"
+msgstr "Aksi tidur penutup magnetik"
+
+msgid "Motion and gesture algorithms"
+msgstr ""
+
+msgid "Motion detect"
+msgstr ""
+
+msgid "Multi-shake"
+msgstr ""
+
+msgid "Nabu hardware controls"
+msgstr "Kontrol perangkat keras Nabu"
+
+msgid "None"
+msgstr ""
+
+msgid "Not supported by this device"
+msgstr "Tidak didukung oleh perangkat ini"
+
+msgid "OEM step detector"
+msgstr ""
+
+msgid "Off"
+msgstr "Mati"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Aktif di %1%"
+
 msgid "Open"
 msgstr "Buka"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 Spesifik"
+
+msgid "Paired"
+msgstr "Dipasangkan"
+
+msgid "Pedometer"
+msgstr ""
+
+msgid "Pen battery"
+msgstr "Baterai pena"
+
+msgid "Persistent significant motion"
+msgstr ""
+
+msgid "Pickup"
+msgstr ""
+
+msgid "Pogo keyboard"
+msgstr "Papan ketik Pogo"
+
+msgid "Power sink"
+msgstr "Tenggelamnya kekuatan"
+
+msgid "Power source"
+msgstr ""
+
+msgid "Raw: %1"
+msgstr ""
+
+msgid "Refresh hardware state"
+msgstr "Segarkan status perangkat keras"
+
+msgid "SAR algorithm"
+msgstr ""
+
+msgid "Safely monitored: %1"
+msgstr ""
+
+msgid "Screen down"
+msgstr ""
+
+msgid "Sensors"
+msgstr ""
+
+msgid "Significant motion"
+msgstr ""
 
 msgid "Sleep action active"
 msgstr "Tindakan tidur aktif"
@@ -113,50 +267,38 @@ msgstr "Tindakan tidur aktif"
 msgid "Sleep action inactive"
 msgstr "Tindakan tidur tidak aktif"
 
-msgid "Magnetic cover sleep action"
-msgstr "Aksi tidur penutup magnetik"
+msgid "Supply power"
+msgstr "Pasokan listrik"
 
-msgid "Pad 5 Specific"
-msgstr "Pad 5 Spesifik"
+msgid "Tablet Control"
+msgstr "Kontrol Tablet"
 
-msgid "Xiaomi Smart Pen"
-msgstr "Xiaomi Smart Pen"
+msgid "The flashlight brightness could not be applied."
+msgstr "Kecerahan senter tidak dapat diterapkan."
 
-msgid "Connect"
-msgstr "Hubungkan"
+msgid "The requested change could not be applied."
+msgstr "Perubahan yang diminta tidak dapat diterapkan."
 
-msgid "Pen battery"
-msgstr "Baterai pena"
+msgid "Tilt"
+msgstr ""
 
-msgid "Pogo keyboard"
-msgstr "Papan ketik Pogo"
-
-msgid "Attached"
-msgstr "Terlampir"
-
-msgid "USB-C"
-msgstr "USB-C"
-
-msgid "USB device sharing"
-msgstr "Berbagi perangkat USB"
-
-msgid " · SSH"
-msgstr "· SSH"
-
-msgid " · ADB"
-msgstr "· ADB"
-
-msgid "MTP%1 · Serial%2"
-msgstr "MTP%1 · Serial%2"
+msgid "Tilt to wake"
+msgstr ""
 
 msgid "USB data role"
 msgstr "Peran data USB"
 
-msgid "Host mode"
-msgstr "Modus tuan rumah"
+msgid "USB device sharing"
+msgstr "Berbagi perangkat USB"
 
-msgid "Device mode"
-msgstr "Modus perangkat"
+msgid "USB power role"
+msgstr "Peran kekuatan USB"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "Unavailable or incompatible: %1"
+msgstr ""
 
 msgid "Use device"
 msgstr "Gunakan perangkat"
@@ -164,17 +306,23 @@ msgstr "Gunakan perangkat"
 msgid "Use host"
 msgstr "Gunakan tuan rumah"
 
-msgid "USB power role"
-msgstr "Peran kekuatan USB"
-
-msgid "Supplying power"
-msgstr "Memasok listrik"
-
-msgid "Power sink"
-msgstr "Tenggelamnya kekuatan"
-
 msgid "Use sink"
 msgstr "Gunakan wastafel"
 
-msgid "Supply power"
-msgstr "Pasokan listrik"
+msgid "Waiting for a fresh sample"
+msgstr ""
+
+msgid "Waiting for a physical event: %1"
+msgstr ""
+
+msgid "Waiting for sensor data"
+msgstr ""
+
+msgid "Waiting until held"
+msgstr ""
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+#~ msgid "Supplying power"
+#~ msgstr "Memasok listrik"

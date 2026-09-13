@@ -3,7 +3,7 @@
 
 Name:           libssc-nabu
 Version:        0.4.4
-Release:        15.nabu14.test%{?dist}
+Release:        16.nabu15.test%{?dist}
 Summary:        Qualcomm Sensor Core client library for Nabu sensor services
 
 License:        GPL-3.0-or-later
@@ -21,6 +21,7 @@ Patch8:         0009-ssccli-expose-LSM6DSO-temperature-stream.patch
 Patch9:         0010-ssccli-expose-LSM6DSO-motion-detect-events.patch
 Patch10:        0011-libssc-support-single-output-sensor-streams.patch
 Patch11:        0012-libssc-decode-LSM6DSO-motion-detect-events.patch
+Patch12:        0013-libssc-fix-public-property-types.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -102,6 +103,9 @@ grep -F 'LSM6DSO motion-detect event:' src/libssc-cli.c
 grep -F 'SSC_STREAM_TYPE_SINGLE_OUTPUT' src/libssc-sensor.c
 grep -F 'SSC_MSG_REPORT_MOTION_DETECT' src/libssc-sensor-light.c
 grep -F 'ssc_motion_detect_event__unpack' src/libssc-sensor-light.c
+grep -F 'g_param_spec_uint (SSC_SENSOR_STREAM_TYPE' src/libssc-sensor.c
+grep -F 'g_param_spec_boolean (SSC_SENSOR_AVAILABLE' src/libssc-sensor.c
+grep -F 'g_param_spec_float (SSC_SENSOR_SAMPLE_RATE' src/libssc-sensor.c
 
 %files
 %license LICENSE
@@ -125,6 +129,10 @@ if [ -x /usr/bin/systemctl ]; then
 fi
 
 %changelog
+* Sun Sep 13 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-16.nabu15.test
+- Correct libssc public property types so typed GObject callers cannot suffer
+  pointer-sized writes into scalar output variables.
+
 * Sun Sep 06 2026 mcc45tr <mcc45tr@gmail.com> - 0.4.4-15.nabu14.test
 - Decode Qualcomm message 771 and publish the LSM6DSO motion-detect state.
 

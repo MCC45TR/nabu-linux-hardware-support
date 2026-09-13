@@ -2,6 +2,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 23:22+0300\n"
 "PO-Revision-Date: 2026-08-29 20:00+0300\n"
 "Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
 "Language-Team: tr\n"
@@ -10,71 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Checking hardware support…"
-msgstr "Donanım desteği denetleniyor…"
+msgid " · ADB"
+msgstr " · ADB"
 
-msgid "Not supported by this device"
-msgstr "Bu cihaz tarafından desteklenmiyor"
-
-msgid "Default brightness:"
-msgstr "Öntanımlı parlaklık:"
-
-msgid "Default flashlight brightness"
-msgstr "Öntanımlı el feneri parlaklığı"
-
-msgid "Current value:"
-msgstr "Geçerli değer:"
-
-msgid "The requested change could not be applied."
-msgstr "İstenen değişiklik uygulanamadı."
-
-msgid "The flashlight brightness could not be applied."
-msgstr "El feneri parlaklığı uygulanamadı."
-
-msgid "Connected"
-msgstr "Bağlı"
-
-msgid "Paired"
-msgstr "Eşleştirildi"
-
-#, javascript-format
-msgid "Battery: %1%"
-msgstr "Pil: %1%"
-
-msgid "Charging"
-msgstr "Şarj oluyor"
-
-#, javascript-format
-msgid "Charge limit: %1%"
-msgstr "Şarj sınırı: %1%"
-
-msgid "Tablet Control"
-msgstr "Tablet Denetimi"
-
-msgid "Flashlight on"
-msgstr "El feneri açık"
-
-msgid "Nabu hardware controls"
-msgstr "Nabu donanım denetimleri"
-
-msgid "Refresh hardware state"
-msgstr "Donanım durumunu yenile"
-
-msgid "Device"
-msgstr "Cihaz"
-
-msgid "Flashlight"
-msgstr "El feneri"
-
-#, javascript-format
-msgid "On at %1%"
-msgstr "Açık: %1%"
-
-msgid "Off"
-msgstr "Kapalı"
-
-msgid "Flashlight brightness"
-msgstr "El feneri parlaklığı"
+msgid " · SSH"
+msgstr " · SSH"
 
 msgid "%1 percent"
 msgstr "Yüzde %1"
@@ -83,29 +25,243 @@ msgstr "Yüzde %1"
 msgid "%1%"
 msgstr "%1%"
 
-msgid "Display and cover"
-msgstr "Ekran ve kapak"
+msgid "%1/%2 available · %3 monitored · data from %4"
+msgstr "%1/%2 kullanılabilir · %3 izleniyor · %4 kaynaktan veri"
 
-msgid "Automatic rotation"
-msgstr "Otomatik döndürme"
+msgid "%1/%2 available · %3 monitored · no data report yet"
+msgstr "%1/%2 kullanılabilir · %3 izleniyor · henüz veri raporu yok"
+
+msgid "3D signature"
+msgstr "3B imzası"
 
 msgid "Active"
 msgstr "Etkin"
 
-msgid "Inactive"
-msgstr "Devre dışı"
+msgid "Attached"
+msgstr "Takılı"
+
+msgid "Automatic"
+msgstr "Otomatik"
 
 msgid "Automatic brightness"
 msgstr "Otomatik parlaklık"
 
-msgid "Magnetic cover"
-msgstr "Manyetik kapak"
+msgid "Automatic rotation"
+msgstr "Otomatik döndürme"
+
+msgid "Available but not monitored by the safe power policy: %1"
+msgstr "Kullanılabilir ancak güvenli güç ilkesi nedeniyle izlenmiyor: %1"
+
+msgid "Baseline: %1"
+msgstr "Taban değeri: %1"
+
+msgid "Basic gestures"
+msgstr "Temel jestler"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Pil: %1%"
+
+msgid "Bring to ear"
+msgstr "Kulağa götürme"
+
+msgid "CH0 %1 · CH1 %2 · CH2 %3"
+msgstr "CH0 %1 · CH1 %2 · CH2 %3"
+
+msgid "Calibration required"
+msgstr "Kalibrasyon gerekli"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Şarj sınırı: %1%"
+
+msgid "Charging"
+msgstr "Şarj oluyor"
+
+msgid "Checking hardware support…"
+msgstr "Donanım desteği denetleniyor…"
+
+msgid "Classifier disabled until controlled HIL calibration"
+msgstr "Denetimli donanım testi kalibrasyonuna kadar sınıflandırıcı devre dışı"
+
+msgid "Classifier: mask %1 · held ≥ %2 · released ≤ %3 · debounce %4"
+msgstr "Sınıflandırıcı: maske %1 · elde ≥ %2 · bırakılmış ≤ %3 · kararlılık %4"
 
 msgid "Closed"
 msgstr "Kapalı"
 
+msgid "Connect"
+msgstr "Bağlan"
+
+msgid "Connected"
+msgstr "Bağlı"
+
+msgid "Current value:"
+msgstr "Geçerli değer:"
+
+msgid "Data reports observed: %1"
+msgstr "Gözlenen veri raporları: %1"
+
+msgid "Default brightness:"
+msgstr "Öntanımlı parlaklık:"
+
+msgid "Default flashlight brightness"
+msgstr "Öntanımlı el feneri parlaklığı"
+
+msgid "Delta: %1"
+msgstr "Fark: %1"
+
+msgid "Device"
+msgstr "Cihaz"
+
+msgid "Device mode"
+msgstr "Cihaz modu"
+
+msgid "Device orientation"
+msgstr "Cihaz yönelimi"
+
+msgid "Discovering firmware endpoints…"
+msgstr "Ürün yazılımı uçları keşfediliyor…"
+
+msgid ""
+"Discovery and enable acknowledgement do not prove event delivery. Only a "
+"known sensor data message is counted; use Refresh after each physical test."
+msgstr ""
+"Keşif ve etkinleştirme onayı olay iletimini kanıtlamaz. Yalnızca bilinen bir "
+"sensör veri iletisi sayılır; her fiziksel testten sonra Yenile’yi kullanın."
+
+msgid "Display and cover"
+msgstr "Ekran ve kapak"
+
+msgid "Facing"
+msgstr "Bakış yönü"
+
+msgid "Firmware available: %1"
+msgstr "Ürün yazılımında kullanılabilir: %1"
+
+msgid "Flashlight"
+msgstr "El feneri"
+
+msgid "Flashlight brightness"
+msgstr "El feneri parlaklığı"
+
+msgid "Flashlight on"
+msgstr "El feneri açık"
+
+msgid "Fresh reports: %1"
+msgstr "Güncel raporlar: %1"
+
+msgid "Fresh sample %1 · delta: %2"
+msgstr "Güncel örnek %1 · fark: %2"
+
+msgid "Gravity"
+msgstr "Yerçekimi"
+
+msgid "Grip sensor channels"
+msgstr "Kavrama sensörü kanalları"
+
+msgid "Held · acquiring inhibitor"
+msgstr "Elde · uyku engelleyici alınıyor"
+
+msgid "Held · sleep blocked"
+msgstr "Elde · uyku engellendi"
+
+msgid "Host mode"
+msgstr "Ana makine modu"
+
+msgid "Inactive"
+msgstr "Devre dışı"
+
+msgid "Keep awake while held"
+msgstr "Eldeyken uyanık tut"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Seri%2"
+
+msgid "Magnetic cover"
+msgstr "Manyetik kapak"
+
+msgid "Magnetic cover sleep action"
+msgstr "Manyetik kapak uyku eylemi"
+
+msgid "Motion and gesture algorithms"
+msgstr "Hareket ve jest algoritmaları"
+
+msgid "Motion detect"
+msgstr "Hareket algılama"
+
+msgid "Multi-shake"
+msgstr "Çoklu sallama"
+
+msgid "Nabu hardware controls"
+msgstr "Nabu donanım denetimleri"
+
+msgid "None"
+msgstr "Yok"
+
+msgid "Not supported by this device"
+msgstr "Bu cihaz tarafından desteklenmiyor"
+
+msgid "OEM step detector"
+msgstr "OEM adım algılayıcı"
+
+msgid "Off"
+msgstr "Kapalı"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Açık: %1%"
+
 msgid "Open"
 msgstr "Açık"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5’e Özel"
+
+msgid "Paired"
+msgstr "Eşleştirildi"
+
+msgid "Pedometer"
+msgstr "Adımsayar"
+
+msgid "Pen battery"
+msgstr "Kalem pili"
+
+msgid "Persistent significant motion"
+msgstr "Kalıcı belirgin hareket"
+
+msgid "Pickup"
+msgstr "Eline alma"
+
+msgid "Pogo keyboard"
+msgstr "Pogo klavye"
+
+msgid "Power sink"
+msgstr "Güç alıcı"
+
+msgid "Power source"
+msgstr "Güç kaynağı"
+
+msgid "Raw: %1"
+msgstr "Ham: %1"
+
+msgid "Refresh hardware state"
+msgstr "Donanım durumunu yenile"
+
+msgid "SAR algorithm"
+msgstr "SAR algoritması"
+
+msgid "Safely monitored: %1"
+msgstr "Güvenli biçimde izlenen: %1"
+
+msgid "Screen down"
+msgstr "Ekran aşağıda"
+
+msgid "Sensors"
+msgstr "Sensörler"
+
+msgid "Significant motion"
+msgstr "Belirgin hareket"
 
 msgid "Sleep action active"
 msgstr "Uyku eylemi etkin"
@@ -113,50 +269,38 @@ msgstr "Uyku eylemi etkin"
 msgid "Sleep action inactive"
 msgstr "Uyku eylemi devre dışı"
 
-msgid "Magnetic cover sleep action"
-msgstr "Manyetik kapak uyku eylemi"
+msgid "Supply power"
+msgstr "Güç sağla"
 
-msgid "Pad 5 Specific"
-msgstr "Pad 5’e Özel"
+msgid "Tablet Control"
+msgstr "Tablet Denetimi"
 
-msgid "Xiaomi Smart Pen"
-msgstr "Xiaomi Akıllı Kalem"
+msgid "The flashlight brightness could not be applied."
+msgstr "El feneri parlaklığı uygulanamadı."
 
-msgid "Connect"
-msgstr "Bağlan"
+msgid "The requested change could not be applied."
+msgstr "İstenen değişiklik uygulanamadı."
 
-msgid "Pen battery"
-msgstr "Kalem pili"
+msgid "Tilt"
+msgstr "Eğilme"
 
-msgid "Pogo keyboard"
-msgstr "Pogo klavye"
-
-msgid "Attached"
-msgstr "Takılı"
-
-msgid "USB-C"
-msgstr "USB-C"
-
-msgid "USB device sharing"
-msgstr "USB cihaz paylaşımı"
-
-msgid " · SSH"
-msgstr " · SSH"
-
-msgid " · ADB"
-msgstr " · ADB"
-
-msgid "MTP%1 · Serial%2"
-msgstr "MTP%1 · Seri%2"
+msgid "Tilt to wake"
+msgstr "Eğerek uyandırma"
 
 msgid "USB data role"
 msgstr "USB veri rolü"
 
-msgid "Host mode"
-msgstr "Ana makine modu"
+msgid "USB device sharing"
+msgstr "USB cihaz paylaşımı"
 
-msgid "Device mode"
-msgstr "Cihaz modu"
+msgid "USB power role"
+msgstr "USB güç rolü"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "Unavailable or incompatible: %1"
+msgstr "Kullanılamıyor veya uyumsuz: %1"
 
 msgid "Use device"
 msgstr "Cihazı kullan"
@@ -164,38 +308,28 @@ msgstr "Cihazı kullan"
 msgid "Use host"
 msgstr "Ana makineyi kullan"
 
-msgid "USB power role"
-msgstr "USB güç rolü"
-
-msgid "Supplying power"
-msgstr "Güç sağlanıyor"
-
-msgid "Power sink"
-msgstr "Güç alıcı"
-
 msgid "Use sink"
 msgstr "Güç alıcıyı kullan"
 
-msgid "Supply power"
-msgstr "Güç sağla"
+msgid "Waiting for a fresh sample"
+msgstr "Güncel örnek bekleniyor"
 
-msgid "Keep awake while held"
-msgstr "Eldeyken uyanık tut"
+msgid "Waiting for a physical event: %1"
+msgstr "Fiziksel olay bekleniyor: %1"
 
-msgid "Use the calibrated grip sensor to prevent idle sleep while held"
-msgstr "Elde tutulurken boşta uyumayı önlemek için kalibre edilmiş kavrama sensörünü kullan"
-
-msgid "Calibration required"
-msgstr "Kalibrasyon gerekli"
-
-msgid "Held · sleep blocked"
-msgstr "Elde · uyku engellendi"
-
-msgid "Held · acquiring inhibitor"
-msgstr "Elde · uyku engelleyici alınıyor"
+msgid "Waiting for sensor data"
+msgstr "Sensör verisi bekleniyor"
 
 msgid "Waiting until held"
 msgstr "Elde tutulması bekleniyor"
 
-msgid "Waiting for sensor data"
-msgstr "Sensör verisi bekleniyor"
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Akıllı Kalem"
+
+#~ msgid "Supplying power"
+#~ msgstr "Güç sağlanıyor"
+
+#~ msgid "Use the calibrated grip sensor to prevent idle sleep while held"
+#~ msgstr ""
+#~ "Elde tutulurken boşta uyumayı önlemek için kalibre edilmiş kavrama "
+#~ "sensörünü kullan"

@@ -1,5 +1,6 @@
 #include "sar-parser.h"
 
+#include <math.h>
 #include <string.h>
 
 static GQuark
@@ -83,6 +84,12 @@ nabu_sar_parse_report(const guint8 *data, gsize length,
 		memcpy(&bits, payload + i * sizeof(bits), sizeof(bits));
 		bits = GUINT32_FROM_LE(bits);
 		memcpy(&sample->values[i], &bits, sizeof(bits));
+		if (!isfinite(sample->values[i])) {
+			g_set_error(error, nabu_sar_parser_error_quark(), 3,
+				    "non-finite ADUX1050 value at index %u", i);
+			memset(sample, 0, sizeof(*sample));
+			return FALSE;
+		}
 	}
 	for (guint channel = 0; channel < NABU_SAR_CHANNEL_COUNT; channel++) {
 		guint base = channel * 3;

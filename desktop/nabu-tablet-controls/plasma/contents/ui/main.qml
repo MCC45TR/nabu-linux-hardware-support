@@ -37,6 +37,29 @@ PlasmoidItem {
     property bool sarHoldAwake: false
     property bool sarSleepInhibited: false
     property string sarGripState: "unknown"
+    property bool sarSampleFresh: false
+    property string sarSampleSequence: "0"
+    property string sarDeltas: ""
+    property string sarRawValues: ""
+    property string sarBaselines: ""
+    property int sarConfiguredChannelMask: 0
+    property string sarHeldThreshold: "0"
+    property string sarReleasedThreshold: "0"
+    property int sarDebounceSamples: 0
+    property bool sscReady: false
+    property int sscTotal: 0
+    property int sscDiscoveredCount: 0
+    property int sscAvailableCount: 0
+    property int sscMonitoringCount: 0
+    property int sscReportingCount: 0
+    property string sscTotalReports: "0"
+    property string sscReports: ""
+    property string sscFreshReports: ""
+    property string sscAvailableAlgorithms: ""
+    property string sscMonitoringAlgorithms: ""
+    property string sscWaiting: ""
+    property string sscDiscoveredOnly: ""
+    property string sscUnavailable: ""
 
     property bool flashKnown: false
     property bool flashAvailable: false
@@ -50,6 +73,8 @@ PlasmoidItem {
     property bool accessoryKnown: false
     property bool sarKnown: false
     property bool sarAvailable: false
+    property bool sscKnown: false
+    property bool sscAvailable: false
 
     property bool torchBusy: false
     property bool rotateBusy: false
@@ -247,6 +272,31 @@ PlasmoidItem {
             sarGripState = succeeded ? statusValue(output, "grip_state", "unknown") : "unknown"
             sarHoldAwake = succeeded && statusValue(output, "hold_awake_enabled", "0") === "1"
             sarSleepInhibited = succeeded && statusValue(output, "sleep_inhibited", "0") === "1"
+            sarSampleFresh = succeeded && statusValue(output, "sample_fresh", "0") === "1"
+            sarSampleSequence = succeeded ? statusValue(output, "sample_sequence", "0") : "0"
+            sarDeltas = succeeded ? statusValue(output, "deltas", "") : ""
+            sarRawValues = succeeded ? statusValue(output, "raw_values", "") : ""
+            sarBaselines = succeeded ? statusValue(output, "baselines", "") : ""
+            sarConfiguredChannelMask = succeeded ? Number(statusValue(output, "configured_channel_mask", "0")) : 0
+            sarHeldThreshold = succeeded ? statusValue(output, "held_threshold", "0") : "0"
+            sarReleasedThreshold = succeeded ? statusValue(output, "released_threshold", "0") : "0"
+            sarDebounceSamples = succeeded ? Number(statusValue(output, "debounce_samples", "0")) : 0
+            sscKnown = true
+            sscAvailable = succeeded && statusValue(output, "algorithm_service", "0") === "1"
+            sscReady = sscAvailable && statusValue(output, "algorithm_ready", "0") === "1"
+            sscTotal = sscAvailable ? Number(statusValue(output, "algorithm_total", "0")) : 0
+            sscDiscoveredCount = sscAvailable ? Number(statusValue(output, "algorithm_discovered_count", "0")) : 0
+            sscAvailableCount = sscAvailable ? Number(statusValue(output, "algorithm_available_count", "0")) : 0
+            sscMonitoringCount = sscAvailable ? Number(statusValue(output, "algorithm_monitoring_count", "0")) : 0
+            sscReportingCount = sscAvailable ? Number(statusValue(output, "algorithm_reporting_count", "0")) : 0
+            sscTotalReports = sscAvailable ? statusValue(output, "algorithm_total_reports", "0") : "0"
+            sscReports = sscAvailable ? statusValue(output, "algorithm_reports", "") : ""
+            sscFreshReports = sscAvailable ? statusValue(output, "algorithm_fresh", "") : ""
+            sscAvailableAlgorithms = sscAvailable ? statusValue(output, "algorithm_available", "") : ""
+            sscMonitoringAlgorithms = sscAvailable ? statusValue(output, "algorithm_monitoring", "") : ""
+            sscWaiting = sscAvailable ? statusValue(output, "algorithm_waiting", "") : ""
+            sscDiscoveredOnly = sscAvailable ? statusValue(output, "algorithm_discovered_only", "") : ""
+            sscUnavailable = sscAvailable ? statusValue(output, "algorithm_unavailable", "") : ""
         }
     }
 
@@ -351,6 +401,61 @@ PlasmoidItem {
         if (sarGripState === "released")
             return i18n("Waiting until held")
         return i18n("Waiting for sensor data")
+    }
+
+    function algorithmLabel(dataType) {
+        switch (dataType) {
+        case "tilt_to_wake": return i18n("Tilt to wake")
+        case "tilt": return i18n("Tilt")
+        case "pickup": return i18n("Pickup")
+        case "screen_down": return i18n("Screen down")
+        case "pedometer": return i18n("Pedometer")
+        case "basic_gestures": return i18n("Basic gestures")
+        case "bring_to_ear": return i18n("Bring to ear")
+        case "multishake": return i18n("Multi-shake")
+        case "device_orient": return i18n("Device orientation")
+        case "facing": return i18n("Facing")
+        case "sig_motion": return i18n("Significant motion")
+        case "motion_detect": return i18n("Motion detect")
+        case "oem_step_detector": return i18n("OEM step detector")
+        case "gravity": return i18n("Gravity")
+        case "sar_algo_1": return i18n("SAR algorithm")
+        case "psmd": return i18n("Persistent significant motion")
+        case "3d_signature": return i18n("3D signature")
+        default: return dataType
+        }
+    }
+
+    function formatAlgorithmList(csv) {
+        if (!csv.length)
+            return i18n("None")
+        return csv.split(",").map(function(dataType) {
+            return root.algorithmLabel(dataType)
+        }).join(", ")
+    }
+
+    function sscDescription() {
+        if (!sscReady)
+            return i18n("Discovering firmware endpoints…")
+        if (sscReportingCount > 0)
+            return i18n("%1/%2 available · %3 monitored · data from %4",
+                sscAvailableCount, sscTotal, sscMonitoringCount, sscReportingCount)
+        return i18n("%1/%2 available · %3 monitored · no data report yet",
+            sscAvailableCount, sscTotal, sscMonitoringCount)
+    }
+
+    function sarChannelSummary(values) {
+        const channels = values.split(",")
+        if (channels.length !== 3)
+            return i18n("Waiting for sensor data")
+        return i18n("CH0 %1 · CH1 %2 · CH2 %3", channels[0], channels[1], channels[2])
+    }
+
+    function sarTelemetryDescription() {
+        if (!sarSampleFresh)
+            return i18n("Waiting for a fresh sample")
+        return i18n("Fresh sample %1 · delta: %2", sarSampleSequence,
+            sarChannelSummary(sarDeltas))
     }
 
     toolTipMainText: i18n("Tablet Control")
@@ -539,6 +644,116 @@ PlasmoidItem {
                         checked: root.lidAction
                         onToggled: root.setLidAction(checked)
                         Accessible.name: i18n("Magnetic cover sleep action")
+                    }
+                }
+            }
+
+            SectionHeader { text: i18n("Sensors") }
+
+            ControlRow {
+                title: i18n("Motion and gesture algorithms")
+                description: root.sscDescription()
+                iconName: "preferences-system-time"
+                capabilityKnown: root.sscKnown
+                available: root.sscAvailable
+                details: Component {
+                    ColumnLayout {
+                        spacing: Kirigami.Units.smallSpacing
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            text: i18n("Firmware available: %1", root.formatAlgorithmList(root.sscAvailableAlgorithms))
+                            wrapMode: Text.WordWrap
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            text: i18n("Safely monitored: %1", root.formatAlgorithmList(root.sscMonitoringAlgorithms))
+                            wrapMode: Text.WordWrap
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            text: i18n("Data reports observed: %1", root.formatAlgorithmList(root.sscReports))
+                            wrapMode: Text.WordWrap
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            text: i18n("Fresh reports: %1", root.formatAlgorithmList(root.sscFreshReports))
+                            wrapMode: Text.WordWrap
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            text: i18n("Waiting for a physical event: %1", root.formatAlgorithmList(root.sscWaiting))
+                            wrapMode: Text.WordWrap
+                            visible: root.sscWaiting.length > 0
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            text: i18n("Available but not monitored by the safe power policy: %1",
+                                root.formatAlgorithmList(root.sscDiscoveredOnly))
+                            wrapMode: Text.WordWrap
+                            visible: root.sscDiscoveredOnly.length > 0
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            text: i18n("Unavailable or incompatible: %1", root.formatAlgorithmList(root.sscUnavailable))
+                            wrapMode: Text.WordWrap
+                            visible: root.sscUnavailable.length > 0
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            text: i18n("Discovery and enable acknowledgement do not prove event delivery. Only a known sensor data message is counted; use Refresh after each physical test.")
+                            color: Kirigami.Theme.disabledTextColor
+                            wrapMode: Text.WordWrap
+                        }
+                    }
+                }
+            }
+
+            ControlRow {
+                title: i18n("Grip sensor channels")
+                description: root.sarTelemetryDescription()
+                iconName: "input-touchpad"
+                capabilityKnown: root.sarKnown
+                available: root.sarAvailable
+                details: Component {
+                    ColumnLayout {
+                        spacing: Kirigami.Units.smallSpacing
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            text: i18n("Delta: %1", root.sarChannelSummary(root.sarDeltas))
+                            wrapMode: Text.WordWrap
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            text: i18n("Raw: %1", root.sarChannelSummary(root.sarRawValues))
+                            wrapMode: Text.WordWrap
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            text: i18n("Baseline: %1", root.sarChannelSummary(root.sarBaselines))
+                            wrapMode: Text.WordWrap
+                        }
+
+                        PlasmaComponents.Label {
+                            Layout.fillWidth: true
+                            text: root.sarMappingEnabled
+                                ? i18n("Classifier: mask %1 · held ≥ %2 · released ≤ %3 · debounce %4",
+                                    root.sarConfiguredChannelMask, root.sarHeldThreshold,
+                                    root.sarReleasedThreshold, root.sarDebounceSamples)
+                                : i18n("Classifier disabled until controlled HIL calibration")
+                            color: Kirigami.Theme.disabledTextColor
+                            wrapMode: Text.WordWrap
+                        }
                     }
                 }
             }

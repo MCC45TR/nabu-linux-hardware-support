@@ -1,8 +1,10 @@
 #include <gio/gio.h>
 #include <glib-unix.h>
 #include <libssc/libssc-sensor.h>
+#include <math.h>
 #include <unistd.h>
 
+#include "nabu-ssc-monitor.h"
 #include "sar-parser.h"
 #include "sar-state.h"
 
@@ -37,8 +39,10 @@ typedef struct {
 	gint64 last_sample_usec;
 	gint64 last_inhibitor_attempt_usec;
 	gint64 last_properties_emit_usec;
+	guint64 sample_sequence;
 	NabuSarSample sample;
 	NabuSarClassifier classifier;
+	NabuSscMonitor *ssc_monitor;
 } Service;
 
 static const gchar introspection_xml[] =
@@ -57,7 +61,13 @@ static const gchar introspection_xml[] =
 "  <property name='Accuracy' type='u' access='read'/>"
 "  <property name='GripState' type='s' access='read'/>"
 "  <property name='MappingEnabled' type='b' access='read'/>"
+"  <property name='ConfiguredChannelMask' type='u' access='read'/>"
+"  <property name='HeldThreshold' type='d' access='read'/>"
+"  <property name='ReleasedThreshold' type='d' access='read'/>"
+"  <property name='DebounceSamples' type='u' access='read'/>"
 "  <property name='SampleFresh' type='b' access='read'/>"
+"  <property name='SampleSequence' type='t' access='read'/>"
+"  <property name='LastSampleMonotonicUsec' type='x' access='read'/>"
 "  <property name='HoldAwakeEnabled' type='b' access='read'/>"
 "  <property name='SleepInhibited' type='b' access='read'/>"
 " </interface>"
@@ -86,7 +96,13 @@ emit_properties_changed(Service *service)
 	g_variant_builder_add(&changed, "{sv}", "Accuracy", g_variant_new_uint32(service->sample.accuracy));
 	g_variant_builder_add(&changed, "{sv}", "GripState", g_variant_new_string(nabu_sar_state_to_string(service->classifier.state)));
 	g_variant_builder_add(&changed, "{sv}", "MappingEnabled", g_variant_new_boolean(service->classifier.enabled));
+	g_variant_builder_add(&changed, "{sv}", "ConfiguredChannelMask", g_variant_new_uint32(service->classifier.channel_mask));
+	g_variant_builder_add(&changed, "{sv}", "HeldThreshold", g_variant_new_double(service->classifier.held_threshold));
+	g_variant_builder_add(&changed, "{sv}", "ReleasedThreshold", g_variant_new_double(service->classifier.released_threshold));
+	g_variant_builder_add(&changed, "{sv}", "DebounceSamples", g_variant_new_uint32(service->classifier.debounce_samples));
 	g_variant_builder_add(&changed, "{sv}", "SampleFresh", g_variant_new_boolean(service->sample_fresh));
+	g_variant_builder_add(&changed, "{sv}", "SampleSequence", g_variant_new_uint64(service->sample_sequence));
+	g_variant_builder_add(&changed, "{sv}", "LastSampleMonotonicUsec", g_variant_new_int64(service->last_sample_usec));
 	g_variant_builder_add(&changed, "{sv}", "HoldAwakeEnabled", g_variant_new_boolean(service->hold_awake_enabled));
 	g_variant_builder_add(&changed, "{sv}", "SleepInhibited", g_variant_new_boolean(service->inhibitor_fd >= 0));
 	g_variant_builder_init(&invalidated, G_VARIANT_TYPE("as"));
@@ -172,6 +188,11 @@ load_configuration(Service *service)
 {
 	g_autoptr(GKeyFile) key_file = g_key_file_new();
 	g_autoptr(GError) error = NULL;
+	guint64 configured_channel_mask;
+	guint64 configured_debounce_samples;
+	gdouble configured_held_threshold;
+	gdouble configured_released_threshold;
+	gboolean scalar_range_valid;
 
 	service->classifier.enabled = FALSE;
 	/* Physical CH0/CH1/CH2 mapping and thresholds are not calibrated. */
@@ -187,15 +208,31 @@ load_configuration(Service *service)
 		return;
 	}
 	service->classifier.enabled = g_key_file_get_boolean(key_file, "Mapping", "Enabled", NULL);
-	service->classifier.channel_mask = g_key_file_get_uint64(key_file, "Mapping", "ChannelMask", NULL);
-	service->classifier.held_threshold = g_key_file_get_double(key_file, "Mapping", "HeldThreshold", NULL);
-	service->classifier.released_threshold = g_key_file_get_double(key_file, "Mapping", "ReleasedThreshold", NULL);
-	service->classifier.debounce_samples = g_key_file_get_uint64(key_file, "Mapping", "DebounceSamples", NULL);
+	configured_channel_mask = g_key_file_get_uint64(key_file, "Mapping", "ChannelMask", NULL);
+	configured_held_threshold = g_key_file_get_double(key_file, "Mapping", "HeldThreshold", NULL);
+	configured_released_threshold = g_key_file_get_double(key_file, "Mapping", "ReleasedThreshold", NULL);
+	configured_debounce_samples = g_key_file_get_uint64(key_file, "Mapping", "DebounceSamples", NULL);
+	scalar_range_valid = configured_channel_mask <= G_MAXUINT &&
+		configured_debounce_samples <= G_MAXUINT &&
+		configured_held_threshold >= -G_MAXFLOAT &&
+		configured_held_threshold <= G_MAXFLOAT &&
+		configured_released_threshold >= -G_MAXFLOAT &&
+		configured_released_threshold <= G_MAXFLOAT;
+	if (scalar_range_valid) {
+		service->classifier.channel_mask = configured_channel_mask;
+		service->classifier.held_threshold = configured_held_threshold;
+		service->classifier.released_threshold = configured_released_threshold;
+		service->classifier.debounce_samples = configured_debounce_samples;
+	}
 	if (service->classifier.enabled &&
-	    (service->classifier.held_threshold <= service->classifier.released_threshold ||
-	     !service->classifier.channel_mask)) {
+	    (!scalar_range_valid ||
+	     !nabu_sar_classifier_configuration_is_valid(&service->classifier))) {
 		g_warning("invalid SAR mapping; disabling classifier");
 		service->classifier.enabled = FALSE;
+		service->classifier.channel_mask = 0;
+		service->classifier.held_threshold = 0.0f;
+		service->classifier.released_threshold = 0.0f;
+		service->classifier.debounce_samples = 3;
 	} else if (!service->classifier.enabled) {
 		g_message("SAR mapping disabled by configuration; raw telemetry remains available");
 	}
@@ -217,7 +254,13 @@ get_property(GDBusConnection *connection, const gchar *sender,
 	if (!g_strcmp0(property_name, "Accuracy")) return g_variant_new_uint32(s->sample.accuracy);
 	if (!g_strcmp0(property_name, "GripState")) return g_variant_new_string(nabu_sar_state_to_string(s->classifier.state));
 	if (!g_strcmp0(property_name, "MappingEnabled")) return g_variant_new_boolean(s->classifier.enabled);
+	if (!g_strcmp0(property_name, "ConfiguredChannelMask")) return g_variant_new_uint32(s->classifier.channel_mask);
+	if (!g_strcmp0(property_name, "HeldThreshold")) return g_variant_new_double(s->classifier.held_threshold);
+	if (!g_strcmp0(property_name, "ReleasedThreshold")) return g_variant_new_double(s->classifier.released_threshold);
+	if (!g_strcmp0(property_name, "DebounceSamples")) return g_variant_new_uint32(s->classifier.debounce_samples);
 	if (!g_strcmp0(property_name, "SampleFresh")) return g_variant_new_boolean(s->sample_fresh);
+	if (!g_strcmp0(property_name, "SampleSequence")) return g_variant_new_uint64(s->sample_sequence);
+	if (!g_strcmp0(property_name, "LastSampleMonotonicUsec")) return g_variant_new_int64(s->last_sample_usec);
 	if (!g_strcmp0(property_name, "HoldAwakeEnabled")) return g_variant_new_boolean(s->hold_awake_enabled);
 	if (!g_strcmp0(property_name, "SleepInhibited")) return g_variant_new_boolean(s->inhibitor_fd >= 0);
 	g_set_error(error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND, "unknown property %s", property_name);
@@ -271,6 +314,8 @@ report_received(gpointer client, guint32 msg_id, guint64 uid_high,
 	}
 	gint64 now_usec = g_get_monotonic_time();
 	s->last_sample_usec = now_usec;
+	if (s->sample_sequence < G_MAXUINT64)
+		s->sample_sequence++;
 	s->sample_fresh = TRUE;
 	nabu_sar_classifier_update(&s->classifier, &s->sample);
 	update_inhibitor(s);
@@ -349,6 +394,13 @@ main(void)
 		s.introspection->interfaces[0], &vtable, &s, NULL, &error);
 	if (!s.registration_id) g_error("cannot export SAR object: %s", error->message);
 	s.owner_id = g_bus_own_name_on_connection(s.bus, BUS_NAME, G_BUS_NAME_OWNER_FLAGS_NONE, NULL, NULL, NULL, NULL);
+	s.ssc_monitor = nabu_ssc_monitor_new(s.bus, &error);
+	if (!s.ssc_monitor) {
+		g_warning("cannot export read-only SSC algorithm monitor: %s", error->message);
+		g_clear_error(&error);
+	} else {
+		nabu_ssc_monitor_start(s.ssc_monitor);
+	}
 	s.stale_timer_id = g_timeout_add_seconds(1, check_sample_freshness, &s);
 	g_unix_signal_add(SIGTERM, quit_signal, &s);
 	g_unix_signal_add(SIGINT, quit_signal, &s);
@@ -359,6 +411,7 @@ main(void)
 	if (s.report_id) g_signal_handler_disconnect(s.client, s.report_id);
 	g_clear_object(&s.client);
 	g_clear_object(&s.sensor);
+	nabu_ssc_monitor_free(s.ssc_monitor);
 	g_clear_pointer(&s.name, g_free);
 	g_clear_pointer(&s.vendor, g_free);
 	g_bus_unown_name(s.owner_id);

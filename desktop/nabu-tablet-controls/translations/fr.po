@@ -2,6 +2,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 23:22+0300\n"
 "PO-Revision-Date: 2026-08-29 20:00+0300\n"
 "Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
 "Language-Team: fr\n"
@@ -10,71 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Checking hardware support…"
-msgstr "Vérification de la prise en charge matérielle…"
+msgid " · ADB"
+msgstr "· ADB"
 
-msgid "Not supported by this device"
-msgstr "Non pris en charge par cet appareil"
-
-msgid "Default brightness:"
-msgstr "Luminosité par défaut :"
-
-msgid "Default flashlight brightness"
-msgstr "Luminosité de la lampe de poche par défaut"
-
-msgid "Current value:"
-msgstr "Valeur actuelle :"
-
-msgid "The requested change could not be applied."
-msgstr "La modification demandée n'a pas pu être appliquée."
-
-msgid "The flashlight brightness could not be applied."
-msgstr "La luminosité de la lampe de poche n'a pas pu être appliquée."
-
-msgid "Connected"
-msgstr "Connecté"
-
-msgid "Paired"
-msgstr "Jumelé"
-
-#, javascript-format
-msgid "Battery: %1%"
-msgstr "Batterie : %1%"
-
-msgid "Charging"
-msgstr "Chargement"
-
-#, javascript-format
-msgid "Charge limit: %1%"
-msgstr "Limite de charge : %1%"
-
-msgid "Tablet Control"
-msgstr "Contrôle des tablettes"
-
-msgid "Flashlight on"
-msgstr "Lampe de poche allumée"
-
-msgid "Nabu hardware controls"
-msgstr "Commandes matérielles Nabu"
-
-msgid "Refresh hardware state"
-msgstr "Actualiser l'état du matériel"
-
-msgid "Device"
-msgstr "Appareil"
-
-msgid "Flashlight"
-msgstr "Lampe de poche"
-
-#, javascript-format
-msgid "On at %1%"
-msgstr "Sur %1%"
-
-msgid "Off"
-msgstr "Désactivé"
-
-msgid "Flashlight brightness"
-msgstr "Luminosité de la lampe de poche"
+msgid " · SSH"
+msgstr "· SSH"
 
 msgid "%1 percent"
 msgstr "%1 pour cent"
@@ -83,29 +25,241 @@ msgstr "%1 pour cent"
 msgid "%1%"
 msgstr "%1%"
 
-msgid "Display and cover"
-msgstr "Présentoir et couverture"
+msgid "%1/%2 available · %3 monitored · data from %4"
+msgstr ""
 
-msgid "Automatic rotation"
-msgstr "Rotation automatique"
+msgid "%1/%2 available · %3 monitored · no data report yet"
+msgstr ""
+
+msgid "3D signature"
+msgstr ""
 
 msgid "Active"
 msgstr "Actif"
 
-msgid "Inactive"
-msgstr "Inactif"
+msgid "Attached"
+msgstr "Ci-joint"
+
+msgid "Automatic"
+msgstr ""
 
 msgid "Automatic brightness"
 msgstr "Luminosité automatique"
 
-msgid "Magnetic cover"
-msgstr "Couverture magnétique"
+msgid "Automatic rotation"
+msgstr "Rotation automatique"
+
+msgid "Available but not monitored by the safe power policy: %1"
+msgstr ""
+
+msgid "Baseline: %1"
+msgstr ""
+
+msgid "Basic gestures"
+msgstr ""
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Batterie : %1%"
+
+msgid "Bring to ear"
+msgstr ""
+
+msgid "CH0 %1 · CH1 %2 · CH2 %3"
+msgstr ""
+
+msgid "Calibration required"
+msgstr ""
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Limite de charge : %1%"
+
+msgid "Charging"
+msgstr "Chargement"
+
+msgid "Checking hardware support…"
+msgstr "Vérification de la prise en charge matérielle…"
+
+msgid "Classifier disabled until controlled HIL calibration"
+msgstr ""
+
+msgid "Classifier: mask %1 · held ≥ %2 · released ≤ %3 · debounce %4"
+msgstr ""
 
 msgid "Closed"
 msgstr "Fermé"
 
+msgid "Connect"
+msgstr "Se connecter"
+
+msgid "Connected"
+msgstr "Connecté"
+
+msgid "Current value:"
+msgstr "Valeur actuelle :"
+
+msgid "Data reports observed: %1"
+msgstr ""
+
+msgid "Default brightness:"
+msgstr "Luminosité par défaut :"
+
+msgid "Default flashlight brightness"
+msgstr "Luminosité de la lampe de poche par défaut"
+
+msgid "Delta: %1"
+msgstr ""
+
+msgid "Device"
+msgstr "Appareil"
+
+msgid "Device mode"
+msgstr "Mode appareil"
+
+msgid "Device orientation"
+msgstr ""
+
+msgid "Discovering firmware endpoints…"
+msgstr ""
+
+msgid ""
+"Discovery and enable acknowledgement do not prove event delivery. Only a "
+"known sensor data message is counted; use Refresh after each physical test."
+msgstr ""
+
+msgid "Display and cover"
+msgstr "Présentoir et couverture"
+
+msgid "Facing"
+msgstr ""
+
+msgid "Firmware available: %1"
+msgstr ""
+
+msgid "Flashlight"
+msgstr "Lampe de poche"
+
+msgid "Flashlight brightness"
+msgstr "Luminosité de la lampe de poche"
+
+msgid "Flashlight on"
+msgstr "Lampe de poche allumée"
+
+msgid "Fresh reports: %1"
+msgstr ""
+
+msgid "Fresh sample %1 · delta: %2"
+msgstr ""
+
+msgid "Gravity"
+msgstr ""
+
+msgid "Grip sensor channels"
+msgstr ""
+
+msgid "Held · acquiring inhibitor"
+msgstr ""
+
+msgid "Held · sleep blocked"
+msgstr ""
+
+msgid "Host mode"
+msgstr "Mode hôte"
+
+msgid "Inactive"
+msgstr "Inactif"
+
+msgid "Keep awake while held"
+msgstr ""
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Série%2"
+
+msgid "Magnetic cover"
+msgstr "Couverture magnétique"
+
+msgid "Magnetic cover sleep action"
+msgstr "Action de sommeil de couverture magnétique"
+
+msgid "Motion and gesture algorithms"
+msgstr ""
+
+msgid "Motion detect"
+msgstr ""
+
+msgid "Multi-shake"
+msgstr ""
+
+msgid "Nabu hardware controls"
+msgstr "Commandes matérielles Nabu"
+
+msgid "None"
+msgstr ""
+
+msgid "Not supported by this device"
+msgstr "Non pris en charge par cet appareil"
+
+msgid "OEM step detector"
+msgstr ""
+
+msgid "Off"
+msgstr "Désactivé"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Sur %1%"
+
 msgid "Open"
 msgstr "Ouvert"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 Spécifique"
+
+msgid "Paired"
+msgstr "Jumelé"
+
+msgid "Pedometer"
+msgstr ""
+
+msgid "Pen battery"
+msgstr "Batterie du stylo"
+
+msgid "Persistent significant motion"
+msgstr ""
+
+msgid "Pickup"
+msgstr ""
+
+msgid "Pogo keyboard"
+msgstr "Clavier Pogo"
+
+msgid "Power sink"
+msgstr "Puits de puissance"
+
+msgid "Power source"
+msgstr ""
+
+msgid "Raw: %1"
+msgstr ""
+
+msgid "Refresh hardware state"
+msgstr "Actualiser l'état du matériel"
+
+msgid "SAR algorithm"
+msgstr ""
+
+msgid "Safely monitored: %1"
+msgstr ""
+
+msgid "Screen down"
+msgstr ""
+
+msgid "Sensors"
+msgstr ""
+
+msgid "Significant motion"
+msgstr ""
 
 msgid "Sleep action active"
 msgstr "Action de sommeil active"
@@ -113,50 +267,38 @@ msgstr "Action de sommeil active"
 msgid "Sleep action inactive"
 msgstr "Action de sommeil inactive"
 
-msgid "Magnetic cover sleep action"
-msgstr "Action de sommeil de couverture magnétique"
+msgid "Supply power"
+msgstr "Alimentation électrique"
 
-msgid "Pad 5 Specific"
-msgstr "Pad 5 Spécifique"
+msgid "Tablet Control"
+msgstr "Contrôle des tablettes"
 
-msgid "Xiaomi Smart Pen"
-msgstr "Xiaomi Smart Pen"
+msgid "The flashlight brightness could not be applied."
+msgstr "La luminosité de la lampe de poche n'a pas pu être appliquée."
 
-msgid "Connect"
-msgstr "Se connecter"
+msgid "The requested change could not be applied."
+msgstr "La modification demandée n'a pas pu être appliquée."
 
-msgid "Pen battery"
-msgstr "Batterie du stylo"
+msgid "Tilt"
+msgstr ""
 
-msgid "Pogo keyboard"
-msgstr "Clavier Pogo"
-
-msgid "Attached"
-msgstr "Ci-joint"
-
-msgid "USB-C"
-msgstr "USB-C"
-
-msgid "USB device sharing"
-msgstr "Partage d'appareil USB"
-
-msgid " · SSH"
-msgstr "· SSH"
-
-msgid " · ADB"
-msgstr "· ADB"
-
-msgid "MTP%1 · Serial%2"
-msgstr "MTP%1 · Série%2"
+msgid "Tilt to wake"
+msgstr ""
 
 msgid "USB data role"
 msgstr "Rôle de données USB"
 
-msgid "Host mode"
-msgstr "Mode hôte"
+msgid "USB device sharing"
+msgstr "Partage d'appareil USB"
 
-msgid "Device mode"
-msgstr "Mode appareil"
+msgid "USB power role"
+msgstr "Rôle de puissance USB"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "Unavailable or incompatible: %1"
+msgstr ""
 
 msgid "Use device"
 msgstr "Utiliser l'appareil"
@@ -164,17 +306,23 @@ msgstr "Utiliser l'appareil"
 msgid "Use host"
 msgstr "Utiliser l'hôte"
 
-msgid "USB power role"
-msgstr "Rôle de puissance USB"
-
-msgid "Supplying power"
-msgstr "Alimentation électrique"
-
-msgid "Power sink"
-msgstr "Puits de puissance"
-
 msgid "Use sink"
 msgstr "Utiliser l'évier"
 
-msgid "Supply power"
-msgstr "Alimentation électrique"
+msgid "Waiting for a fresh sample"
+msgstr ""
+
+msgid "Waiting for a physical event: %1"
+msgstr ""
+
+msgid "Waiting for sensor data"
+msgstr ""
+
+msgid "Waiting until held"
+msgstr ""
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+#~ msgid "Supplying power"
+#~ msgstr "Alimentation électrique"

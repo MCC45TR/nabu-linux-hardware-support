@@ -2,6 +2,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 23:22+0300\n"
 "PO-Revision-Date: 2026-08-29 20:00+0300\n"
 "Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
 "Language-Team: ru\n"
@@ -10,71 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Checking hardware support…"
-msgstr "Проверка поддержки оборудования…"
+msgid " · ADB"
+msgstr "· ADB"
 
-msgid "Not supported by this device"
-msgstr "Не поддерживается этим устройством"
-
-msgid "Default brightness:"
-msgstr "Яркость по умолчанию:"
-
-msgid "Default flashlight brightness"
-msgstr "Яркость фонарика по умолчанию"
-
-msgid "Current value:"
-msgstr "Текущая стоимость:"
-
-msgid "The requested change could not be applied."
-msgstr "Запрошенное изменение не удалось применить."
-
-msgid "The flashlight brightness could not be applied."
-msgstr "Не удалось установить яркость фонарика."
-
-msgid "Connected"
-msgstr "Подключено"
-
-msgid "Paired"
-msgstr "Парный"
-
-#, javascript-format
-msgid "Battery: %1%"
-msgstr "Батарея: %1%"
-
-msgid "Charging"
-msgstr "Зарядка"
-
-#, javascript-format
-msgid "Charge limit: %1%"
-msgstr "Лимит заряда: %1%"
-
-msgid "Tablet Control"
-msgstr "Планшетное управление"
-
-msgid "Flashlight on"
-msgstr "Фонарик включен"
-
-msgid "Nabu hardware controls"
-msgstr "Аппаратное управление Nabu"
-
-msgid "Refresh hardware state"
-msgstr "Обновить состояние оборудования"
-
-msgid "Device"
-msgstr "Устройство"
-
-msgid "Flashlight"
-msgstr "фонарик"
-
-#, javascript-format
-msgid "On at %1%"
-msgstr "Включено на %1%"
-
-msgid "Off"
-msgstr "Выкл."
-
-msgid "Flashlight brightness"
-msgstr "Яркость фонарика"
+msgid " · SSH"
+msgstr "· SSH"
 
 msgid "%1 percent"
 msgstr "%1 проценты"
@@ -83,29 +25,241 @@ msgstr "%1 проценты"
 msgid "%1%"
 msgstr "%1%"
 
-msgid "Display and cover"
-msgstr "Дисплей и крышка"
+msgid "%1/%2 available · %3 monitored · data from %4"
+msgstr ""
 
-msgid "Automatic rotation"
-msgstr "Автоматическое вращение"
+msgid "%1/%2 available · %3 monitored · no data report yet"
+msgstr ""
+
+msgid "3D signature"
+msgstr ""
 
 msgid "Active"
 msgstr "Активный"
 
-msgid "Inactive"
-msgstr "Неактивный"
+msgid "Attached"
+msgstr "Прикреплено"
+
+msgid "Automatic"
+msgstr ""
 
 msgid "Automatic brightness"
 msgstr "Автоматическая яркость"
 
-msgid "Magnetic cover"
-msgstr "Магнитная крышка"
+msgid "Automatic rotation"
+msgstr "Автоматическое вращение"
+
+msgid "Available but not monitored by the safe power policy: %1"
+msgstr ""
+
+msgid "Baseline: %1"
+msgstr ""
+
+msgid "Basic gestures"
+msgstr ""
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Батарея: %1%"
+
+msgid "Bring to ear"
+msgstr ""
+
+msgid "CH0 %1 · CH1 %2 · CH2 %3"
+msgstr ""
+
+msgid "Calibration required"
+msgstr ""
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Лимит заряда: %1%"
+
+msgid "Charging"
+msgstr "Зарядка"
+
+msgid "Checking hardware support…"
+msgstr "Проверка поддержки оборудования…"
+
+msgid "Classifier disabled until controlled HIL calibration"
+msgstr ""
+
+msgid "Classifier: mask %1 · held ≥ %2 · released ≤ %3 · debounce %4"
+msgstr ""
 
 msgid "Closed"
 msgstr "Закрыто"
 
+msgid "Connect"
+msgstr "Подключиться"
+
+msgid "Connected"
+msgstr "Подключено"
+
+msgid "Current value:"
+msgstr "Текущая стоимость:"
+
+msgid "Data reports observed: %1"
+msgstr ""
+
+msgid "Default brightness:"
+msgstr "Яркость по умолчанию:"
+
+msgid "Default flashlight brightness"
+msgstr "Яркость фонарика по умолчанию"
+
+msgid "Delta: %1"
+msgstr ""
+
+msgid "Device"
+msgstr "Устройство"
+
+msgid "Device mode"
+msgstr "Режим устройства"
+
+msgid "Device orientation"
+msgstr ""
+
+msgid "Discovering firmware endpoints…"
+msgstr ""
+
+msgid ""
+"Discovery and enable acknowledgement do not prove event delivery. Only a "
+"known sensor data message is counted; use Refresh after each physical test."
+msgstr ""
+
+msgid "Display and cover"
+msgstr "Дисплей и крышка"
+
+msgid "Facing"
+msgstr ""
+
+msgid "Firmware available: %1"
+msgstr ""
+
+msgid "Flashlight"
+msgstr "фонарик"
+
+msgid "Flashlight brightness"
+msgstr "Яркость фонарика"
+
+msgid "Flashlight on"
+msgstr "Фонарик включен"
+
+msgid "Fresh reports: %1"
+msgstr ""
+
+msgid "Fresh sample %1 · delta: %2"
+msgstr ""
+
+msgid "Gravity"
+msgstr ""
+
+msgid "Grip sensor channels"
+msgstr ""
+
+msgid "Held · acquiring inhibitor"
+msgstr ""
+
+msgid "Held · sleep blocked"
+msgstr ""
+
+msgid "Host mode"
+msgstr "Режим хоста"
+
+msgid "Inactive"
+msgstr "Неактивный"
+
+msgid "Keep awake while held"
+msgstr ""
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Серийный%2"
+
+msgid "Magnetic cover"
+msgstr "Магнитная крышка"
+
+msgid "Magnetic cover sleep action"
+msgstr "Магнитная крышка для сна"
+
+msgid "Motion and gesture algorithms"
+msgstr ""
+
+msgid "Motion detect"
+msgstr ""
+
+msgid "Multi-shake"
+msgstr ""
+
+msgid "Nabu hardware controls"
+msgstr "Аппаратное управление Nabu"
+
+msgid "None"
+msgstr ""
+
+msgid "Not supported by this device"
+msgstr "Не поддерживается этим устройством"
+
+msgid "OEM step detector"
+msgstr ""
+
+msgid "Off"
+msgstr "Выкл."
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Включено на %1%"
+
 msgid "Open"
 msgstr "Открыть"
+
+msgid "Pad 5 Specific"
+msgstr "Специально для Pad 5"
+
+msgid "Paired"
+msgstr "Парный"
+
+msgid "Pedometer"
+msgstr ""
+
+msgid "Pen battery"
+msgstr "Ручка-батарейка"
+
+msgid "Persistent significant motion"
+msgstr ""
+
+msgid "Pickup"
+msgstr ""
+
+msgid "Pogo keyboard"
+msgstr "Клавиатура Pogo"
+
+msgid "Power sink"
+msgstr "Энергоотвод"
+
+msgid "Power source"
+msgstr ""
+
+msgid "Raw: %1"
+msgstr ""
+
+msgid "Refresh hardware state"
+msgstr "Обновить состояние оборудования"
+
+msgid "SAR algorithm"
+msgstr ""
+
+msgid "Safely monitored: %1"
+msgstr ""
+
+msgid "Screen down"
+msgstr ""
+
+msgid "Sensors"
+msgstr ""
+
+msgid "Significant motion"
+msgstr ""
 
 msgid "Sleep action active"
 msgstr "Действие сна активно"
@@ -113,50 +267,38 @@ msgstr "Действие сна активно"
 msgid "Sleep action inactive"
 msgstr "Действие сна неактивно"
 
-msgid "Magnetic cover sleep action"
-msgstr "Магнитная крышка для сна"
+msgid "Supply power"
+msgstr "Питание"
 
-msgid "Pad 5 Specific"
-msgstr "Специально для Pad 5"
+msgid "Tablet Control"
+msgstr "Планшетное управление"
 
-msgid "Xiaomi Smart Pen"
-msgstr "Xiaomi Smart Pen"
+msgid "The flashlight brightness could not be applied."
+msgstr "Не удалось установить яркость фонарика."
 
-msgid "Connect"
-msgstr "Подключиться"
+msgid "The requested change could not be applied."
+msgstr "Запрошенное изменение не удалось применить."
 
-msgid "Pen battery"
-msgstr "Ручка-батарейка"
+msgid "Tilt"
+msgstr ""
 
-msgid "Pogo keyboard"
-msgstr "Клавиатура Pogo"
-
-msgid "Attached"
-msgstr "Прикреплено"
-
-msgid "USB-C"
-msgstr "USB-C"
-
-msgid "USB device sharing"
-msgstr "Общий доступ к устройству USB"
-
-msgid " · SSH"
-msgstr "· SSH"
-
-msgid " · ADB"
-msgstr "· ADB"
-
-msgid "MTP%1 · Serial%2"
-msgstr "MTP%1 · Серийный%2"
+msgid "Tilt to wake"
+msgstr ""
 
 msgid "USB data role"
 msgstr "Роль данных USB"
 
-msgid "Host mode"
-msgstr "Режим хоста"
+msgid "USB device sharing"
+msgstr "Общий доступ к устройству USB"
 
-msgid "Device mode"
-msgstr "Режим устройства"
+msgid "USB power role"
+msgstr "Силовая роль USB"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "Unavailable or incompatible: %1"
+msgstr ""
 
 msgid "Use device"
 msgstr "Использовать устройство"
@@ -164,17 +306,23 @@ msgstr "Использовать устройство"
 msgid "Use host"
 msgstr "Использовать хост"
 
-msgid "USB power role"
-msgstr "Силовая роль USB"
-
-msgid "Supplying power"
-msgstr "Подача питания"
-
-msgid "Power sink"
-msgstr "Энергоотвод"
-
 msgid "Use sink"
 msgstr "Используйте раковину"
 
-msgid "Supply power"
-msgstr "Питание"
+msgid "Waiting for a fresh sample"
+msgstr ""
+
+msgid "Waiting for a physical event: %1"
+msgstr ""
+
+msgid "Waiting for sensor data"
+msgstr ""
+
+msgid "Waiting until held"
+msgstr ""
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+#~ msgid "Supplying power"
+#~ msgstr "Подача питания"

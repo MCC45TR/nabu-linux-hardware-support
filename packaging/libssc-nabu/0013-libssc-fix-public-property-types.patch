@@ -1,0 +1,60 @@
+From: mcc45tr <mcc45tr@gmail.com>
+Date: Sun, 13 Sep 2026 17:00:00 +0300
+Subject: [PATCH] libssc: fix public property value types
+
+The stream-type, available and sample-rate getters return guint, gboolean and
+gfloat respectively, but their GParamSpecs incorrectly declare strings.  A
+typed g_object_get() therefore triggers GLib criticals and can overwrite a
+caller's scalar with a pointer-sized value.
+
+Declare the ABI's actual value types.  Property names and access flags remain
+unchanged, so existing clients which use the documented scalar values continue
+to work while generic SSC monitors can inspect stream policy safely.
+
+Signed-off-by: mcc45tr <mcc45tr@gmail.com>
+---
+ src/libssc-sensor.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/src/libssc-sensor.c b/src/libssc-sensor.c
+index c50a60d..4e2557f 100644
+--- a/src/libssc-sensor.c
++++ b/src/libssc-sensor.c
+@@ -858,25 +858,30 @@ ssc_sensor_class_init (SSCSensorClass *klass)
+ 	g_object_class_install_property (object_class, PROP_DATA_TYPE, properties[PROP_DATA_TYPE]);
+ 
+ 	properties[PROP_STREAM_TYPE] =
+-		g_param_spec_string (SSC_SENSOR_STREAM_TYPE,
++		g_param_spec_uint (SSC_SENSOR_STREAM_TYPE,
+ 				     "Stream type",
+ 				     "The stream type supported by the sensor.",
+-				     NULL,
++				     0,
++				     G_MAXUINT,
++				     0,
+ 				     G_PARAM_READABLE);
+ 	g_object_class_install_property (object_class, PROP_STREAM_TYPE, properties[PROP_STREAM_TYPE]);
+ 
+ 	properties[PROP_AVAILABLE] =
+-		g_param_spec_string (SSC_SENSOR_AVAILABLE,
++		g_param_spec_boolean (SSC_SENSOR_AVAILABLE,
+ 				     "Availability",
+ 				     "If the sensor is available for measurements.",
+-				     NULL,
++				     FALSE,
+ 				     G_PARAM_READABLE);
+ 	g_object_class_install_property (object_class, PROP_AVAILABLE, properties[PROP_AVAILABLE]);
+ 
+ 	properties[PROP_SAMPLE_RATE] =
+-		g_param_spec_string (SSC_SENSOR_SAMPLE_RATE,
++		g_param_spec_float (SSC_SENSOR_SAMPLE_RATE,
+ 				     "Sample rate",
+ 				     "The sample rate in Hz supported by the sensor.",
+-				     NULL,
++				     -G_MAXFLOAT,
++				     G_MAXFLOAT,
++				     0.0f,
+ 				     G_PARAM_READABLE);
+ 	g_object_class_install_property (object_class, PROP_SAMPLE_RATE, properties[PROP_SAMPLE_RATE]);
+-- 
+2.52.0

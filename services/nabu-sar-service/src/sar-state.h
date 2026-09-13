@@ -18,6 +18,7 @@ typedef struct {
 	NabuSarState state;
 } NabuSarClassifier;
 
+gboolean nabu_sar_classifier_configuration_is_valid(const NabuSarClassifier *classifier);
 NabuSarState nabu_sar_classifier_update(NabuSarClassifier *classifier,
 					const NabuSarSample *sample);
 const gchar *nabu_sar_state_to_string(NabuSarState state);

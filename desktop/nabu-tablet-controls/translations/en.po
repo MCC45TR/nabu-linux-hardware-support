@@ -2,6 +2,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 23:22+0300\n"
 "PO-Revision-Date: 2026-08-29 20:00+0300\n"
 "Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
 "Language-Team: en\n"
@@ -10,71 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Checking hardware support…"
-msgstr "Checking hardware support…"
+msgid " · ADB"
+msgstr " · ADB"
 
-msgid "Not supported by this device"
-msgstr "Not supported by this device"
-
-msgid "Default brightness:"
-msgstr "Default brightness:"
-
-msgid "Default flashlight brightness"
-msgstr "Default flashlight brightness"
-
-msgid "Current value:"
-msgstr "Current value:"
-
-msgid "The requested change could not be applied."
-msgstr "The requested change could not be applied."
-
-msgid "The flashlight brightness could not be applied."
-msgstr "The flashlight brightness could not be applied."
-
-msgid "Connected"
-msgstr "Connected"
-
-msgid "Paired"
-msgstr "Paired"
-
-#, javascript-format
-msgid "Battery: %1%"
-msgstr "Battery: %1%"
-
-msgid "Charging"
-msgstr "Charging"
-
-#, javascript-format
-msgid "Charge limit: %1%"
-msgstr "Charge limit: %1%"
-
-msgid "Tablet Control"
-msgstr "Tablet Control"
-
-msgid "Flashlight on"
-msgstr "Flashlight on"
-
-msgid "Nabu hardware controls"
-msgstr "Nabu hardware controls"
-
-msgid "Refresh hardware state"
-msgstr "Refresh hardware state"
-
-msgid "Device"
-msgstr "Device"
-
-msgid "Flashlight"
-msgstr "Flashlight"
-
-#, javascript-format
-msgid "On at %1%"
-msgstr "On at %1%"
-
-msgid "Off"
-msgstr "Off"
-
-msgid "Flashlight brightness"
-msgstr "Flashlight brightness"
+msgid " · SSH"
+msgstr " · SSH"
 
 msgid "%1 percent"
 msgstr "%1 percent"
@@ -83,29 +25,243 @@ msgstr "%1 percent"
 msgid "%1%"
 msgstr "%1%"
 
-msgid "Display and cover"
-msgstr "Display and cover"
+msgid "%1/%2 available · %3 monitored · data from %4"
+msgstr "%1/%2 available · %3 monitored · data from %4"
 
-msgid "Automatic rotation"
-msgstr "Automatic rotation"
+msgid "%1/%2 available · %3 monitored · no data report yet"
+msgstr "%1/%2 available · %3 monitored · no data report yet"
+
+msgid "3D signature"
+msgstr "3D signature"
 
 msgid "Active"
 msgstr "Active"
 
-msgid "Inactive"
-msgstr "Inactive"
+msgid "Attached"
+msgstr "Attached"
+
+msgid "Automatic"
+msgstr "Automatic"
 
 msgid "Automatic brightness"
 msgstr "Automatic brightness"
 
-msgid "Magnetic cover"
-msgstr "Magnetic cover"
+msgid "Automatic rotation"
+msgstr "Automatic rotation"
+
+msgid "Available but not monitored by the safe power policy: %1"
+msgstr "Available but not monitored by the safe power policy: %1"
+
+msgid "Baseline: %1"
+msgstr "Baseline: %1"
+
+msgid "Basic gestures"
+msgstr "Basic gestures"
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Battery: %1%"
+
+msgid "Bring to ear"
+msgstr "Bring to ear"
+
+msgid "CH0 %1 · CH1 %2 · CH2 %3"
+msgstr "CH0 %1 · CH1 %2 · CH2 %3"
+
+msgid "Calibration required"
+msgstr "Calibration required"
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Charge limit: %1%"
+
+msgid "Charging"
+msgstr "Charging"
+
+msgid "Checking hardware support…"
+msgstr "Checking hardware support…"
+
+msgid "Classifier disabled until controlled HIL calibration"
+msgstr "Classifier disabled until controlled HIL calibration"
+
+msgid "Classifier: mask %1 · held ≥ %2 · released ≤ %3 · debounce %4"
+msgstr "Classifier: mask %1 · held ≥ %2 · released ≤ %3 · debounce %4"
 
 msgid "Closed"
 msgstr "Closed"
 
+msgid "Connect"
+msgstr "Connect"
+
+msgid "Connected"
+msgstr "Connected"
+
+msgid "Current value:"
+msgstr "Current value:"
+
+msgid "Data reports observed: %1"
+msgstr "Data reports observed: %1"
+
+msgid "Default brightness:"
+msgstr "Default brightness:"
+
+msgid "Default flashlight brightness"
+msgstr "Default flashlight brightness"
+
+msgid "Delta: %1"
+msgstr "Delta: %1"
+
+msgid "Device"
+msgstr "Device"
+
+msgid "Device mode"
+msgstr "Device mode"
+
+msgid "Device orientation"
+msgstr "Device orientation"
+
+msgid "Discovering firmware endpoints…"
+msgstr "Discovering firmware endpoints…"
+
+msgid ""
+"Discovery and enable acknowledgement do not prove event delivery. Only a "
+"known sensor data message is counted; use Refresh after each physical test."
+msgstr ""
+"Discovery and enable acknowledgement do not prove event delivery. Only a "
+"known sensor data message is counted; use Refresh after each physical test."
+
+msgid "Display and cover"
+msgstr "Display and cover"
+
+msgid "Facing"
+msgstr "Facing"
+
+msgid "Firmware available: %1"
+msgstr "Firmware available: %1"
+
+msgid "Flashlight"
+msgstr "Flashlight"
+
+msgid "Flashlight brightness"
+msgstr "Flashlight brightness"
+
+msgid "Flashlight on"
+msgstr "Flashlight on"
+
+msgid "Fresh reports: %1"
+msgstr "Fresh reports: %1"
+
+msgid "Fresh sample %1 · delta: %2"
+msgstr "Fresh sample %1 · delta: %2"
+
+msgid "Gravity"
+msgstr "Gravity"
+
+msgid "Grip sensor channels"
+msgstr "Grip sensor channels"
+
+msgid "Held · acquiring inhibitor"
+msgstr "Held · acquiring inhibitor"
+
+msgid "Held · sleep blocked"
+msgstr "Held · sleep blocked"
+
+msgid "Host mode"
+msgstr "Host mode"
+
+msgid "Inactive"
+msgstr "Inactive"
+
+msgid "Keep awake while held"
+msgstr "Keep awake while held"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Serial%2"
+
+msgid "Magnetic cover"
+msgstr "Magnetic cover"
+
+msgid "Magnetic cover sleep action"
+msgstr "Magnetic cover sleep action"
+
+msgid "Motion and gesture algorithms"
+msgstr "Motion and gesture algorithms"
+
+msgid "Motion detect"
+msgstr "Motion detect"
+
+msgid "Multi-shake"
+msgstr "Multi-shake"
+
+msgid "Nabu hardware controls"
+msgstr "Nabu hardware controls"
+
+msgid "None"
+msgstr "None"
+
+msgid "Not supported by this device"
+msgstr "Not supported by this device"
+
+msgid "OEM step detector"
+msgstr "OEM step detector"
+
+msgid "Off"
+msgstr "Off"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "On at %1%"
+
 msgid "Open"
 msgstr "Open"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 Specific"
+
+msgid "Paired"
+msgstr "Paired"
+
+msgid "Pedometer"
+msgstr "Pedometer"
+
+msgid "Pen battery"
+msgstr "Pen battery"
+
+msgid "Persistent significant motion"
+msgstr "Persistent significant motion"
+
+msgid "Pickup"
+msgstr "Pickup"
+
+msgid "Pogo keyboard"
+msgstr "Pogo keyboard"
+
+msgid "Power sink"
+msgstr "Power sink"
+
+msgid "Power source"
+msgstr "Power source"
+
+msgid "Raw: %1"
+msgstr "Raw: %1"
+
+msgid "Refresh hardware state"
+msgstr "Refresh hardware state"
+
+msgid "SAR algorithm"
+msgstr "SAR algorithm"
+
+msgid "Safely monitored: %1"
+msgstr "Safely monitored: %1"
+
+msgid "Screen down"
+msgstr "Screen down"
+
+msgid "Sensors"
+msgstr "Sensors"
+
+msgid "Significant motion"
+msgstr "Significant motion"
 
 msgid "Sleep action active"
 msgstr "Sleep action active"
@@ -113,50 +269,38 @@ msgstr "Sleep action active"
 msgid "Sleep action inactive"
 msgstr "Sleep action inactive"
 
-msgid "Magnetic cover sleep action"
-msgstr "Magnetic cover sleep action"
+msgid "Supply power"
+msgstr "Supply power"
 
-msgid "Pad 5 Specific"
-msgstr "Pad 5 Specific"
+msgid "Tablet Control"
+msgstr "Tablet Control"
 
-msgid "Xiaomi Smart Pen"
-msgstr "Xiaomi Smart Pen"
+msgid "The flashlight brightness could not be applied."
+msgstr "The flashlight brightness could not be applied."
 
-msgid "Connect"
-msgstr "Connect"
+msgid "The requested change could not be applied."
+msgstr "The requested change could not be applied."
 
-msgid "Pen battery"
-msgstr "Pen battery"
+msgid "Tilt"
+msgstr "Tilt"
 
-msgid "Pogo keyboard"
-msgstr "Pogo keyboard"
-
-msgid "Attached"
-msgstr "Attached"
-
-msgid "USB-C"
-msgstr "USB-C"
-
-msgid "USB device sharing"
-msgstr "USB device sharing"
-
-msgid " · SSH"
-msgstr " · SSH"
-
-msgid " · ADB"
-msgstr " · ADB"
-
-msgid "MTP%1 · Serial%2"
-msgstr "MTP%1 · Serial%2"
+msgid "Tilt to wake"
+msgstr "Tilt to wake"
 
 msgid "USB data role"
 msgstr "USB data role"
 
-msgid "Host mode"
-msgstr "Host mode"
+msgid "USB device sharing"
+msgstr "USB device sharing"
 
-msgid "Device mode"
-msgstr "Device mode"
+msgid "USB power role"
+msgstr "USB power role"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "Unavailable or incompatible: %1"
+msgstr "Unavailable or incompatible: %1"
 
 msgid "Use device"
 msgstr "Use device"
@@ -164,38 +308,26 @@ msgstr "Use device"
 msgid "Use host"
 msgstr "Use host"
 
-msgid "USB power role"
-msgstr "USB power role"
-
-msgid "Supplying power"
-msgstr "Supplying power"
-
-msgid "Power sink"
-msgstr "Power sink"
-
 msgid "Use sink"
 msgstr "Use sink"
 
-msgid "Supply power"
-msgstr "Supply power"
+msgid "Waiting for a fresh sample"
+msgstr "Waiting for a fresh sample"
 
-msgid "Keep awake while held"
-msgstr "Keep awake while held"
+msgid "Waiting for a physical event: %1"
+msgstr "Waiting for a physical event: %1"
 
-msgid "Use the calibrated grip sensor to prevent idle sleep while held"
-msgstr "Use the calibrated grip sensor to prevent idle sleep while held"
-
-msgid "Calibration required"
-msgstr "Calibration required"
-
-msgid "Held · sleep blocked"
-msgstr "Held · sleep blocked"
-
-msgid "Held · acquiring inhibitor"
-msgstr "Held · acquiring inhibitor"
+msgid "Waiting for sensor data"
+msgstr "Waiting for sensor data"
 
 msgid "Waiting until held"
 msgstr "Waiting until held"
 
-msgid "Waiting for sensor data"
-msgstr "Waiting for sensor data"
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+#~ msgid "Supplying power"
+#~ msgstr "Supplying power"
+
+#~ msgid "Use the calibrated grip sensor to prevent idle sleep while held"
+#~ msgstr "Use the calibrated grip sensor to prevent idle sleep while held"

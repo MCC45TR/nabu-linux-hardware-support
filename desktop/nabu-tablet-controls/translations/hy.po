@@ -2,6 +2,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 23:22+0300\n"
 "PO-Revision-Date: 2026-08-29 20:00+0300\n"
 "Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
 "Language-Team: hy\n"
@@ -10,71 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Checking hardware support…"
-msgstr "Սարքավորումների աջակցության ստուգում…"
+msgid " · ADB"
+msgstr "· ADB"
 
-msgid "Not supported by this device"
-msgstr "Չի աջակցվում այս սարքի կողմից"
-
-msgid "Default brightness:"
-msgstr "Կանխադրված պայծառություն."
-
-msgid "Default flashlight brightness"
-msgstr "Լապտերի կանխադրված պայծառությունը"
-
-msgid "Current value:"
-msgstr "Ընթացիկ արժեքը:"
-
-msgid "The requested change could not be applied."
-msgstr "Պահանջվող փոփոխությունը չի կարող կիրառվել:"
-
-msgid "The flashlight brightness could not be applied."
-msgstr "Լապտերի պայծառությունը չհաջողվեց կիրառել:"
-
-msgid "Connected"
-msgstr "Միացված է"
-
-msgid "Paired"
-msgstr "Զուգակցված"
-
-#, javascript-format
-msgid "Battery: %1%"
-msgstr "Մարտկոց՝ %1%"
-
-msgid "Charging"
-msgstr "Լիցքավորում"
-
-#, javascript-format
-msgid "Charge limit: %1%"
-msgstr "Լիցքավորման սահմանաչափ՝ %1%"
-
-msgid "Tablet Control"
-msgstr "Պլանշետների կառավարում"
-
-msgid "Flashlight on"
-msgstr "Լապտերը միացված է"
-
-msgid "Nabu hardware controls"
-msgstr "Nabu ապարատային հսկիչներ"
-
-msgid "Refresh hardware state"
-msgstr "Թարմացրեք ապարատային վիճակը"
-
-msgid "Device"
-msgstr "Սարք"
-
-msgid "Flashlight"
-msgstr "Լապտեր"
-
-#, javascript-format
-msgid "On at %1%"
-msgstr "Միացված է %1%-ում"
-
-msgid "Off"
-msgstr "Անջատված"
-
-msgid "Flashlight brightness"
-msgstr "Լապտերի պայծառությունը"
+msgid " · SSH"
+msgstr "· SSH"
 
 msgid "%1 percent"
 msgstr "%1 տոկոս"
@@ -83,29 +25,241 @@ msgstr "%1 տոկոս"
 msgid "%1%"
 msgstr "%1%"
 
-msgid "Display and cover"
-msgstr "Ցուցադրել և ծածկել"
+msgid "%1/%2 available · %3 monitored · data from %4"
+msgstr ""
 
-msgid "Automatic rotation"
-msgstr "Ավտոմատ ռոտացիա"
+msgid "%1/%2 available · %3 monitored · no data report yet"
+msgstr ""
+
+msgid "3D signature"
+msgstr ""
 
 msgid "Active"
 msgstr "Ակտիվ"
 
-msgid "Inactive"
-msgstr "Անգործուն"
+msgid "Attached"
+msgstr "Կից"
+
+msgid "Automatic"
+msgstr ""
 
 msgid "Automatic brightness"
 msgstr "Ավտոմատ պայծառություն"
 
-msgid "Magnetic cover"
-msgstr "Մագնիսական ծածկույթ"
+msgid "Automatic rotation"
+msgstr "Ավտոմատ ռոտացիա"
+
+msgid "Available but not monitored by the safe power policy: %1"
+msgstr ""
+
+msgid "Baseline: %1"
+msgstr ""
+
+msgid "Basic gestures"
+msgstr ""
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Մարտկոց՝ %1%"
+
+msgid "Bring to ear"
+msgstr ""
+
+msgid "CH0 %1 · CH1 %2 · CH2 %3"
+msgstr ""
+
+msgid "Calibration required"
+msgstr ""
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Լիցքավորման սահմանաչափ՝ %1%"
+
+msgid "Charging"
+msgstr "Լիցքավորում"
+
+msgid "Checking hardware support…"
+msgstr "Սարքավորումների աջակցության ստուգում…"
+
+msgid "Classifier disabled until controlled HIL calibration"
+msgstr ""
+
+msgid "Classifier: mask %1 · held ≥ %2 · released ≤ %3 · debounce %4"
+msgstr ""
 
 msgid "Closed"
 msgstr "Փակված է"
 
+msgid "Connect"
+msgstr "Միացնել"
+
+msgid "Connected"
+msgstr "Միացված է"
+
+msgid "Current value:"
+msgstr "Ընթացիկ արժեքը:"
+
+msgid "Data reports observed: %1"
+msgstr ""
+
+msgid "Default brightness:"
+msgstr "Կանխադրված պայծառություն."
+
+msgid "Default flashlight brightness"
+msgstr "Լապտերի կանխադրված պայծառությունը"
+
+msgid "Delta: %1"
+msgstr ""
+
+msgid "Device"
+msgstr "Սարք"
+
+msgid "Device mode"
+msgstr "Սարքի ռեժիմ"
+
+msgid "Device orientation"
+msgstr ""
+
+msgid "Discovering firmware endpoints…"
+msgstr ""
+
+msgid ""
+"Discovery and enable acknowledgement do not prove event delivery. Only a "
+"known sensor data message is counted; use Refresh after each physical test."
+msgstr ""
+
+msgid "Display and cover"
+msgstr "Ցուցադրել և ծածկել"
+
+msgid "Facing"
+msgstr ""
+
+msgid "Firmware available: %1"
+msgstr ""
+
+msgid "Flashlight"
+msgstr "Լապտեր"
+
+msgid "Flashlight brightness"
+msgstr "Լապտերի պայծառությունը"
+
+msgid "Flashlight on"
+msgstr "Լապտերը միացված է"
+
+msgid "Fresh reports: %1"
+msgstr ""
+
+msgid "Fresh sample %1 · delta: %2"
+msgstr ""
+
+msgid "Gravity"
+msgstr ""
+
+msgid "Grip sensor channels"
+msgstr ""
+
+msgid "Held · acquiring inhibitor"
+msgstr ""
+
+msgid "Held · sleep blocked"
+msgstr ""
+
+msgid "Host mode"
+msgstr "Հյուրընկալող ռեժիմ"
+
+msgid "Inactive"
+msgstr "Անգործուն"
+
+msgid "Keep awake while held"
+msgstr ""
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Սերիալ%2"
+
+msgid "Magnetic cover"
+msgstr "Մագնիսական ծածկույթ"
+
+msgid "Magnetic cover sleep action"
+msgstr "Մագնիսական ծածկույթի քնի գործողություն"
+
+msgid "Motion and gesture algorithms"
+msgstr ""
+
+msgid "Motion detect"
+msgstr ""
+
+msgid "Multi-shake"
+msgstr ""
+
+msgid "Nabu hardware controls"
+msgstr "Nabu ապարատային հսկիչներ"
+
+msgid "None"
+msgstr ""
+
+msgid "Not supported by this device"
+msgstr "Չի աջակցվում այս սարքի կողմից"
+
+msgid "OEM step detector"
+msgstr ""
+
+msgid "Off"
+msgstr "Անջատված"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Միացված է %1%-ում"
+
 msgid "Open"
 msgstr "Բաց"
+
+msgid "Pad 5 Specific"
+msgstr "Pad 5 Հատուկ"
+
+msgid "Paired"
+msgstr "Զուգակցված"
+
+msgid "Pedometer"
+msgstr ""
+
+msgid "Pen battery"
+msgstr "Գրիչի մարտկոց"
+
+msgid "Persistent significant motion"
+msgstr ""
+
+msgid "Pickup"
+msgstr ""
+
+msgid "Pogo keyboard"
+msgstr "Pogo ստեղնաշար"
+
+msgid "Power sink"
+msgstr "Էլեկտրաէներգիայի լվացարան"
+
+msgid "Power source"
+msgstr ""
+
+msgid "Raw: %1"
+msgstr ""
+
+msgid "Refresh hardware state"
+msgstr "Թարմացրեք ապարատային վիճակը"
+
+msgid "SAR algorithm"
+msgstr ""
+
+msgid "Safely monitored: %1"
+msgstr ""
+
+msgid "Screen down"
+msgstr ""
+
+msgid "Sensors"
+msgstr ""
+
+msgid "Significant motion"
+msgstr ""
 
 msgid "Sleep action active"
 msgstr "Քնի գործողությունը ակտիվ է"
@@ -113,50 +267,38 @@ msgstr "Քնի գործողությունը ակտիվ է"
 msgid "Sleep action inactive"
 msgstr "Քնի գործողությունը ոչ ակտիվ է"
 
-msgid "Magnetic cover sleep action"
-msgstr "Մագնիսական ծածկույթի քնի գործողություն"
+msgid "Supply power"
+msgstr "Էլեկտրաէներգիայի մատակարարում"
 
-msgid "Pad 5 Specific"
-msgstr "Pad 5 Հատուկ"
+msgid "Tablet Control"
+msgstr "Պլանշետների կառավարում"
 
-msgid "Xiaomi Smart Pen"
-msgstr "Xiaomi Smart Pen"
+msgid "The flashlight brightness could not be applied."
+msgstr "Լապտերի պայծառությունը չհաջողվեց կիրառել:"
 
-msgid "Connect"
-msgstr "Միացնել"
+msgid "The requested change could not be applied."
+msgstr "Պահանջվող փոփոխությունը չի կարող կիրառվել:"
 
-msgid "Pen battery"
-msgstr "Գրիչի մարտկոց"
+msgid "Tilt"
+msgstr ""
 
-msgid "Pogo keyboard"
-msgstr "Pogo ստեղնաշար"
-
-msgid "Attached"
-msgstr "Կից"
-
-msgid "USB-C"
-msgstr "USB-C"
-
-msgid "USB device sharing"
-msgstr "USB սարքի համօգտագործում"
-
-msgid " · SSH"
-msgstr "· SSH"
-
-msgid " · ADB"
-msgstr "· ADB"
-
-msgid "MTP%1 · Serial%2"
-msgstr "MTP%1 · Սերիալ%2"
+msgid "Tilt to wake"
+msgstr ""
 
 msgid "USB data role"
 msgstr "USB տվյալների դերը"
 
-msgid "Host mode"
-msgstr "Հյուրընկալող ռեժիմ"
+msgid "USB device sharing"
+msgstr "USB սարքի համօգտագործում"
 
-msgid "Device mode"
-msgstr "Սարքի ռեժիմ"
+msgid "USB power role"
+msgstr "USB ուժային դեր"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "Unavailable or incompatible: %1"
+msgstr ""
 
 msgid "Use device"
 msgstr "Օգտագործեք սարքը"
@@ -164,17 +306,23 @@ msgstr "Օգտագործեք սարքը"
 msgid "Use host"
 msgstr "Օգտագործեք հյուրընկալողը"
 
-msgid "USB power role"
-msgstr "USB ուժային դեր"
-
-msgid "Supplying power"
-msgstr "Էլեկտրաէներգիայի մատակարարում"
-
-msgid "Power sink"
-msgstr "Էլեկտրաէներգիայի լվացարան"
-
 msgid "Use sink"
 msgstr "Օգտագործեք լվացարան"
 
-msgid "Supply power"
-msgstr "Էլեկտրաէներգիայի մատակարարում"
+msgid "Waiting for a fresh sample"
+msgstr ""
+
+msgid "Waiting for a physical event: %1"
+msgstr ""
+
+msgid "Waiting for sensor data"
+msgstr ""
+
+msgid "Waiting until held"
+msgstr ""
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+#~ msgid "Supplying power"
+#~ msgstr "Էլեկտրաէներգիայի մատակարարում"

@@ -1,7 +1,7 @@
 [Unit]
-Description=Xiaomi Pad 5 ADUX1050 SAR sensor service
-After=dbus.service systemd-logind.service
-Wants=systemd-logind.service
+Description=Xiaomi Pad 5 SAR and SSC algorithm monitor
+After=dbus.service systemd-logind.service hexagonrpcd-sdsp.service
+Wants=systemd-logind.service hexagonrpcd-sdsp.service
 
 [Service]
 Type=dbus
@@ -12,9 +12,25 @@ RestartSec=2
 StateDirectory=nabu-sar
 StateDirectoryMode=0700
 NoNewPrivileges=yes
+CapabilityBoundingSet=
 ProtectSystem=strict
 ProtectHome=yes
 PrivateTmp=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ProtectProc=invisible
+RestrictNamespaces=yes
+RestrictAddressFamilies=AF_UNIX AF_NETLINK AF_QIPCRTR
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+SystemCallArchitectures=native
+UMask=0077
 
 [Install]
 WantedBy=multi-user.target

@@ -47,6 +47,10 @@ grep -Fq 'org.freedesktop.login1.Manager' \
     "$repo_root/services/nabu-sar-service/src/nabu-sar-service.c"
 grep -Fq 'SAMPLE_STALE_USEC' \
     "$repo_root/services/nabu-sar-service/src/nabu-sar-service.c"
+grep -Fq 'sensor_property_abi_is_compatible' \
+    "$repo_root/services/nabu-sar-service/src/nabu-ssc-monitor.c"
+grep -Fq 'nabu_ssc_message_is_sensor_report' \
+    "$repo_root/services/nabu-sar-service/src/ssc-monitor-state.c"
 grep -Fq 'SSC_SENSOR_DATA_TYPE, "cct_front"' \
     "$repo_root/services/nabu-sar-service/src/nabu-cct-iio-bridge.c"
 bash "$repo_root/tests/test-sensor-session-gate.sh"
@@ -88,6 +92,8 @@ grep -Fq 'ssc_sensor_light_new_for_data_type_sync' \
     "$repo_root/packaging/libssc-nabu/0008-libssc-address-named-light-sensor-data-types.patch"
 grep -Fq '"ambient_light_back"' \
     "$repo_root/packaging/libssc-nabu/0008-libssc-address-named-light-sensor-data-types.patch"
+grep -Fq 'g_param_spec_boolean (SSC_SENSOR_AVAILABLE' \
+    "$repo_root/packaging/libssc-nabu/0013-libssc-fix-public-property-types.patch"
 grep -Fq 'BuildRequires:  /usr/bin/protoc-c' \
     "$repo_root/packaging/libssc-nabu/libssc.spec"
 grep -Fq 'BuildRequires:  python3-gobject-base' \

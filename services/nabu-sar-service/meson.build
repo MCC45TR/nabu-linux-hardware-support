@@ -1,4 +1,4 @@
-project('nabu-sar-service', 'c', version: '0.2.5',
+project('nabu-sar-service', 'c', version: '0.3.0',
   default_options: ['c_std=gnu11', 'warning_level=3'])
 
 glib = dependency('glib-2.0')
@@ -8,9 +8,11 @@ libssc = dependency('libssc')
 m = meson.get_compiler('c').find_library('m')
 inc = include_directories('src')
 core = static_library('nabu-sar-core', 'src/sar-parser.c', 'src/sar-state.c',
+  'src/ssc-monitor-state.c',
   include_directories: inc, dependencies: [glib, m])
 
 executable('nabu-sar-service', 'src/nabu-sar-service.c',
+  'src/nabu-ssc-monitor.c',
   include_directories: inc, link_with: core,
   dependencies: [glib, gio, gio_unix, libssc, m],
   install: true, install_dir: get_option('libexecdir'))

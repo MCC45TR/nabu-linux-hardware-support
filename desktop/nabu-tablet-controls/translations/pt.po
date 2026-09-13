@@ -2,6 +2,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 23:22+0300\n"
 "PO-Revision-Date: 2026-08-29 20:00+0300\n"
 "Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
 "Language-Team: pt\n"
@@ -10,71 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Checking hardware support…"
-msgstr "Verificando suporte de hardware…"
+msgid " · ADB"
+msgstr "· ADB"
 
-msgid "Not supported by this device"
-msgstr "Não suportado por este dispositivo"
-
-msgid "Default brightness:"
-msgstr "Brilho padrão:"
-
-msgid "Default flashlight brightness"
-msgstr "Brilho padrão da lanterna"
-
-msgid "Current value:"
-msgstr "Valor atual:"
-
-msgid "The requested change could not be applied."
-msgstr "A alteração solicitada não pôde ser aplicada."
-
-msgid "The flashlight brightness could not be applied."
-msgstr "O brilho da lanterna não pôde ser aplicado."
-
-msgid "Connected"
-msgstr "Conectado"
-
-msgid "Paired"
-msgstr "Emparelhado"
-
-#, javascript-format
-msgid "Battery: %1%"
-msgstr "Bateria: %1%"
-
-msgid "Charging"
-msgstr "Carregando"
-
-#, javascript-format
-msgid "Charge limit: %1%"
-msgstr "Limite de carga: %1%"
-
-msgid "Tablet Control"
-msgstr "Controle de tablet"
-
-msgid "Flashlight on"
-msgstr "Lanterna ligada"
-
-msgid "Nabu hardware controls"
-msgstr "Controles de hardware Nabu"
-
-msgid "Refresh hardware state"
-msgstr "Atualizar estado do hardware"
-
-msgid "Device"
-msgstr "Dispositivo"
-
-msgid "Flashlight"
-msgstr "Lanterna"
-
-#, javascript-format
-msgid "On at %1%"
-msgstr "Ligado em %1%"
-
-msgid "Off"
-msgstr "Desligado"
-
-msgid "Flashlight brightness"
-msgstr "Brilho da lanterna"
+msgid " · SSH"
+msgstr "·SSH"
 
 msgid "%1 percent"
 msgstr "%1 por cento"
@@ -83,29 +25,241 @@ msgstr "%1 por cento"
 msgid "%1%"
 msgstr "%1%"
 
-msgid "Display and cover"
-msgstr "Exibição e capa"
+msgid "%1/%2 available · %3 monitored · data from %4"
+msgstr ""
 
-msgid "Automatic rotation"
-msgstr "Rotação automática"
+msgid "%1/%2 available · %3 monitored · no data report yet"
+msgstr ""
+
+msgid "3D signature"
+msgstr ""
 
 msgid "Active"
 msgstr "Ativo"
 
-msgid "Inactive"
-msgstr "Inativo"
+msgid "Attached"
+msgstr "Anexado"
+
+msgid "Automatic"
+msgstr ""
 
 msgid "Automatic brightness"
 msgstr "Brilho automático"
 
-msgid "Magnetic cover"
-msgstr "Capa magnética"
+msgid "Automatic rotation"
+msgstr "Rotação automática"
+
+msgid "Available but not monitored by the safe power policy: %1"
+msgstr ""
+
+msgid "Baseline: %1"
+msgstr ""
+
+msgid "Basic gestures"
+msgstr ""
+
+#, javascript-format
+msgid "Battery: %1%"
+msgstr "Bateria: %1%"
+
+msgid "Bring to ear"
+msgstr ""
+
+msgid "CH0 %1 · CH1 %2 · CH2 %3"
+msgstr ""
+
+msgid "Calibration required"
+msgstr ""
+
+#, javascript-format
+msgid "Charge limit: %1%"
+msgstr "Limite de carga: %1%"
+
+msgid "Charging"
+msgstr "Carregando"
+
+msgid "Checking hardware support…"
+msgstr "Verificando suporte de hardware…"
+
+msgid "Classifier disabled until controlled HIL calibration"
+msgstr ""
+
+msgid "Classifier: mask %1 · held ≥ %2 · released ≤ %3 · debounce %4"
+msgstr ""
 
 msgid "Closed"
 msgstr "Fechado"
 
+msgid "Connect"
+msgstr "Conectar"
+
+msgid "Connected"
+msgstr "Conectado"
+
+msgid "Current value:"
+msgstr "Valor atual:"
+
+msgid "Data reports observed: %1"
+msgstr ""
+
+msgid "Default brightness:"
+msgstr "Brilho padrão:"
+
+msgid "Default flashlight brightness"
+msgstr "Brilho padrão da lanterna"
+
+msgid "Delta: %1"
+msgstr ""
+
+msgid "Device"
+msgstr "Dispositivo"
+
+msgid "Device mode"
+msgstr "Modo de dispositivo"
+
+msgid "Device orientation"
+msgstr ""
+
+msgid "Discovering firmware endpoints…"
+msgstr ""
+
+msgid ""
+"Discovery and enable acknowledgement do not prove event delivery. Only a "
+"known sensor data message is counted; use Refresh after each physical test."
+msgstr ""
+
+msgid "Display and cover"
+msgstr "Exibição e capa"
+
+msgid "Facing"
+msgstr ""
+
+msgid "Firmware available: %1"
+msgstr ""
+
+msgid "Flashlight"
+msgstr "Lanterna"
+
+msgid "Flashlight brightness"
+msgstr "Brilho da lanterna"
+
+msgid "Flashlight on"
+msgstr "Lanterna ligada"
+
+msgid "Fresh reports: %1"
+msgstr ""
+
+msgid "Fresh sample %1 · delta: %2"
+msgstr ""
+
+msgid "Gravity"
+msgstr ""
+
+msgid "Grip sensor channels"
+msgstr ""
+
+msgid "Held · acquiring inhibitor"
+msgstr ""
+
+msgid "Held · sleep blocked"
+msgstr ""
+
+msgid "Host mode"
+msgstr "Modo anfitrião"
+
+msgid "Inactive"
+msgstr "Inativo"
+
+msgid "Keep awake while held"
+msgstr ""
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · Série%2"
+
+msgid "Magnetic cover"
+msgstr "Capa magnética"
+
+msgid "Magnetic cover sleep action"
+msgstr "Ação de dormir com capa magnética"
+
+msgid "Motion and gesture algorithms"
+msgstr ""
+
+msgid "Motion detect"
+msgstr ""
+
+msgid "Multi-shake"
+msgstr ""
+
+msgid "Nabu hardware controls"
+msgstr "Controles de hardware Nabu"
+
+msgid "None"
+msgstr ""
+
+msgid "Not supported by this device"
+msgstr "Não suportado por este dispositivo"
+
+msgid "OEM step detector"
+msgstr ""
+
+msgid "Off"
+msgstr "Desligado"
+
+#, javascript-format
+msgid "On at %1%"
+msgstr "Ligado em %1%"
+
 msgid "Open"
 msgstr "Abrir"
+
+msgid "Pad 5 Specific"
+msgstr "Específico Pad 5"
+
+msgid "Paired"
+msgstr "Emparelhado"
+
+msgid "Pedometer"
+msgstr ""
+
+msgid "Pen battery"
+msgstr "Bateria da caneta"
+
+msgid "Persistent significant motion"
+msgstr ""
+
+msgid "Pickup"
+msgstr ""
+
+msgid "Pogo keyboard"
+msgstr "Teclado Pogo"
+
+msgid "Power sink"
+msgstr "Dissipador de energia"
+
+msgid "Power source"
+msgstr ""
+
+msgid "Raw: %1"
+msgstr ""
+
+msgid "Refresh hardware state"
+msgstr "Atualizar estado do hardware"
+
+msgid "SAR algorithm"
+msgstr ""
+
+msgid "Safely monitored: %1"
+msgstr ""
+
+msgid "Screen down"
+msgstr ""
+
+msgid "Sensors"
+msgstr ""
+
+msgid "Significant motion"
+msgstr ""
 
 msgid "Sleep action active"
 msgstr "Ação de sono ativa"
@@ -113,50 +267,38 @@ msgstr "Ação de sono ativa"
 msgid "Sleep action inactive"
 msgstr "Ação do sono inativa"
 
-msgid "Magnetic cover sleep action"
-msgstr "Ação de dormir com capa magnética"
+msgid "Supply power"
+msgstr "Fornecimento de energia"
 
-msgid "Pad 5 Specific"
-msgstr "Específico Pad 5"
+msgid "Tablet Control"
+msgstr "Controle de tablet"
 
-msgid "Xiaomi Smart Pen"
-msgstr "Xiaomi Smart Pen"
+msgid "The flashlight brightness could not be applied."
+msgstr "O brilho da lanterna não pôde ser aplicado."
 
-msgid "Connect"
-msgstr "Conectar"
+msgid "The requested change could not be applied."
+msgstr "A alteração solicitada não pôde ser aplicada."
 
-msgid "Pen battery"
-msgstr "Bateria da caneta"
+msgid "Tilt"
+msgstr ""
 
-msgid "Pogo keyboard"
-msgstr "Teclado Pogo"
-
-msgid "Attached"
-msgstr "Anexado"
-
-msgid "USB-C"
-msgstr "USB-C"
-
-msgid "USB device sharing"
-msgstr "Compartilhamento de dispositivo USB"
-
-msgid " · SSH"
-msgstr "·SSH"
-
-msgid " · ADB"
-msgstr "· ADB"
-
-msgid "MTP%1 · Serial%2"
-msgstr "MTP%1 · Série%2"
+msgid "Tilt to wake"
+msgstr ""
 
 msgid "USB data role"
 msgstr "Função de dados USB"
 
-msgid "Host mode"
-msgstr "Modo anfitrião"
+msgid "USB device sharing"
+msgstr "Compartilhamento de dispositivo USB"
 
-msgid "Device mode"
-msgstr "Modo de dispositivo"
+msgid "USB power role"
+msgstr "Função de potência USB"
+
+msgid "USB-C"
+msgstr "USB-C"
+
+msgid "Unavailable or incompatible: %1"
+msgstr ""
 
 msgid "Use device"
 msgstr "Usar dispositivo"
@@ -164,17 +306,23 @@ msgstr "Usar dispositivo"
 msgid "Use host"
 msgstr "Usar anfitrião"
 
-msgid "USB power role"
-msgstr "Função de potência USB"
-
-msgid "Supplying power"
-msgstr "Fornecendo energia"
-
-msgid "Power sink"
-msgstr "Dissipador de energia"
-
 msgid "Use sink"
 msgstr "Usar pia"
 
-msgid "Supply power"
-msgstr "Fornecimento de energia"
+msgid "Waiting for a fresh sample"
+msgstr ""
+
+msgid "Waiting for a physical event: %1"
+msgstr ""
+
+msgid "Waiting for sensor data"
+msgstr ""
+
+msgid "Waiting until held"
+msgstr ""
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+#~ msgid "Supplying power"
+#~ msgstr "Fornecendo energia"
