@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 
-helper = pathlib.Path(sys.argv[1])
+helper = pathlib.Path(sys.argv[1]).resolve(strict=True)
 source = pathlib.Path(sys.argv[2]).read_text(encoding="utf-8")
 
 

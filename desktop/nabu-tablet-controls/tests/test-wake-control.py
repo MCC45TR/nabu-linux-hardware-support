@@ -9,7 +9,7 @@ import sys
 
 
 def main() -> int:
-    binary = pathlib.Path(sys.argv[1])
+    binary = pathlib.Path(sys.argv[1]).resolve(strict=True)
     source = pathlib.Path(sys.argv[2]).read_text(encoding="utf-8")
 
     result = subprocess.run(
