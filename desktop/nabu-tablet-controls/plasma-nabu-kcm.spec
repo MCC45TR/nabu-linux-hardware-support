@@ -1,6 +1,6 @@
 Name:           plasma-nabu-kcm
 Version:        1.0.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Native Xiaomi Pad 5 settings module and Plasma widget
 License:        MIT AND GPL-3.0-or-later
 URL:            https://github.com/MCC45TR/nabu-linux-hardware-support
@@ -131,6 +131,11 @@ python3 tests/test-wake-control.py ./nabu-wake-control src/nabu-wake-control.cpp
 python3 tests/test-sar-calibration.py ./nabu-sar-calibration src/nabu-sar-calibration.cpp
 python3 tests/test-kcm-contract.py
 python3 -m json.tool plasma/metadata.json >/dev/null
+python3 -m json.tool kcm/kcm_nabu.json >/dev/null
+grep -Fq '"Description[tr]": "Xiaomi Pad 5 donanım bütünleştirmesini yapılandır"' \
+    kcm/kcm_nabu.json
+test "$(grep -Ec '^        "Name\[[^]]+\]"' kcm/kcm_nabu.json)" = 27
+test "$(grep -Ec '^        "Description\[[^]]+\]"' kcm/kcm_nabu.json)" = 27
 grep -Fq 'Double tap to wake' plasma/contents/ui/main.qml
 grep -Fq 'Tilt to wake' plasma/contents/ui/main.qml
 grep -Fq 'source: "configInfo.qml"' plasma/contents/config/config.qml
@@ -189,6 +194,9 @@ test "$(find translations -name '*.po' | wc -l)" = 27
 %license uMTP-Responder-umtprd-1.8.1/LICENSE
 
 %changelog
+* Mon Sep 14 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-5
+- Embed localized KPlugin metadata so System Settings translates the KCM list.
+
 * Mon Sep 14 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-4
 - Include the reviewed spec in Source0 for the packaged contract test.
 

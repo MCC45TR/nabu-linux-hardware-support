@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import json
 import pathlib
 
 
@@ -8,6 +9,7 @@ root = pathlib.Path(__file__).resolve().parents[1]
 backend = (root / "kcm/kcm_nabu.cpp").read_text(encoding="utf-8")
 qml = (root / "kcm/ui/main.qml").read_text(encoding="utf-8")
 spec = (root / "plasma-nabu-kcm.spec").read_text(encoding="utf-8")
+metadata = json.loads((root / "kcm/kcm_nabu.json").read_text(encoding="utf-8"))
 
 for method in (
     "setFlashlightEnabled", "setFlashlightBrightness", "setAutoRotateEnabled",
@@ -37,5 +39,13 @@ assert "kcm_colord" in qml and "kcm_tablet" in qml and "kcm_keyboard" in qml
 assert "plasma_applet_org.senemos.nabu.flashlight" in backend
 assert "nabu-sar-calibration" in spec
 assert "src/nabu-sar-calibration.cpp" in spec
+
+plugin = metadata["KPlugin"]
+catalog_locales = {po.stem for po in (root / "translations").glob("*.po")}
+name_locales = {key[5:-1] for key in plugin if key.startswith("Name[")}
+description_locales = {key[12:-1] for key in plugin if key.startswith("Description[")}
+assert name_locales == catalog_locales
+assert description_locales == catalog_locales
+assert plugin["Description[tr]"] == "Xiaomi Pad 5 donanım bütünleştirmesini yapılandır"
 
 print("KCM parity, event and safety contract: PASS")
