@@ -18,7 +18,7 @@ tar -czf "$archive" \
     --transform="s,^,$name-$version/," \
     -C "$repo_root" LICENSE \
     -C "$source_root" \
-    API.md dbus kcm network plasma plasma-update polkit src/nabu-wake-control.cpp \
+    API.md dbus kcm network plasma plasma-update plasma-nabu-kcm.spec polkit src/nabu-wake-control.cpp \
     src/nabu-wake-service.cpp src/nabu-sar-calibration.cpp src/nabu-usb-gadget \
     src/nabu-umtprd-start systemd tests tmpfiles translations
 
