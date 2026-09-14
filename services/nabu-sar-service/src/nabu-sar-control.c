@@ -180,6 +180,7 @@ status(GDBusConnection *bus)
 
 	g_autoptr(GVariant) properties = g_variant_get_child_value(reply, 0);
 	g_autofree gchar *grip_state = lookup_string(properties, "GripState", "unknown");
+	g_autofree gchar *sample_quality = lookup_string(properties, "SampleQuality", "unknown");
 	printf("available=%d\n", lookup_boolean(properties, "Available", FALSE));
 	printf("mapping_enabled=%d\n", lookup_boolean(properties, "MappingEnabled", FALSE));
 	printf("configured_channel_mask=%u\n", lookup_uint32(properties, "ConfiguredChannelMask", 0));
@@ -187,6 +188,11 @@ status(GDBusConnection *bus)
 	printf("released_threshold=%.9g\n", lookup_double(properties, "ReleasedThreshold", 0.0));
 	printf("debounce_samples=%u\n", lookup_uint32(properties, "DebounceSamples", 0));
 	printf("sample_fresh=%d\n", lookup_boolean(properties, "SampleFresh", FALSE));
+	printf("sample_quality=%s\n", sample_quality);
+	printf("data_usable=%d\n", lookup_boolean(properties, "DataUsable", FALSE));
+	printf("data_changing=%d\n", lookup_boolean(properties, "DataChanging", FALSE));
+	printf("consecutive_identical_samples=%u\n", lookup_uint32(properties, "ConsecutiveIdenticalSamples", 0));
+	printf("saturated_channel_mask=%u\n", lookup_uint32(properties, "SaturatedChannelMask", 0));
 	printf("sample_sequence=%" G_GUINT64_FORMAT "\n", lookup_uint64(properties, "SampleSequence", 0));
 	printf("grip_state=%s\n", grip_state);
 	printf("hold_awake_enabled=%d\n", lookup_boolean(properties, "HoldAwakeEnabled", FALSE));

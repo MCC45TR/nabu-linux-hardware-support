@@ -2,8 +2,62 @@
 #include <math.h>
 
 #include "sar-parser.h"
+#include "sar-health.h"
 #include "sar-state.h"
 #include "ssc-monitor-state.h"
+
+static void
+test_health_rejects_fixed_saturated_stream(void)
+{
+	NabuSarSample sample = {
+		.delta = { 25535.0f, 0.0f, 25535.0f },
+		.raw = { 65535.0f, 0.0f, 65535.0f },
+		.baseline = { 40000.0f, 0.0f, 40000.0f },
+	};
+	NabuSarHealth *health = nabu_sar_health_new();
+
+	g_assert_cmpint(nabu_sar_health_update(health, &sample), ==,
+			NABU_SAR_SAMPLE_QUALITY_WARMING_UP);
+	g_assert_cmpint(nabu_sar_health_update(health, &sample), ==,
+			NABU_SAR_SAMPLE_QUALITY_INVALID_SATURATED);
+	for (guint i = 0; i < 15; ++i)
+		nabu_sar_health_update(health, &sample);
+	g_assert_cmpint(nabu_sar_health_quality(health), ==,
+			NABU_SAR_SAMPLE_QUALITY_STUCK_SATURATED);
+	g_assert_false(nabu_sar_health_data_usable(health));
+	g_assert_false(nabu_sar_health_data_changing(health));
+	g_assert_cmpuint(nabu_sar_health_saturated_channel_mask(health), ==, 5);
+	g_assert_cmpuint(nabu_sar_health_consecutive_identical(health), ==, 16);
+	nabu_sar_health_free(health);
+}
+
+static void
+test_health_accepts_only_validated_variation(void)
+{
+	NabuSarSample sample = {
+		.delta = { -50.0f, 0.0f, -50.0f },
+		.raw = { 19893.0f, 0.0f, 19893.0f },
+		.baseline = { 19943.0f, 0.0f, 19943.0f },
+	};
+	NabuSarHealth *health = nabu_sar_health_new();
+
+	nabu_sar_health_update(health, &sample);
+	sample.delta[0] = -48.0f;
+	sample.raw[0] = 19895.0f;
+	nabu_sar_health_update(health, &sample);
+	g_assert_false(nabu_sar_health_data_usable(health));
+	sample.delta[2] = -47.0f;
+	sample.raw[2] = 19896.0f;
+	g_assert_cmpint(nabu_sar_health_update(health, &sample), ==,
+			NABU_SAR_SAMPLE_QUALITY_VALID_CHANGING);
+	g_assert_true(nabu_sar_health_data_usable(health));
+	g_assert_true(nabu_sar_health_data_changing(health));
+	nabu_sar_health_mark_transport_stale(health);
+	g_assert_cmpstr(nabu_sar_sample_quality_to_string(
+			nabu_sar_health_quality(health)), ==, "transport-stale");
+	g_assert_false(nabu_sar_health_data_usable(health));
+	nabu_sar_health_free(health);
+}
 
 static void
 test_parse_live_shape(void)
@@ -153,6 +207,8 @@ main(int argc, char **argv)
 	g_test_init(&argc, &argv, NULL);
 	g_test_add_func("/nabu-sar/parser/live-shape", test_parse_live_shape);
 	g_test_add_func("/nabu-sar/parser/reject-non-finite", test_parser_rejects_non_finite_values);
+	g_test_add_func("/nabu-sar/health/reject-fixed-saturated", test_health_rejects_fixed_saturated_stream);
+	g_test_add_func("/nabu-sar/health/validated-variation", test_health_accepts_only_validated_variation);
 	g_test_add_func("/nabu-sar/classifier/fail-closed", test_classifier_is_fail_closed);
 	g_test_add_func("/nabu-sar/classifier/reject-unsafe-configuration",
 			test_classifier_rejects_unsafe_configuration);

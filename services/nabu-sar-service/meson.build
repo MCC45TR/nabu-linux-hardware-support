@@ -1,5 +1,5 @@
-project('nabu-sar-service', 'c', version: '0.3.0',
-  default_options: ['c_std=gnu11', 'warning_level=3'])
+project('nabu-sar-service', ['c', 'cpp'], version: '0.3.1',
+  default_options: ['c_std=gnu11', 'cpp_std=c++20', 'warning_level=3'])
 
 glib = dependency('glib-2.0')
 gio = dependency('gio-2.0')
@@ -8,6 +8,7 @@ libssc = dependency('libssc')
 m = meson.get_compiler('c').find_library('m')
 inc = include_directories('src')
 core = static_library('nabu-sar-core', 'src/sar-parser.c', 'src/sar-state.c',
+  'src/sar-health.cpp',
   'src/ssc-monitor-state.c',
   include_directories: inc, dependencies: [glib, m])
 
@@ -15,6 +16,7 @@ executable('nabu-sar-service', 'src/nabu-sar-service.c',
   'src/nabu-ssc-monitor.c',
   include_directories: inc, link_with: core,
   dependencies: [glib, gio, gio_unix, libssc, m],
+  link_language: 'cpp',
   install: true, install_dir: get_option('libexecdir'))
 
 executable('nabu-sar-control', 'src/nabu-sar-control.c',
@@ -40,4 +42,5 @@ install_data('tools/nabu-sar-capture', install_mode: 'rwxr-xr-x',
   install_dir: get_option('bindir'))
 
 test('sar-core', executable('test-sar', 'tests/test-sar.c',
-  include_directories: inc, link_with: core, dependencies: [glib, m]))
+  include_directories: inc, link_with: core, dependencies: [glib, m],
+  link_language: 'cpp'))

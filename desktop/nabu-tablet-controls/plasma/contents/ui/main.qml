@@ -41,6 +41,11 @@ PlasmoidItem {
     property bool sarSleepInhibited: false
     property string sarGripState: "unknown"
     property bool sarSampleFresh: false
+    property string sarSampleQuality: "unknown"
+    property bool sarDataUsable: false
+    property bool sarDataChanging: false
+    property int sarIdenticalSamples: 0
+    property int sarSaturatedChannelMask: 0
     property string sarSampleSequence: "0"
     property string sarDeltas: ""
     property string sarRawValues: ""
@@ -295,6 +300,11 @@ PlasmoidItem {
             sarHoldAwake = succeeded && statusValue(output, "hold_awake_enabled", "0") === "1"
             sarSleepInhibited = succeeded && statusValue(output, "sleep_inhibited", "0") === "1"
             sarSampleFresh = succeeded && statusValue(output, "sample_fresh", "0") === "1"
+            sarSampleQuality = succeeded ? statusValue(output, "sample_quality", "unknown") : "unknown"
+            sarDataUsable = succeeded && statusValue(output, "data_usable", "0") === "1"
+            sarDataChanging = succeeded && statusValue(output, "data_changing", "0") === "1"
+            sarIdenticalSamples = succeeded ? Number(statusValue(output, "consecutive_identical_samples", "0")) : 0
+            sarSaturatedChannelMask = succeeded ? Number(statusValue(output, "saturated_channel_mask", "0")) : 0
             sarSampleSequence = succeeded ? statusValue(output, "sample_sequence", "0") : "0"
             sarDeltas = succeeded ? statusValue(output, "deltas", "") : ""
             sarRawValues = succeeded ? statusValue(output, "raw_values", "") : ""
@@ -425,6 +435,17 @@ PlasmoidItem {
     }
 
     function sarDescription() {
+        if (!sarDataUsable) {
+            if (sarSampleQuality === "stuck-saturated")
+                return i18n("Data fixed and saturated · safely disabled")
+            if (sarSampleQuality === "invalid-saturated")
+                return i18n("Saturated channel · safely disabled")
+            if (sarSampleQuality === "stuck-constant")
+                return i18n("Reports arrive but values are fixed · safely disabled")
+            if (sarSampleQuality === "transport-stale")
+                return i18n("Sensor report stream is stale")
+            return i18n("Validating sensor variation…")
+        }
         if (!sarMappingEnabled)
             return i18n("Calibration required")
         if (!sarHoldAwake)
@@ -489,6 +510,8 @@ PlasmoidItem {
     function sarTelemetryDescription() {
         if (!sarSampleFresh)
             return i18n("Waiting for a fresh sample")
+        if (!sarDataUsable)
+            return sarDescription()
         return i18n("Fresh sample %1 · delta: %2", sarSampleSequence,
             sarChannelSummary(sarDeltas))
     }
@@ -735,6 +758,7 @@ PlasmoidItem {
                 capabilityKnown: root.sarKnown
                 available: root.sarAvailable
                 controlEnabled: root.sarMappingEnabled
+                    && (root.sarDataUsable || root.sarHoldAwake)
                 busy: root.sarBusy
                 action: Component {
                     PlasmaComponents.Switch {

@@ -47,6 +47,10 @@ grep -Fq 'org.freedesktop.login1.Manager' \
     "$repo_root/services/nabu-sar-service/src/nabu-sar-service.c"
 grep -Fq 'SAMPLE_STALE_USEC' \
     "$repo_root/services/nabu-sar-service/src/nabu-sar-service.c"
+grep -Fq 'NABU_SAR_SAMPLE_QUALITY_STUCK_SATURATED' \
+    "$repo_root/services/nabu-sar-service/src/sar-health.cpp"
+grep -Fq 'DataUsable' \
+    "$repo_root/services/nabu-sar-service/src/nabu-sar-service.c"
 grep -Fq 'sensor_property_abi_is_compatible' \
     "$repo_root/services/nabu-sar-service/src/nabu-ssc-monitor.c"
 grep -Fq 'nabu_ssc_message_is_sensor_report' \

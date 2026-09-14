@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "nabu-ssc-monitor.h"
+#include "sar-health.h"
 #include "sar-parser.h"
 #include "sar-state.h"
 
@@ -17,6 +18,7 @@
 #define SAMPLE_STALE_USEC (3 * G_USEC_PER_SEC)
 #define INHIBITOR_RETRY_USEC (5 * G_USEC_PER_SEC)
 #define PROPERTIES_EMIT_INTERVAL_USEC G_USEC_PER_SEC
+#define UNHEALTHY_PROPERTIES_EMIT_INTERVAL_USEC (5 * G_USEC_PER_SEC)
 
 typedef struct {
 	GMainLoop *loop;
@@ -42,6 +44,7 @@ typedef struct {
 	guint64 sample_sequence;
 	NabuSarSample sample;
 	NabuSarClassifier classifier;
+	NabuSarHealth *health;
 	NabuSscMonitor *ssc_monitor;
 } Service;
 
@@ -66,6 +69,11 @@ static const gchar introspection_xml[] =
 "  <property name='ReleasedThreshold' type='d' access='read'/>"
 "  <property name='DebounceSamples' type='u' access='read'/>"
 "  <property name='SampleFresh' type='b' access='read'/>"
+"  <property name='SampleQuality' type='s' access='read'/>"
+"  <property name='DataUsable' type='b' access='read'/>"
+"  <property name='DataChanging' type='b' access='read'/>"
+"  <property name='ConsecutiveIdenticalSamples' type='u' access='read'/>"
+"  <property name='SaturatedChannelMask' type='u' access='read'/>"
 "  <property name='SampleSequence' type='t' access='read'/>"
 "  <property name='LastSampleMonotonicUsec' type='x' access='read'/>"
 "  <property name='HoldAwakeEnabled' type='b' access='read'/>"
@@ -101,6 +109,16 @@ emit_properties_changed(Service *service)
 	g_variant_builder_add(&changed, "{sv}", "ReleasedThreshold", g_variant_new_double(service->classifier.released_threshold));
 	g_variant_builder_add(&changed, "{sv}", "DebounceSamples", g_variant_new_uint32(service->classifier.debounce_samples));
 	g_variant_builder_add(&changed, "{sv}", "SampleFresh", g_variant_new_boolean(service->sample_fresh));
+	g_variant_builder_add(&changed, "{sv}", "SampleQuality", g_variant_new_string(
+		nabu_sar_sample_quality_to_string(nabu_sar_health_quality(service->health))));
+	g_variant_builder_add(&changed, "{sv}", "DataUsable", g_variant_new_boolean(
+		nabu_sar_health_data_usable(service->health)));
+	g_variant_builder_add(&changed, "{sv}", "DataChanging", g_variant_new_boolean(
+		nabu_sar_health_data_changing(service->health)));
+	g_variant_builder_add(&changed, "{sv}", "ConsecutiveIdenticalSamples", g_variant_new_uint32(
+		nabu_sar_health_consecutive_identical(service->health)));
+	g_variant_builder_add(&changed, "{sv}", "SaturatedChannelMask", g_variant_new_uint32(
+		nabu_sar_health_saturated_channel_mask(service->health)));
 	g_variant_builder_add(&changed, "{sv}", "SampleSequence", g_variant_new_uint64(service->sample_sequence));
 	g_variant_builder_add(&changed, "{sv}", "LastSampleMonotonicUsec", g_variant_new_int64(service->last_sample_usec));
 	g_variant_builder_add(&changed, "{sv}", "HoldAwakeEnabled", g_variant_new_boolean(service->hold_awake_enabled));
@@ -126,7 +144,8 @@ static void
 update_inhibitor(Service *service)
 {
 	gboolean required = nabu_sar_should_inhibit(service->hold_awake_enabled,
-		service->classifier.enabled, service->sample_fresh,
+		service->classifier.enabled,
+		service->sample_fresh && nabu_sar_health_data_usable(service->health),
 		service->classifier.state);
 
 	if (!required) {
@@ -259,6 +278,12 @@ get_property(GDBusConnection *connection, const gchar *sender,
 	if (!g_strcmp0(property_name, "ReleasedThreshold")) return g_variant_new_double(s->classifier.released_threshold);
 	if (!g_strcmp0(property_name, "DebounceSamples")) return g_variant_new_uint32(s->classifier.debounce_samples);
 	if (!g_strcmp0(property_name, "SampleFresh")) return g_variant_new_boolean(s->sample_fresh);
+	if (!g_strcmp0(property_name, "SampleQuality")) return g_variant_new_string(
+		nabu_sar_sample_quality_to_string(nabu_sar_health_quality(s->health)));
+	if (!g_strcmp0(property_name, "DataUsable")) return g_variant_new_boolean(nabu_sar_health_data_usable(s->health));
+	if (!g_strcmp0(property_name, "DataChanging")) return g_variant_new_boolean(nabu_sar_health_data_changing(s->health));
+	if (!g_strcmp0(property_name, "ConsecutiveIdenticalSamples")) return g_variant_new_uint32(nabu_sar_health_consecutive_identical(s->health));
+	if (!g_strcmp0(property_name, "SaturatedChannelMask")) return g_variant_new_uint32(nabu_sar_health_saturated_channel_mask(s->health));
 	if (!g_strcmp0(property_name, "SampleSequence")) return g_variant_new_uint64(s->sample_sequence);
 	if (!g_strcmp0(property_name, "LastSampleMonotonicUsec")) return g_variant_new_int64(s->last_sample_usec);
 	if (!g_strcmp0(property_name, "HoldAwakeEnabled")) return g_variant_new_boolean(s->hold_awake_enabled);
@@ -306,6 +331,7 @@ report_received(gpointer client, guint32 msg_id, guint64 uid_high,
 	g_autoptr(GError) error = NULL;
 	gboolean was_sample_fresh = s->sample_fresh;
 	NabuSarState previous_state = s->classifier.state;
+	NabuSarSampleQuality previous_quality = nabu_sar_health_quality(s->health);
 	if (msg_id != SSC_MSG_REPORT_MEASUREMENT || uid_high != s->uid_high || uid_low != s->uid_low)
 		return;
 	if (!nabu_sar_parse_report((const guint8 *)buffer->data, buffer->len, &s->sample, &error)) {
@@ -317,11 +343,30 @@ report_received(gpointer client, guint32 msg_id, guint64 uid_high,
 	if (s->sample_sequence < G_MAXUINT64)
 		s->sample_sequence++;
 	s->sample_fresh = TRUE;
-	nabu_sar_classifier_update(&s->classifier, &s->sample);
+	NabuSarSampleQuality quality = nabu_sar_health_update(s->health, &s->sample);
+	gint64 emit_interval_usec = (quality == NABU_SAR_SAMPLE_QUALITY_STUCK_SATURATED ||
+		quality == NABU_SAR_SAMPLE_QUALITY_STUCK_CONSTANT)
+		? UNHEALTHY_PROPERTIES_EMIT_INTERVAL_USEC
+		: PROPERTIES_EMIT_INTERVAL_USEC;
+	if (nabu_sar_health_data_usable(s->health)) {
+		nabu_sar_classifier_update(&s->classifier, &s->sample);
+	} else {
+		s->classifier.state = NABU_SAR_STATE_UNKNOWN;
+		s->classifier.candidate_count = 0;
+	}
 	update_inhibitor(s);
-	if (nabu_sar_should_publish(was_sample_fresh, previous_state,
+	if (quality != previous_quality) {
+		if (quality == NABU_SAR_SAMPLE_QUALITY_STUCK_SATURATED ||
+		    quality == NABU_SAR_SAMPLE_QUALITY_STUCK_CONSTANT)
+			g_warning("ADUX1050 data rejected: %s after %u identical reports",
+				nabu_sar_sample_quality_to_string(quality),
+				nabu_sar_health_consecutive_identical(s->health));
+		else if (quality == NABU_SAR_SAMPLE_QUALITY_VALID_CHANGING)
+			g_message("ADUX1050 data variation validated; grip classification may proceed");
+	}
+	if (quality != previous_quality || nabu_sar_should_publish(was_sample_fresh, previous_state,
 		    s->classifier.state, now_usec, s->last_properties_emit_usec,
-		    PROPERTIES_EMIT_INTERVAL_USEC))
+		    emit_interval_usec))
 		emit_properties_changed(s);
 }
 
@@ -333,6 +378,7 @@ check_sample_freshness(gpointer user_data)
 	    g_get_monotonic_time() - s->last_sample_usec <= SAMPLE_STALE_USEC)
 		return G_SOURCE_CONTINUE;
 	s->sample_fresh = FALSE;
+	nabu_sar_health_mark_transport_stale(s->health);
 	s->classifier.state = NABU_SAR_STATE_UNKNOWN;
 	s->classifier.candidate_count = 0;
 	update_inhibitor(s);
@@ -383,6 +429,7 @@ main(void)
 {
 	Service s = { .inhibitor_fd = -1 };
 	g_autoptr(GError) error = NULL;
+	s.health = nabu_sar_health_new();
 	s.loop = g_main_loop_new(NULL, FALSE);
 	load_configuration(&s);
 	load_hold_awake_enabled(&s);
@@ -412,6 +459,7 @@ main(void)
 	g_clear_object(&s.client);
 	g_clear_object(&s.sensor);
 	nabu_ssc_monitor_free(s.ssc_monitor);
+	nabu_sar_health_free(s.health);
 	g_clear_pointer(&s.name, g_free);
 	g_clear_pointer(&s.vendor, g_free);
 	g_bus_unown_name(s.owner_id);

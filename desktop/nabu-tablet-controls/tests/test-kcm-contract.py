@@ -21,6 +21,11 @@ for method in (
     assert method in backend, method
 
 assert 'QStringLiteral("PropertiesChanged")' in backend
+for quality_property in (
+    "SampleQuality", "DataUsable", "DataChanging",
+    "ConsecutiveIdenticalSamples", "SaturatedChannelMask",
+):
+    assert quality_property in backend, quality_property
 assert "startSensorLive" in backend and "stopSensorLive" in backend
 assert "bus.disconnect" in backend
 assert "setSingleShot(true)" in backend
@@ -33,6 +38,7 @@ for label in (
     "Double tap to wake", "Tilt to wake", "Keep awake while held", "Xiaomi Smart Pen",
     "Pogo keyboard", "USB device sharing", "USB data mode", "USB power role",
     "Live sensors", "Grip calibration",
+    "ADUX1050 data quality", "Identical reports", "Saturated channel mask",
 ):
     assert label in qml, label
 
@@ -40,6 +46,7 @@ assert "kcm_colord" in qml and "kcm_tablet" in qml and "kcm_keyboard" in qml
 assert "plasma_applet_org.senemos.nabu.flashlight" in backend
 assert "nabu-sar-calibration" in spec
 assert "src/nabu-sar-calibration.cpp" in spec
+assert "Requires:       nabu-sar-service >= 3.0.0-93" in spec
 
 plugin = metadata["KPlugin"]
 catalog_locales = {po.stem for po in (root / "translations").glob("*.po")}

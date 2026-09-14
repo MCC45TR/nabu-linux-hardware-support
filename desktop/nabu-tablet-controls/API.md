@@ -61,7 +61,11 @@ machine-readable key/value pairs. The existing Plasma widget and GNOME Quick
 Settings extension invoke `pkexec /usr/libexec/nabu-sar-control set hold-awake
 on|off`; polkit authorizes only that fixed helper. The root SAR service owns
 the persistent toggle and obtains a standard systemd-logind inhibitor only
-while a calibrated, fresh sample says the tablet is held.
+while a calibrated, fresh and validated-changing sample says the tablet is
+held. `sample_fresh` proves only that SSC transport is alive; `sample_quality`,
+`data_usable`, `data_changing`, `consecutive_identical_samples`, and
+`saturated_channel_mask` prevent constant or saturated reports from being
+treated as physical grip evidence.
 
 The feature is disabled when the mapping is uncalibrated, unavailable, stale,
 or unknown. SAR is not exposed as display proximity.

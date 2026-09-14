@@ -91,6 +91,12 @@ class NabuSettings final : public KQuickConfigModule
     Q_PROPERTY(QString gripChannels READ gripChannels NOTIFY stateChanged)
     Q_PROPERTY(QString gripRawValues READ gripRawValues NOTIFY stateChanged)
     Q_PROPERTY(QString gripBaselines READ gripBaselines NOTIFY stateChanged)
+    Q_PROPERTY(QString gripSampleQuality READ gripSampleQuality NOTIFY stateChanged)
+    Q_PROPERTY(QString gripQualityText READ gripQualityText NOTIFY stateChanged)
+    Q_PROPERTY(bool gripDataUsable READ gripDataUsable NOTIFY stateChanged)
+    Q_PROPERTY(bool gripDataChanging READ gripDataChanging NOTIFY stateChanged)
+    Q_PROPERTY(int gripIdenticalSamples READ gripIdenticalSamples NOTIFY stateChanged)
+    Q_PROPERTY(int gripSaturatedChannelMask READ gripSaturatedChannelMask NOTIFY stateChanged)
     Q_PROPERTY(qulonglong gripSampleSequence READ gripSampleSequence NOTIFY stateChanged)
     Q_PROPERTY(bool sensorLive READ sensorLive NOTIFY stateChanged)
     Q_PROPERTY(QString sensorSummary READ sensorSummary NOTIFY stateChanged)
@@ -175,6 +181,25 @@ public:
     QString gripChannels() const { return m_gripChannels; }
     QString gripRawValues() const { return m_gripRawValues; }
     QString gripBaselines() const { return m_gripBaselines; }
+    QString gripSampleQuality() const { return m_gripSampleQuality; }
+    QString gripQualityText() const
+    {
+        if (m_gripSampleQuality == QLatin1String("valid-changing"))
+            return i18n("Data is changing and usable");
+        if (m_gripSampleQuality == QLatin1String("invalid-saturated"))
+            return i18n("One or more channels are saturated; grip actions and calibration are disabled");
+        if (m_gripSampleQuality == QLatin1String("stuck-saturated"))
+            return i18n("Data is fixed and saturated; grip actions and calibration are disabled");
+        if (m_gripSampleQuality == QLatin1String("stuck-constant"))
+            return i18n("Reports arrive but values do not change; grip actions and calibration are disabled");
+        if (m_gripSampleQuality == QLatin1String("transport-stale"))
+            return i18n("The ADUX1050 report stream is stale");
+        return i18n("Validating ADUX1050 data variation…");
+    }
+    bool gripDataUsable() const { return m_gripDataUsable; }
+    bool gripDataChanging() const { return m_gripDataChanging; }
+    int gripIdenticalSamples() const { return m_gripIdenticalSamples; }
+    int gripSaturatedChannelMask() const { return m_gripSaturatedChannelMask; }
     qulonglong gripSampleSequence() const { return m_gripSampleSequence; }
     bool sensorLive() const { return m_sensorLive; }
     QString sensorSummary() const { return m_sensorSummary; }
@@ -286,7 +311,7 @@ public:
 
     Q_INVOKABLE void setGripHoldAwakeEnabled(bool enabled)
     {
-        if (!m_gripMappingEnabled)
+        if (enabled && (!m_gripMappingEnabled || !m_gripDataUsable))
             return;
         m_gripHoldAwakeEnabled = enabled;
         run(QStringLiteral("/usr/bin/pkexec"),
@@ -389,8 +414,13 @@ public:
     Q_INVOKABLE void startCalibrationCapture(const QString &phase)
     {
         if ((phase != QLatin1String("released") && phase != QLatin1String("held"))
-            || !m_gripAvailable || m_calibrationChannelMask == 0)
+            || !m_gripAvailable || !m_gripDataUsable || m_calibrationChannelMask == 0) {
+            if (m_gripAvailable && !m_gripDataUsable) {
+                m_calibrationMessage = i18n("Calibration is blocked until ADUX1050 values change without saturation.");
+                Q_EMIT stateChanged();
+            }
             return;
+        }
         if (!m_sensorLive)
             startSensorLive();
         if (!m_sensorLive)
@@ -620,8 +650,19 @@ private:
         m_gripChannels = numberList(m_gripDeltas);
         m_gripRawValues = numberList(doubleList(properties.value(QStringLiteral("RawValues"))));
         m_gripBaselines = numberList(doubleList(properties.value(QStringLiteral("Baselines"))));
+        m_gripSampleQuality = properties.value(QStringLiteral("SampleQuality"), QStringLiteral("unknown")).toString();
+        m_gripDataUsable = properties.value(QStringLiteral("DataUsable")).toBool();
+        m_gripDataChanging = properties.value(QStringLiteral("DataChanging")).toBool();
+        m_gripIdenticalSamples = properties.value(QStringLiteral("ConsecutiveIdenticalSamples")).toInt();
+        m_gripSaturatedChannelMask = properties.value(QStringLiteral("SaturatedChannelMask")).toInt();
         const qulonglong previousSequence = m_gripSampleSequence;
         m_gripSampleSequence = properties.value(QStringLiteral("SampleSequence")).toULongLong();
+        if (m_calibrationPhase != QLatin1String("idle") && !m_gripDataUsable) {
+            m_calibrationTimer.stop();
+            m_calibrationPhase = QStringLiteral("idle");
+            m_calibrationReady = false;
+            m_calibrationMessage = i18n("Capture stopped because ADUX1050 data became constant, saturated, or stale.");
+        }
         if (m_calibrationPhase != QLatin1String("idle") && m_gripSampleSequence != previousSequence)
             captureCalibrationSample();
     }
@@ -672,6 +713,7 @@ private:
     void captureCalibrationSample()
     {
         if (m_calibrationPhase == QLatin1String("idle") || !m_gripAvailable
+            || !m_gripDataUsable
             || m_gripSampleSequence == 0 || m_gripSampleSequence == m_lastCalibrationSequence
             || m_gripDeltas.size() < 3)
             return;
@@ -789,6 +831,11 @@ private:
     QString m_gripChannels;
     QString m_gripRawValues;
     QString m_gripBaselines;
+    QString m_gripSampleQuality = QStringLiteral("unknown");
+    bool m_gripDataUsable = false;
+    bool m_gripDataChanging = false;
+    int m_gripIdenticalSamples = 0;
+    int m_gripSaturatedChannelMask = 0;
     QList<double> m_gripDeltas;
     qulonglong m_gripSampleSequence = 0;
     bool m_sensorLive = false;

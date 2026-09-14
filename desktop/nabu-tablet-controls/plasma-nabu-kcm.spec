@@ -1,6 +1,6 @@
 Name:           plasma-nabu-kcm
 Version:        1.0.0
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Native Xiaomi Pad 5 settings module and Plasma widget
 License:        MIT AND GPL-3.0-or-later
 URL:            https://github.com/MCC45TR/nabu-linux-hardware-support
@@ -36,6 +36,7 @@ Requires:       /usr/bin/nabu-accessory-state
 Requires:       /usr/bin/nabu-flashlightctl
 Requires:       /usr/bin/nabu-usb-role
 Requires:       /usr/libexec/nabu-sar-control
+Requires:       nabu-sar-service >= 3.0.0-93
 Provides:       nabu-flashlight-integration-plasma = 3.0.0-107
 Obsoletes:      nabu-flashlight-integration-plasma < 9999999999-99
 
@@ -194,6 +195,11 @@ test "$(find translations -name '*.po' | wc -l)" = 27
 %license uMTP-Responder-umtprd-1.8.1/LICENSE
 
 %changelog
+* Mon Sep 14 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-7
+- Surface ADUX1050 saturation and constant-stream health in the KCM and widget.
+- Block grip calibration and wake inhibition unless physical data variation is
+  validated by the native service.
+
 * Mon Sep 14 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-6
 - Complete the Turkish KCM and widget catalog after on-device visual QA.
 

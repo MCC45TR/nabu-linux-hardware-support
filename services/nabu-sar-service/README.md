@@ -4,16 +4,28 @@ This service publishes the real three-channel ADUX1050 SSC stream on the
 system D-Bus. It never maps SAR to the screen-proximity API.
 
 The optional hold-awake feature uses a standard `systemd-logind` inhibitor.
-It is fail closed: the user toggle, a calibrated mapping, a fresh sample, and
-the `held` state must all be true. Losing samples for three seconds closes the
+It is fail closed: the user toggle, a calibrated mapping, a fresh transport
+sample, validated changing data, and the `held` state must all be true. Losing
+samples for three seconds, a constant stream, or a saturated channel closes the
 inhibitor file descriptor automatically. The toggle defaults off and is stored
 under the service-owned `/var/lib/nabu-sar` state directory.
+
+`SampleFresh` describes transport liveness only. `SampleQuality`, `DataUsable`,
+`DataChanging`, `ConsecutiveIdenticalSamples`, and `SaturatedChannelMask`
+separate a live SSC connection from physically useful ADUX1050 data. Sixteen
+identical saturated reports or thirty-two identical ordinary reports are
+rejected without restarting SLPI or writing sensor registers.
+After a stream is classified as stuck, unchanged D-Bus telemetry is bounded to
+one update every five seconds; quality transitions are still emitted
+immediately. This preserves diagnostics without a needless desktop wake-up
+every second.
 
 `nabu-sar-control status` is unprivileged and machine readable. Changing the
 toggle is performed through the root-only D-Bus method by a polkit-launched
 `/usr/libexec/nabu-sar-control set hold-awake on|off` command.
 
 Use `nabu-sar-capture PHASE SECONDS OUTPUT.csv` for controlled HIL calibration.
+The capture helper records only samples whose data quality is usable.
 Do not enable `Mapping.Enabled` until uncovered and held samples have produced
 separable thresholds on every intended grip edge.
 

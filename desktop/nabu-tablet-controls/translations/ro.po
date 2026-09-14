@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 16:40+0300\n"
+"POT-Creation-Date: 2026-09-14 22:56+0300\n"
 "PO-Revision-Date: 2026-08-29 20:00+0300\n"
 "Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
 "Language-Team: ro\n"
@@ -26,7 +26,31 @@ msgstr ""
 msgid "Capture timed out. Keep the tablet steady and try that phase again."
 msgstr ""
 
+msgid "Data is changing and usable"
+msgstr ""
+
+msgid ""
+"One or more channels are saturated; grip actions and calibration are disabled"
+msgstr ""
+
+msgid "Data is fixed and saturated; grip actions and calibration are disabled"
+msgstr ""
+
+msgid ""
+"Reports arrive but values do not change; grip actions and calibration are "
+"disabled"
+msgstr ""
+
+msgid "The ADUX1050 report stream is stale"
+msgstr ""
+
+msgid "Validating ADUX1050 data variation…"
+msgstr ""
+
 msgid "Could not subscribe to the sensor service."
+msgstr ""
+
+msgid "Calibration is blocked until ADUX1050 values change without saturation."
 msgstr ""
 
 msgid ""
@@ -61,6 +85,10 @@ msgid "No sharing service is ready"
 msgstr ""
 
 msgid "Sensor service is unavailable"
+msgstr ""
+
+msgid ""
+"Capture stopped because ADUX1050 data became constant, saturated, or stale."
 msgstr ""
 
 msgid "%1 of %2 firmware endpoints available; %3 monitored; %4 reporting"
@@ -296,6 +324,15 @@ msgstr ""
 msgid "Sensor DSP"
 msgstr ""
 
+msgid "ADUX1050 data quality"
+msgstr ""
+
+msgid "Identical reports"
+msgstr ""
+
+msgid "Saturated channel mask"
+msgstr ""
+
 msgid "ADUX1050 delta CH0, CH1, CH2"
 msgstr ""
 
@@ -476,10 +513,28 @@ msgstr ""
 msgid "%1/%2 firmware endpoints available · %3 monitored · %4 reporting"
 msgstr ""
 
-msgid "Fresh ADUX1050 deltas: %1 · raw: %2 · baseline: %3"
+msgid "Changing ADUX1050 deltas: %1 · raw: %2 · baseline: %3"
 msgstr ""
 
-msgid "No fresh ADUX1050 sample"
+msgid ""
+"ADUX1050 reports arrive, but values are fixed and saturated; grip actions "
+"and calibration are safely disabled"
+msgstr ""
+
+msgid ""
+"ADUX1050 has a saturated channel; grip actions and calibration are safely "
+"disabled"
+msgstr ""
+
+msgid ""
+"ADUX1050 reports arrive, but values do not change; grip actions and "
+"calibration are safely disabled"
+msgstr ""
+
+msgid "No fresh ADUX1050 report"
+msgstr ""
+
+msgid "quality: %1 · identical: %2 · saturated mask: 0x%3"
 msgstr ""
 
 msgid "classifier disabled until controlled HIL calibration"
@@ -515,6 +570,21 @@ msgstr "Modificarea solicitată nu a putut fi aplicată."
 
 msgid "The flashlight brightness could not be applied."
 msgstr "Luminozitatea lanternei nu a putut fi aplicată."
+
+msgid "Data fixed and saturated · safely disabled"
+msgstr ""
+
+msgid "Saturated channel · safely disabled"
+msgstr ""
+
+msgid "Reports arrive but values are fixed · safely disabled"
+msgstr ""
+
+msgid "Sensor report stream is stale"
+msgstr ""
+
+msgid "Validating sensor variation…"
+msgstr ""
 
 msgid "Calibration required"
 msgstr ""

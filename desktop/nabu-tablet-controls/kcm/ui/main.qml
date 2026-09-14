@@ -162,10 +162,13 @@ KCM.ScrollViewKCM {
                     SettingRow {
                         title: i18nd("plasma_applet_org.senemos.nabu.flashlight", "Keep awake while held")
                         description: kcm.gripMappingEnabled
-                            ? i18nd("plasma_applet_org.senemos.nabu.flashlight", "Grip state: %1", kcm.gripState)
+                            ? (kcm.gripDataUsable
+                                ? i18nd("plasma_applet_org.senemos.nabu.flashlight", "Grip state: %1", kcm.gripState)
+                                : kcm.gripQualityText)
                             : i18nd("plasma_applet_org.senemos.nabu.flashlight", "Disabled until controlled SAR channel calibration is complete")
                         iconName: "system-suspend"
                         available: kcm.gripAvailable && kcm.gripMappingEnabled
+                            && (kcm.gripDataUsable || kcm.gripHoldAwakeEnabled)
                         checked: kcm.gripHoldAwakeEnabled
                         onToggled: checked => kcm.setGripHoldAwakeEnabled(checked)
                     }
@@ -276,6 +279,15 @@ KCM.ScrollViewKCM {
                             : i18nd("plasma_applet_org.senemos.nabu.flashlight", "Live view is stopped. No sensor refresh timer or background command is running.")
                     }
                     InfoRow { title: i18nd("plasma_applet_org.senemos.nabu.flashlight", "Sensor DSP"); value: kcm.sensorSummary }
+                    Kirigami.InlineMessage {
+                        Layout.fillWidth: true
+                        visible: kcm.gripAvailable
+                        type: kcm.gripDataUsable ? Kirigami.MessageType.Positive : Kirigami.MessageType.Warning
+                        text: kcm.gripQualityText
+                    }
+                    InfoRow { title: i18nd("plasma_applet_org.senemos.nabu.flashlight", "ADUX1050 data quality"); value: kcm.gripSampleQuality }
+                    InfoRow { title: i18nd("plasma_applet_org.senemos.nabu.flashlight", "Identical reports"); value: String(kcm.gripIdenticalSamples) }
+                    InfoRow { title: i18nd("plasma_applet_org.senemos.nabu.flashlight", "Saturated channel mask"); value: "0x" + kcm.gripSaturatedChannelMask.toString(16) }
                     InfoRow { title: i18nd("plasma_applet_org.senemos.nabu.flashlight", "ADUX1050 delta CH0, CH1, CH2"); value: page.sensorValue(kcm.gripChannels) }
                     InfoRow { title: i18nd("plasma_applet_org.senemos.nabu.flashlight", "ADUX1050 raw CH0, CH1, CH2"); value: page.sensorValue(kcm.gripRawValues) }
                     InfoRow { title: i18nd("plasma_applet_org.senemos.nabu.flashlight", "ADUX1050 baseline CH0, CH1, CH2"); value: page.sensorValue(kcm.gripBaselines) }
@@ -318,7 +330,7 @@ KCM.ScrollViewKCM {
                         Layout.fillWidth: true
                         Controls.Button {
                             text: kcm.calibrationPhase === "released" ? i18nd("plasma_applet_org.senemos.nabu.flashlight", "Stop Released Capture") : i18nd("plasma_applet_org.senemos.nabu.flashlight", "Capture Released")
-                            enabled: kcm.gripAvailable && kcm.calibrationChannelMask !== 0
+                            enabled: kcm.gripAvailable && kcm.gripDataUsable && kcm.calibrationChannelMask !== 0
                                 && (kcm.calibrationPhase === "idle" || kcm.calibrationPhase === "released")
                             onClicked: kcm.calibrationPhase === "released"
                                 ? kcm.stopCalibrationCapture() : kcm.startCalibrationCapture("released")
@@ -329,7 +341,7 @@ KCM.ScrollViewKCM {
                         Layout.fillWidth: true
                         Controls.Button {
                             text: kcm.calibrationPhase === "held" ? i18nd("plasma_applet_org.senemos.nabu.flashlight", "Stop Held Capture") : i18nd("plasma_applet_org.senemos.nabu.flashlight", "Capture Held")
-                            enabled: kcm.gripAvailable && kcm.calibrationChannelMask !== 0
+                            enabled: kcm.gripAvailable && kcm.gripDataUsable && kcm.calibrationChannelMask !== 0
                                 && (kcm.calibrationPhase === "idle" || kcm.calibrationPhase === "held")
                             onClicked: kcm.calibrationPhase === "held"
                                 ? kcm.stopCalibrationCapture() : kcm.startCalibrationCapture("held")

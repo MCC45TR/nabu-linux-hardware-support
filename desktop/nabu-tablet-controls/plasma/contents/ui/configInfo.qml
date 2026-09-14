@@ -71,10 +71,25 @@ QQC2.ScrollView {
         reportedAlgorithms = list(value(output, "algorithm_reports", ""))
         freshAlgorithms = list(value(output, "algorithm_fresh", ""))
         discoveredOnlyAlgorithms = list(value(output, "algorithm_discovered_only", ""))
-        gripTelemetry = value(output, "sample_fresh", "0") === "1"
-            ? i18n("Fresh ADUX1050 deltas: %1 · raw: %2 · baseline: %3",
+        const quality = value(output, "sample_quality", "unknown")
+        const usable = value(output, "data_usable", "0") === "1"
+        if (usable) {
+            gripTelemetry = i18n("Changing ADUX1050 deltas: %1 · raw: %2 · baseline: %3",
                 value(output, "deltas", ""), value(output, "raw_values", ""), value(output, "baselines", ""))
-            : i18n("No fresh ADUX1050 sample")
+        } else if (quality === "stuck-saturated") {
+            gripTelemetry = i18n("ADUX1050 reports arrive, but values are fixed and saturated; grip actions and calibration are safely disabled")
+        } else if (quality === "invalid-saturated") {
+            gripTelemetry = i18n("ADUX1050 has a saturated channel; grip actions and calibration are safely disabled")
+        } else if (quality === "stuck-constant") {
+            gripTelemetry = i18n("ADUX1050 reports arrive, but values do not change; grip actions and calibration are safely disabled")
+        } else if (quality === "transport-stale") {
+            gripTelemetry = i18n("No fresh ADUX1050 report")
+        } else {
+            gripTelemetry = i18n("Validating ADUX1050 data variation…")
+        }
+        gripTelemetry += " · " + i18n("quality: %1 · identical: %2 · saturated mask: 0x%3",
+            quality, value(output, "consecutive_identical_samples", "0"),
+            Number(value(output, "saturated_channel_mask", "0")).toString(16))
         if (value(output, "mapping_enabled", "0") !== "1")
             gripTelemetry += " · " + i18n("classifier disabled until controlled HIL calibration")
     }
