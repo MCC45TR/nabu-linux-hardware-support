@@ -1,4 +1,4 @@
-# Nabu flashlight user API
+# Nabu tablet user API
 
 Applications may call `nabu-flashlightctl` with `status`, `on [1-100]`,
 `off`, `toggle [1-100]`, or `set 1-100`. Percent values are scaled only to
@@ -79,3 +79,46 @@ The grip row exposes fresh CH0/CH1/CH2 delta, raw, and baseline values together
 with the configured mask, thresholds, and debounce count. These values are
 diagnostics only. The classifier and logind inhibitor remain disabled until
 controlled uncovered/held HIL establishes device-specific thresholds.
+
+The System Settings page can subscribe directly to the SAR and SSC
+`PropertiesChanged` signals. Live view is opt-in and has no polling timer or
+periodic subprocess; stopping it disconnects both signal subscriptions. The
+two-phase grip calibration collects ten released and ten held samples only in
+memory, rejects overlapping ranges, and presents conservative hysteresis
+thresholds for explicit administrator approval. The privileged C++ helper
+writes only `/etc/nabu-sar.conf` atomically, validates every numeric field,
+restarts only `nabu-sar-service.service`, and restores the previous file if the
+restart request fails. It never writes firmware, EEPROM, modem NV or an Android
+partition.
+
+# Wake gestures and Plasma settings
+
+`plasma-nabu-kcm` installs the Nabu Tablet page in Plasma System Settings and
+owns the matching System Tray widget. The widget keeps only everyday controls
+in its popup; advertised, monitored, and physically observed Sensor DSP states
+are separated on the widget's Information configuration page.
+
+The KCM mirrors every widget control: flashlight and brightness, display
+rotation and ambient brightness, magnetic-cover sleep, double-tap and tilt
+wake, calibrated grip hold-awake, Smart Pen connection and battery state, pogo
+keyboard presence, USB sharing, data role, and power role. It links to KDE's
+native Display, Color Profiles, Night Light, Power Management, Drawing Tablet,
+Bluetooth, and Keyboard pages for standard settings instead of duplicating
+those implementations. Both interfaces share one gettext domain and use
+Kirigami/Qt Quick Controls so Breeze colors, metrics, keyboard navigation, and
+accessibility remain authoritative.
+
+`/usr/libexec/nabu-wake-control status` is unprivileged and reports capability
+and state. Its allowlisted `set double-tap on|off` operation writes only the
+documented NT36523 `double_tap_to_wake` attribute. The kernel exposes that
+attribute only when Device Tree declares both the gesture and touchscreen wake
+source. The current policy is retained under `/var/lib/nabu-wake` and restored
+after boot without changing the firmware-provided default on first install.
+
+Tilt wake is opt-in. `nabu-wake-service` watches the existing read-only
+`org.senemos.Nabu.Sensors1` algorithm report counters and emits only a standard
+`KEY_WAKEUP` event through a dedicated uinput device after a new
+`tilt_to_wake` report. Its systemd device policy grants access only to
+`/dev/uinput`; the service has no block-device or firmware-partition access.
+The option remains unavailable if either the SSC endpoint or the kernel uinput
+device is missing.

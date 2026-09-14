@@ -33,6 +33,9 @@ PlasmoidItem {
     property bool penCharging: false
     property int penChargeLimit: -1
     property bool keyboardAttached: false
+    property bool doubleTapEnabled: false
+    property bool tiltWakeEnabled: false
+    property string tiltWakeReports: "0"
     property bool sarMappingEnabled: false
     property bool sarHoldAwake: false
     property bool sarSleepInhibited: false
@@ -71,6 +74,9 @@ PlasmoidItem {
     property bool usbKnown: false
     property bool usbAvailable: false
     property bool accessoryKnown: false
+    property bool wakeKnown: false
+    property bool doubleTapAvailable: false
+    property bool tiltWakeAvailable: false
     property bool sarKnown: false
     property bool sarAvailable: false
     property bool sscKnown: false
@@ -84,6 +90,7 @@ PlasmoidItem {
     property bool usbRoleBusy: false
     property bool usbPowerBusy: false
     property bool penBusy: false
+    property bool wakeBusy: false
     property bool sarBusy: false
     property bool torchLevelInFlight: false
     property bool torchLevelPending: false
@@ -124,6 +131,10 @@ PlasmoidItem {
         execute("/usr/libexec/nabu-sar-control status", "sar-status")
     }
 
+    function refreshWake() {
+        execute("/usr/libexec/nabu-wake-control status", "wake-status")
+    }
+
     function refreshAll() {
         refreshFlash()
         refreshDisplay()
@@ -131,6 +142,7 @@ PlasmoidItem {
         refreshUsb()
         refreshAccessories()
         refreshSar()
+        refreshWake()
     }
 
     function statusValue(output, key, fallback) {
@@ -182,6 +194,9 @@ PlasmoidItem {
         } else if (kind === "sar-action") {
             sarBusy = false
             refreshSar()
+        } else if (kind === "wake-action") {
+            wakeBusy = false
+            refreshWake()
         }
     }
 
@@ -264,6 +279,13 @@ PlasmoidItem {
             penCharging = succeeded && statusValue(output, "pen_charging", "0") === "1"
             penChargeLimit = succeeded ? Number(statusValue(output, "pen_charge_limit", "-1")) : -1
             keyboardAttached = succeeded && statusValue(output, "keyboard_attached", "0") === "1"
+        } else if (kind === "wake-status" || kind === "wake-action") {
+            wakeKnown = true
+            doubleTapAvailable = succeeded && statusValue(output, "double_tap_available", "0") === "1"
+            doubleTapEnabled = succeeded && statusValue(output, "double_tap_enabled", "0") === "1"
+            tiltWakeAvailable = succeeded && statusValue(output, "tilt_wake_available", "0") === "1"
+            tiltWakeEnabled = succeeded && statusValue(output, "tilt_wake_enabled", "0") === "1"
+            tiltWakeReports = succeeded ? statusValue(output, "tilt_wake_reports", "0") : "0"
         } else if (kind === "sar-status" || kind === "sar-action") {
             sarKnown = true
             const sensorAvailable = succeeded && statusValue(output, "available", "0") === "1"
@@ -387,6 +409,19 @@ PlasmoidItem {
         sarBusy = true
         execute("pkexec /usr/libexec/nabu-sar-control set hold-awake "
             + (enabled ? "on" : "off"), "sar-action")
+    }
+
+    function setWakeFeature(feature, enabled) {
+        if (wakeBusy)
+            return
+        errorText = ""
+        if (feature === "double-tap")
+            doubleTapEnabled = enabled
+        else
+            tiltWakeEnabled = enabled
+        wakeBusy = true
+        execute("pkexec /usr/libexec/nabu-wake-control set " + feature + " "
+            + (enabled ? "on" : "off"), "wake-action")
     }
 
     function sarDescription() {
@@ -519,6 +554,15 @@ PlasmoidItem {
                 }
 
                 PlasmaComponents.ToolButton {
+                    icon.name: "configure"
+                    text: i18n("Open Nabu Tablet Settings")
+                    display: PlasmaComponents.AbstractButton.IconOnly
+                    onClicked: root.execute("systemsettings kcm_nabu", "open-settings")
+                    PlasmaComponents.ToolTip.text: text
+                    PlasmaComponents.ToolTip.visible: hovered
+                }
+
+                PlasmaComponents.ToolButton {
                     icon.name: "view-refresh"
                     text: i18n("Refresh hardware state")
                     display: PlasmaComponents.AbstractButton.IconOnly
@@ -648,112 +692,38 @@ PlasmoidItem {
                 }
             }
 
-            SectionHeader { text: i18n("Sensors") }
+            SectionHeader { text: i18n("Wake and grip") }
 
             ControlRow {
-                title: i18n("Motion and gesture algorithms")
-                description: root.sscDescription()
-                iconName: "preferences-system-time"
-                capabilityKnown: root.sscKnown
-                available: root.sscAvailable
-                details: Component {
-                    ColumnLayout {
-                        spacing: Kirigami.Units.smallSpacing
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            text: i18n("Firmware available: %1", root.formatAlgorithmList(root.sscAvailableAlgorithms))
-                            wrapMode: Text.WordWrap
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            text: i18n("Safely monitored: %1", root.formatAlgorithmList(root.sscMonitoringAlgorithms))
-                            wrapMode: Text.WordWrap
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            text: i18n("Data reports observed: %1", root.formatAlgorithmList(root.sscReports))
-                            wrapMode: Text.WordWrap
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            text: i18n("Fresh reports: %1", root.formatAlgorithmList(root.sscFreshReports))
-                            wrapMode: Text.WordWrap
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            text: i18n("Waiting for a physical event: %1", root.formatAlgorithmList(root.sscWaiting))
-                            wrapMode: Text.WordWrap
-                            visible: root.sscWaiting.length > 0
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            text: i18n("Available but not monitored by the safe power policy: %1",
-                                root.formatAlgorithmList(root.sscDiscoveredOnly))
-                            wrapMode: Text.WordWrap
-                            visible: root.sscDiscoveredOnly.length > 0
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            text: i18n("Unavailable or incompatible: %1", root.formatAlgorithmList(root.sscUnavailable))
-                            wrapMode: Text.WordWrap
-                            visible: root.sscUnavailable.length > 0
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            text: i18n("Discovery and enable acknowledgement do not prove event delivery. Only a known sensor data message is counted; use Refresh after each physical test.")
-                            color: Kirigami.Theme.disabledTextColor
-                            wrapMode: Text.WordWrap
-                        }
+                title: i18n("Double tap to wake")
+                description: root.doubleTapEnabled ? i18n("Active") : i18n("Inactive")
+                iconName: "input-touchscreen"
+                capabilityKnown: root.wakeKnown
+                available: root.doubleTapAvailable
+                busy: root.wakeBusy
+                action: Component {
+                    PlasmaComponents.Switch {
+                        checked: root.doubleTapEnabled
+                        onToggled: root.setWakeFeature("double-tap", checked)
+                        Accessible.name: i18n("Double tap to wake")
                     }
                 }
             }
 
             ControlRow {
-                title: i18n("Grip sensor channels")
-                description: root.sarTelemetryDescription()
-                iconName: "input-touchpad"
-                capabilityKnown: root.sarKnown
-                available: root.sarAvailable
-                details: Component {
-                    ColumnLayout {
-                        spacing: Kirigami.Units.smallSpacing
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            text: i18n("Delta: %1", root.sarChannelSummary(root.sarDeltas))
-                            wrapMode: Text.WordWrap
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            text: i18n("Raw: %1", root.sarChannelSummary(root.sarRawValues))
-                            wrapMode: Text.WordWrap
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            text: i18n("Baseline: %1", root.sarChannelSummary(root.sarBaselines))
-                            wrapMode: Text.WordWrap
-                        }
-
-                        PlasmaComponents.Label {
-                            Layout.fillWidth: true
-                            text: root.sarMappingEnabled
-                                ? i18n("Classifier: mask %1 · held ≥ %2 · released ≤ %3 · debounce %4",
-                                    root.sarConfiguredChannelMask, root.sarHeldThreshold,
-                                    root.sarReleasedThreshold, root.sarDebounceSamples)
-                                : i18n("Classifier disabled until controlled HIL calibration")
-                            color: Kirigami.Theme.disabledTextColor
-                            wrapMode: Text.WordWrap
-                        }
+                title: i18n("Tilt to wake")
+                description: root.tiltWakeEnabled
+                    ? i18n("Active · %1 reports observed", root.tiltWakeReports)
+                    : i18n("Inactive")
+                iconName: "object-rotate-right"
+                capabilityKnown: root.wakeKnown
+                available: root.tiltWakeAvailable
+                busy: root.wakeBusy
+                action: Component {
+                    PlasmaComponents.Switch {
+                        checked: root.tiltWakeEnabled
+                        onToggled: root.setWakeFeature("tilt-wake", checked)
+                        Accessible.name: i18n("Tilt to wake")
                     }
                 }
             }

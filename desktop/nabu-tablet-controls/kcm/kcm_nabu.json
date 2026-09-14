@@ -1,0 +1,10 @@
+{
+    "KPlugin": {
+        "Description": "Configure Xiaomi Pad 5 hardware integration",
+        "Icon": "input-tablet",
+        "Name": "Nabu Tablet",
+        "TranslationDomain": "plasma_applet_org.senemos.nabu.flashlight"
+    },
+    "X-KDE-Keywords": "Nabu,tablet,wake,double tap,tilt,SAR,sensors,calibration,USB,rotation,brightness,cover,pen,stylus,keyboard,flashlight",
+    "X-KDE-System-Settings-Parent-Category": "hardware"
+}

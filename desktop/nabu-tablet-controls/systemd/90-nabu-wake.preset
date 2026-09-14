@@ -1,0 +1,2 @@
+enable nabu-wake-service.service
+enable nabu-wake-apply.service

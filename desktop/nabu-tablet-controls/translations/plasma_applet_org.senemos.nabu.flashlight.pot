@@ -1,16 +1,22 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the plasma-nabu-kcm package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
+"Project-Id-Version: plasma-nabu-kcm 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 16:40+0300\n"
-"PO-Revision-Date: 2026-08-29 20:00+0300\n"
-"Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
-"Language-Team: pl\n"
-"Language: pl\n"
+"POT-Creation-Date: 2026-09-14 06:39+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 msgid "Nabu Tablet"
 msgstr ""
@@ -104,19 +110,19 @@ msgid "No paired Xiaomi Smart Pen was found"
 msgstr ""
 
 msgid "Connected"
-msgstr "Połączono"
+msgstr ""
 
 msgid "Paired"
-msgstr "Sparowane"
+msgstr ""
 
 msgid "Battery: %1%"
-msgstr "Bateria: %1%"
+msgstr ""
 
 msgid "Charging"
-msgstr "Ładowanie"
+msgstr ""
 
 msgid "Charge limit: %1%"
-msgstr "Limit ładowania: %1%"
+msgstr ""
 
 msgid "None"
 msgstr ""
@@ -125,34 +131,34 @@ msgid "Device controls"
 msgstr ""
 
 msgid "Flashlight"
-msgstr "Latarka"
+msgstr ""
 
 msgid "On at %1%"
-msgstr "Włączone w %1%"
+msgstr ""
 
 msgid "Off"
-msgstr "Wyłączone"
+msgstr ""
 
 msgid "Brightness"
 msgstr ""
 
 msgid "Flashlight brightness"
-msgstr "Jasność latarki"
+msgstr ""
 
 msgid "%1%"
-msgstr "%1%"
+msgstr ""
 
 msgid "Display and cover"
-msgstr "Wyświetlacz i pokrywa"
+msgstr ""
 
 msgid "Automatic rotation"
-msgstr "Automatyczny obrót"
+msgstr ""
 
 msgid "Rotate the internal display from the accelerometer orientation"
 msgstr ""
 
 msgid "Automatic brightness"
-msgstr "Automatyczna jasność"
+msgstr ""
 
 msgid "Let PowerDevil use the ambient-light sensor"
 msgstr ""
@@ -212,13 +218,13 @@ msgid "Pen and keyboard"
 msgstr ""
 
 msgid "Xiaomi Smart Pen"
-msgstr "Xiaomi Smart Pen"
+msgstr ""
 
 msgid "Pogo keyboard"
-msgstr "Klawiatura Pogo"
+msgstr ""
 
 msgid "Attached"
-msgstr "W załączeniu"
+msgstr ""
 
 msgid "Not attached"
 msgstr ""
@@ -245,7 +251,7 @@ msgid "USB-C policy"
 msgstr ""
 
 msgid "USB device sharing"
-msgstr "Udostępnianie urządzenia USB"
+msgstr ""
 
 msgid "MTP, optional ADB, network, serial and SSH sharing are inactive"
 msgstr ""
@@ -263,13 +269,13 @@ msgid "Automatic power role"
 msgstr ""
 
 msgid "Supply power"
-msgstr "Zasilanie"
+msgstr ""
 
 msgid "Receive power"
 msgstr ""
 
 msgid "USB power role"
-msgstr "Rola zasilania USB"
+msgstr ""
 
 msgid ""
 "Changing USB data or power role can disconnect the current USB session. "
@@ -402,19 +408,19 @@ msgid "Information"
 msgstr ""
 
 msgid "Checking hardware support…"
-msgstr "Sprawdzam obsługę sprzętu…"
+msgstr ""
 
 msgid "Not supported by this device"
-msgstr "Nieobsługiwane przez to urządzenie"
+msgstr ""
 
 msgid "Default brightness:"
-msgstr "Domyślna jasność:"
+msgstr ""
 
 msgid "Default flashlight brightness"
-msgstr "Domyślna jasność latarki"
+msgstr ""
 
 msgid "Current value:"
-msgstr "Aktualna wartość:"
+msgstr ""
 
 msgid "Reading Sensor DSP state…"
 msgstr ""
@@ -511,16 +517,16 @@ msgid "Refresh information"
 msgstr ""
 
 msgid "The requested change could not be applied."
-msgstr "Nie można zastosować żądanej zmiany."
+msgstr ""
 
 msgid "The flashlight brightness could not be applied."
-msgstr "Nie można zastosować jasności latarki."
+msgstr ""
 
 msgid "Calibration required"
 msgstr ""
 
 msgid "Inactive"
-msgstr "Nieaktywny"
+msgstr ""
 
 msgid "Held · sleep blocked"
 msgstr ""
@@ -553,97 +559,94 @@ msgid "Fresh sample %1 · delta: %2"
 msgstr ""
 
 msgid "Tablet Control"
-msgstr "Sterowanie tabletem"
+msgstr ""
 
 msgid "Flashlight on"
-msgstr "Latarka włączona"
+msgstr ""
 
 msgid "Nabu hardware controls"
-msgstr "Sterowanie sprzętowe Nabu"
+msgstr ""
 
 msgid "Open Nabu Tablet Settings"
 msgstr ""
 
 msgid "Refresh hardware state"
-msgstr "Odśwież stan sprzętu"
+msgstr ""
 
 msgid "Device"
-msgstr "Urządzenie"
+msgstr ""
 
 msgid "%1 percent"
-msgstr "%1 procent"
+msgstr ""
 
 msgid "Active"
-msgstr "Aktywny"
+msgstr ""
 
 msgid "Magnetic cover"
-msgstr "Osłona magnetyczna"
+msgstr ""
 
 msgid "Closed"
-msgstr "Zamknięte"
+msgstr ""
 
 msgid "Open"
-msgstr "Otwórz"
+msgstr ""
 
 msgid "Sleep action active"
-msgstr "Akcja uśpienia aktywna"
+msgstr ""
 
 msgid "Sleep action inactive"
-msgstr "Akcja uśpienia nieaktywna"
+msgstr ""
 
 msgid "Magnetic cover sleep action"
-msgstr "Magnetyczna osłona z funkcją uśpienia"
+msgstr ""
 
 msgid "Active · %1 reports observed"
 msgstr ""
 
 msgid "Pad 5 Specific"
-msgstr "Specyficzny dla Pad 5"
+msgstr ""
 
 msgid "Connect"
-msgstr "Połącz"
+msgstr ""
 
 msgid "Pen battery"
-msgstr "Bateria do pióra"
+msgstr ""
 
 msgid "USB-C"
-msgstr "USB-C"
+msgstr ""
 
 msgid " · SSH"
-msgstr "· SSH"
+msgstr ""
 
 msgid " · ADB"
-msgstr "· ADB"
+msgstr ""
 
 msgid "MTP%1 · Serial%2"
-msgstr "MTP%1 · Numer seryjny%2"
+msgstr ""
 
 msgid "USB data role"
-msgstr "Rola danych USB"
+msgstr ""
 
 msgid "Host mode"
-msgstr "Tryb hosta"
+msgstr ""
 
 msgid "Device mode"
-msgstr "Tryb urządzenia"
+msgstr ""
 
 msgid "Use device"
-msgstr "Użyj urządzenia"
+msgstr ""
 
 msgid "Use host"
-msgstr "Użyj hosta"
+msgstr ""
 
 msgid "Power source"
 msgstr ""
 
 msgid "Power sink"
-msgstr "Zlew mocy"
+msgstr ""
 
 msgid "Automatic"
 msgstr ""
 
 msgid "Use sink"
-msgstr "Użyj zlewu"
-
-#~ msgid "Supplying power"
-#~ msgstr "Zasilanie"
+msgstr ""

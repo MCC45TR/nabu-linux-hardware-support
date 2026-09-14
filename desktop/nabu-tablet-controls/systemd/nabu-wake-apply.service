@@ -1,0 +1,31 @@
+[Unit]
+Description=Restore Xiaomi Pad 5 touchscreen wake policy
+After=nabu-wake-service.service
+Wants=nabu-wake-service.service
+ConditionPathExists=/sys/bus/spi/devices/spi0.0/double_tap_to_wake
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/nabu-wake-control apply
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ProtectProc=invisible
+RestrictNamespaces=yes
+RestrictAddressFamilies=AF_UNIX
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+SystemCallArchitectures=native
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

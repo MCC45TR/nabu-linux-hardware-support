@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nabu-flashlight-integration 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 23:22+0300\n"
+"POT-Creation-Date: 2026-09-13 16:40+0300\n"
 "PO-Revision-Date: 2026-08-29 20:00+0300\n"
 "Last-Translator: mcc45tr <mcc45tr@gmail.com>\n"
 "Language-Team: bn\n"
@@ -12,95 +12,400 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid " · ADB"
-msgstr "· ADB"
+msgid "Nabu Tablet"
+msgstr ""
 
-msgid " · SSH"
-msgstr "· SSH"
+msgid "Configure Xiaomi Pad 5 hardware integration"
+msgstr ""
 
-msgid "%1 percent"
-msgstr "%1 শতাংশ"
+msgid ""
+"Collect released and held samples. Nothing is written until Apply is "
+"selected."
+msgstr ""
 
-#, javascript-format
+msgid "Capture timed out. Keep the tablet steady and try that phase again."
+msgstr ""
+
+msgid "Could not subscribe to the sensor service."
+msgstr ""
+
+msgid ""
+"Keep hands away from the selected tablet edges while samples are collected."
+msgstr ""
+
+msgid "Hold the selected tablet edges naturally and keep the grip steady."
+msgstr ""
+
+msgid "Could not start %1"
+msgstr ""
+
+msgid "The requested operation failed."
+msgstr ""
+
+msgid "MTP"
+msgstr ""
+
+msgid "ADB"
+msgstr ""
+
+msgid "Network"
+msgstr ""
+
+msgid "Serial"
+msgstr ""
+
+msgid "SSH"
+msgstr ""
+
+msgid "No sharing service is ready"
+msgstr ""
+
+msgid "Sensor service is unavailable"
+msgstr ""
+
+msgid "%1 of %2 firmware endpoints available; %3 monitored; %4 reporting"
+msgstr ""
+
+msgid "Collect at least %1 released and %1 held samples."
+msgstr ""
+
+msgid ""
+"The released and held ranges overlap. Do not apply this capture; adjust "
+"channels or repeat it."
+msgstr ""
+
+msgid ""
+"Ranges are separated. Review the proposed thresholds, then apply explicitly."
+msgstr ""
+
+msgid "%1 calibrated camera module"
+msgid_plural "%1 calibrated camera modules"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Camera calibration report is unavailable"
+msgstr ""
+
+msgid "Read-only hardware provenance loaded; %1 DTBO overlay"
+msgid_plural "Read-only hardware provenance loaded; %1 DTBO overlays"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Hardware provenance report is unavailable"
+msgstr ""
+
+msgid "Unavailable"
+msgstr ""
+
+msgid "Checking hardware…"
+msgstr ""
+
+msgid "No paired Xiaomi Smart Pen was found"
+msgstr ""
+
+msgid "Connected"
+msgstr "সংযুক্ত"
+
+msgid "Paired"
+msgstr "জোড়া হয়েছে"
+
+msgid "Battery: %1%"
+msgstr "ব্যাটারি: %1%"
+
+msgid "Charging"
+msgstr "চার্জিং"
+
+msgid "Charge limit: %1%"
+msgstr "চার্জ সীমা: %1%"
+
+msgid "None"
+msgstr ""
+
+msgid "Device controls"
+msgstr ""
+
+msgid "Flashlight"
+msgstr "টর্চলাইট"
+
+msgid "On at %1%"
+msgstr "%1% এ চালু আছে"
+
+msgid "Off"
+msgstr "বন্ধ"
+
+msgid "Brightness"
+msgstr ""
+
+msgid "Flashlight brightness"
+msgstr "টর্চলাইটের উজ্জ্বলতা"
+
 msgid "%1%"
 msgstr "%1%"
 
-msgid "%1/%2 available · %3 monitored · data from %4"
-msgstr ""
+msgid "Display and cover"
+msgstr "প্রদর্শন এবং কভার"
 
-msgid "%1/%2 available · %3 monitored · no data report yet"
-msgstr ""
+msgid "Automatic rotation"
+msgstr "স্বয়ংক্রিয় ঘূর্ণন"
 
-msgid "3D signature"
-msgstr ""
-
-msgid "Active"
-msgstr "সক্রিয়"
-
-msgid "Attached"
-msgstr "সংযুক্ত"
-
-msgid "Automatic"
+msgid "Rotate the internal display from the accelerometer orientation"
 msgstr ""
 
 msgid "Automatic brightness"
 msgstr "স্বয়ংক্রিয় উজ্জ্বলতা"
 
-msgid "Automatic rotation"
-msgstr "স্বয়ংক্রিয় ঘূর্ণন"
-
-msgid "Available but not monitored by the safe power policy: %1"
+msgid "Let PowerDevil use the ambient-light sensor"
 msgstr ""
 
-msgid "Baseline: %1"
+msgid "Magnetic cover sleep"
 msgstr ""
 
-msgid "Basic gestures"
+msgid "Cover is closed"
 msgstr ""
 
-#, javascript-format
-msgid "Battery: %1%"
-msgstr "ব্যাটারি: %1%"
-
-msgid "Bring to ear"
+msgid "Suspend when the cover closes"
 msgstr ""
 
-msgid "CH0 %1 · CH1 %2 · CH2 %3"
+msgid "Display Configuration"
 msgstr ""
 
-msgid "Calibration required"
+msgid "Color Profiles"
 msgstr ""
 
-#, javascript-format
-msgid "Charge limit: %1%"
-msgstr "চার্জ সীমা: %1%"
+msgid "Night Light"
+msgstr ""
 
-msgid "Charging"
-msgstr "চার্জিং"
+msgid "Power Management"
+msgstr ""
+
+msgid "Wake and grip"
+msgstr ""
+
+msgid "Double tap to wake"
+msgstr ""
+
+msgid "Wake the tablet by double-tapping the sleeping touchscreen"
+msgstr ""
+
+msgid "Requires the Nabu touchscreen runtime-control ABI"
+msgstr ""
+
+msgid "Tilt to wake"
+msgstr ""
+
+msgid "Use the low-power Sensor DSP tilt event; %1 reports observed"
+msgstr ""
+
+msgid "The Sensor DSP tilt endpoint or wake input bridge is unavailable"
+msgstr ""
+
+msgid "Keep awake while held"
+msgstr ""
+
+msgid "Grip state: %1"
+msgstr ""
+
+msgid "Disabled until controlled SAR channel calibration is complete"
+msgstr ""
+
+msgid "Pen and keyboard"
+msgstr ""
+
+msgid "Xiaomi Smart Pen"
+msgstr "Xiaomi Smart Pen"
+
+msgid "Pogo keyboard"
+msgstr "Pogo কীবোর্ড"
+
+msgid "Attached"
+msgstr "সংযুক্ত"
+
+msgid "Not attached"
+msgstr ""
+
+msgid "Connect Pen"
+msgstr ""
+
+msgid "Pen Calibration"
+msgstr ""
+
+msgid "Bluetooth Devices"
+msgstr ""
+
+msgid "Keyboard Settings"
+msgstr ""
+
+msgid ""
+"Pen pressure, button mapping, handedness and calibration remain in KDE's "
+"native Drawing Tablet page. Keyboard layout and repeat behavior remain in "
+"Keyboard settings."
+msgstr ""
+
+msgid "USB-C policy"
+msgstr ""
+
+msgid "USB device sharing"
+msgstr "USB ডিভাইস শেয়ারিং"
+
+msgid "MTP, optional ADB, network, serial and SSH sharing are inactive"
+msgstr ""
+
+msgid "Host"
+msgstr ""
+
+msgid "USB sharing"
+msgstr ""
+
+msgid "USB data mode"
+msgstr ""
+
+msgid "Automatic power role"
+msgstr ""
+
+msgid "Supply power"
+msgstr "শক্তি সরবরাহ করুন"
+
+msgid "Receive power"
+msgstr ""
+
+msgid "USB power role"
+msgstr "USB শক্তি ভূমিকা"
+
+msgid ""
+"Changing USB data or power role can disconnect the current USB session. "
+"Network and SSH sharing follow the existing administrator policy."
+msgstr ""
+
+msgid "Live sensors"
+msgstr ""
+
+msgid "Stop"
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "Live view is active. Updates arrive from D-Bus events without polling."
+msgstr ""
+
+msgid ""
+"Live view is stopped. No sensor refresh timer or background command is "
+"running."
+msgstr ""
+
+msgid "Sensor DSP"
+msgstr ""
+
+msgid "ADUX1050 delta CH0, CH1, CH2"
+msgstr ""
+
+msgid "ADUX1050 raw CH0, CH1, CH2"
+msgstr ""
+
+msgid "ADUX1050 baseline CH0, CH1, CH2"
+msgstr ""
+
+msgid "Firmware endpoints"
+msgstr ""
+
+msgid "Safely monitored"
+msgstr ""
+
+msgid "Reports observed"
+msgstr ""
+
+msgid "Fresh reports"
+msgstr ""
+
+msgid "Discovered without continuous monitoring"
+msgstr ""
+
+msgid "Grip calibration"
+msgstr ""
+
+msgid ""
+"Select only the edges you can test. The current Nabu layout usually uses CH0 "
+"and CH2; CH1 remains available for hardware variants."
+msgstr ""
+
+msgid "CH0"
+msgstr ""
+
+msgid "CH1"
+msgstr ""
+
+msgid "CH2"
+msgstr ""
+
+msgid "Stop Released Capture"
+msgstr ""
+
+msgid "Capture Released"
+msgstr ""
+
+msgid "%1/10 samples"
+msgstr ""
+
+msgid "Stop Held Capture"
+msgstr ""
+
+msgid "Capture Held"
+msgstr ""
+
+msgid "Proposed Linux thresholds"
+msgstr ""
+
+msgid "Held ≥ %1 · released ≤ %2 · debounce 3"
+msgstr ""
+
+msgid "Not ready"
+msgstr ""
+
+msgid "Apply Calibration"
+msgstr ""
+
+msgid "Clear Capture"
+msgstr ""
+
+msgid "Disable Grip Mapping"
+msgstr ""
+
+msgid ""
+"Calibration changes only /etc/nabu-sar.conf after administrator "
+"authentication. Sensor firmware, Android partitions and factory calibration "
+"storage stay read-only."
+msgstr ""
+
+msgid "Hardware information"
+msgstr ""
+
+msgid "Refresh"
+msgstr ""
+
+msgid "Camera EEPROM calibration"
+msgstr ""
+
+msgid "Partition and DTBO provenance"
+msgstr ""
+
+msgid ""
+"Availability means firmware advertised an endpoint. Physical function is "
+"confirmed only by an observed data report and a device test. Android "
+"firmware, active-slot DTBO, modem identity and camera EEPROM payloads are "
+"consumed read-only."
+msgstr ""
+
+msgid "General"
+msgstr ""
+
+msgid "Information"
+msgstr ""
 
 msgid "Checking hardware support…"
 msgstr "হার্ডওয়্যার সমর্থন পরীক্ষা করা হচ্ছে..."
 
-msgid "Classifier disabled until controlled HIL calibration"
-msgstr ""
-
-msgid "Classifier: mask %1 · held ≥ %2 · released ≤ %3 · debounce %4"
-msgstr ""
-
-msgid "Closed"
-msgstr "বন্ধ"
-
-msgid "Connect"
-msgstr "সংযোগ করুন"
-
-msgid "Connected"
-msgstr "সংযুক্ত"
-
-msgid "Current value:"
-msgstr "বর্তমান মান:"
-
-msgid "Data reports observed: %1"
-msgstr ""
+msgid "Not supported by this device"
+msgstr "এই ডিভাইস দ্বারা সমর্থিত নয়"
 
 msgid "Default brightness:"
 msgstr "ডিফল্ট উজ্জ্বলতা:"
@@ -108,158 +413,177 @@ msgstr "ডিফল্ট উজ্জ্বলতা:"
 msgid "Default flashlight brightness"
 msgstr "ডিফল্ট ফ্ল্যাশলাইটের উজ্জ্বলতা"
 
-msgid "Delta: %1"
+msgid "Current value:"
+msgstr "বর্তমান মান:"
+
+msgid "Reading Sensor DSP state…"
 msgstr ""
 
-msgid "Device"
-msgstr "ডিভাইস"
-
-msgid "Device mode"
-msgstr "ডিভাইস মোড"
-
-msgid "Device orientation"
+msgid "Reading grip channels…"
 msgstr ""
 
-msgid "Discovering firmware endpoints…"
+msgid "Runtime report is checked by Nabu Tablet Settings"
 msgstr ""
 
-msgid ""
-"Discovery and enable acknowledgement do not prove event delivery. Only a "
-"known sensor data message is counted; use Refresh after each physical test."
-msgstr ""
-
-msgid "Display and cover"
-msgstr "প্রদর্শন এবং কভার"
-
-msgid "Facing"
-msgstr ""
-
-msgid "Firmware available: %1"
-msgstr ""
-
-msgid "Flashlight"
-msgstr "টর্চলাইট"
-
-msgid "Flashlight brightness"
-msgstr "টর্চলাইটের উজ্জ্বলতা"
-
-msgid "Flashlight on"
-msgstr "টর্চলাইট অন"
-
-msgid "Fresh reports: %1"
-msgstr ""
-
-msgid "Fresh sample %1 · delta: %2"
-msgstr ""
-
-msgid "Gravity"
-msgstr ""
-
-msgid "Grip sensor channels"
-msgstr ""
-
-msgid "Held · acquiring inhibitor"
-msgstr ""
-
-msgid "Held · sleep blocked"
-msgstr ""
-
-msgid "Host mode"
-msgstr "হোস্ট মোড"
-
-msgid "Inactive"
-msgstr "নিষ্ক্রিয়"
-
-msgid "Keep awake while held"
-msgstr ""
-
-msgid "MTP%1 · Serial%2"
-msgstr "MTP%1 · সিরিয়াল%2"
-
-msgid "Magnetic cover"
-msgstr "চৌম্বক আবরণ"
-
-msgid "Magnetic cover sleep action"
-msgstr "চৌম্বক কভার ঘুম কর্ম"
-
-msgid "Motion and gesture algorithms"
-msgstr ""
-
-msgid "Motion detect"
-msgstr ""
-
-msgid "Multi-shake"
-msgstr ""
-
-msgid "Nabu hardware controls"
-msgstr "Nabu হার্ডওয়্যার নিয়ন্ত্রণ"
-
-msgid "None"
-msgstr ""
-
-msgid "Not supported by this device"
-msgstr "এই ডিভাইস দ্বারা সমর্থিত নয়"
-
-msgid "OEM step detector"
-msgstr ""
-
-msgid "Off"
-msgstr "বন্ধ"
-
-#, javascript-format
-msgid "On at %1%"
-msgstr "%1% এ চালু আছে"
-
-msgid "Open"
-msgstr "খোলা"
-
-msgid "Pad 5 Specific"
-msgstr "Pad 5 নির্দিষ্ট"
-
-msgid "Paired"
-msgstr "জোড়া হয়েছে"
-
-msgid "Pedometer"
-msgstr ""
-
-msgid "Pen battery"
-msgstr "কলমের ব্যাটারি"
-
-msgid "Persistent significant motion"
+msgid "Tilt"
 msgstr ""
 
 msgid "Pickup"
 msgstr ""
 
-msgid "Pogo keyboard"
-msgstr "Pogo কীবোর্ড"
-
-msgid "Power sink"
-msgstr "পাওয়ার সিঙ্ক"
-
-msgid "Power source"
+msgid "Screen down"
 msgstr ""
 
-msgid "Raw: %1"
+msgid "Pedometer"
+msgstr ""
+
+msgid "Basic gestures"
+msgstr ""
+
+msgid "Bring to ear"
+msgstr ""
+
+msgid "Multi-shake"
+msgstr ""
+
+msgid "Device orientation"
+msgstr ""
+
+msgid "Facing"
+msgstr ""
+
+msgid "Significant motion"
+msgstr ""
+
+msgid "Motion detect"
+msgstr ""
+
+msgid "OEM step detector"
+msgstr ""
+
+msgid "Gravity"
+msgstr ""
+
+msgid "SAR algorithm"
+msgstr ""
+
+msgid "Persistent significant motion"
+msgstr ""
+
+msgid "3D signature"
+msgstr ""
+
+msgid "%1/%2 firmware endpoints available · %3 monitored · %4 reporting"
+msgstr ""
+
+msgid "Fresh ADUX1050 deltas: %1 · raw: %2 · baseline: %3"
+msgstr ""
+
+msgid "No fresh ADUX1050 sample"
+msgstr ""
+
+msgid "classifier disabled until controlled HIL calibration"
+msgstr ""
+
+msgid "Sensor diagnostics are currently unavailable."
+msgstr ""
+
+msgid "Data reports observed"
+msgstr ""
+
+msgid "Discovered without a report yet"
+msgstr ""
+
+msgid "Grip sensor"
+msgstr ""
+
+msgid ""
+"Discovery proves that firmware advertised an algorithm. Enable "
+"acknowledgement is not a physical test: only a known sensor data message is "
+"counted as an observed report. Raw CH0/CH1/CH2 values stay visible while "
+"unsafe grip thresholds remain fail-closed."
+msgstr ""
+
+msgid "Open Live Sensors and Calibration"
+msgstr ""
+
+msgid "Refresh information"
+msgstr ""
+
+msgid "The requested change could not be applied."
+msgstr "অনুরোধ করা পরিবর্তন প্রয়োগ করা যাবে না."
+
+msgid "The flashlight brightness could not be applied."
+msgstr "টর্চলাইটের উজ্জ্বলতা প্রয়োগ করা যায়নি।"
+
+msgid "Calibration required"
+msgstr ""
+
+msgid "Inactive"
+msgstr "নিষ্ক্রিয়"
+
+msgid "Held · sleep blocked"
+msgstr ""
+
+msgid "Held · acquiring inhibitor"
+msgstr ""
+
+msgid "Waiting until held"
+msgstr ""
+
+msgid "Waiting for sensor data"
+msgstr ""
+
+msgid "Discovering firmware endpoints…"
+msgstr ""
+
+msgid "%1/%2 available · %3 monitored · data from %4"
+msgstr ""
+
+msgid "%1/%2 available · %3 monitored · no data report yet"
+msgstr ""
+
+msgid "CH0 %1 · CH1 %2 · CH2 %3"
+msgstr ""
+
+msgid "Waiting for a fresh sample"
+msgstr ""
+
+msgid "Fresh sample %1 · delta: %2"
+msgstr ""
+
+msgid "Tablet Control"
+msgstr "ট্যাবলেট নিয়ন্ত্রণ"
+
+msgid "Flashlight on"
+msgstr "টর্চলাইট অন"
+
+msgid "Nabu hardware controls"
+msgstr "Nabu হার্ডওয়্যার নিয়ন্ত্রণ"
+
+msgid "Open Nabu Tablet Settings"
 msgstr ""
 
 msgid "Refresh hardware state"
 msgstr "হার্ডওয়্যারের অবস্থা রিফ্রেশ করুন"
 
-msgid "SAR algorithm"
-msgstr ""
+msgid "Device"
+msgstr "ডিভাইস"
 
-msgid "Safely monitored: %1"
-msgstr ""
+msgid "%1 percent"
+msgstr "%1 শতাংশ"
 
-msgid "Screen down"
-msgstr ""
+msgid "Active"
+msgstr "সক্রিয়"
 
-msgid "Sensors"
-msgstr ""
+msgid "Magnetic cover"
+msgstr "চৌম্বক আবরণ"
 
-msgid "Significant motion"
-msgstr ""
+msgid "Closed"
+msgstr "বন্ধ"
+
+msgid "Open"
+msgstr "খোলা"
 
 msgid "Sleep action active"
 msgstr "স্লিপ অ্যাকশন সক্রিয়"
@@ -267,38 +591,41 @@ msgstr "স্লিপ অ্যাকশন সক্রিয়"
 msgid "Sleep action inactive"
 msgstr "স্লিপ অ্যাকশন নিষ্ক্রিয়"
 
-msgid "Supply power"
-msgstr "শক্তি সরবরাহ করুন"
+msgid "Magnetic cover sleep action"
+msgstr "চৌম্বক কভার ঘুম কর্ম"
 
-msgid "Tablet Control"
-msgstr "ট্যাবলেট নিয়ন্ত্রণ"
-
-msgid "The flashlight brightness could not be applied."
-msgstr "টর্চলাইটের উজ্জ্বলতা প্রয়োগ করা যায়নি।"
-
-msgid "The requested change could not be applied."
-msgstr "অনুরোধ করা পরিবর্তন প্রয়োগ করা যাবে না."
-
-msgid "Tilt"
+msgid "Active · %1 reports observed"
 msgstr ""
 
-msgid "Tilt to wake"
-msgstr ""
+msgid "Pad 5 Specific"
+msgstr "Pad 5 নির্দিষ্ট"
 
-msgid "USB data role"
-msgstr "USB ডেটা ভূমিকা"
+msgid "Connect"
+msgstr "সংযোগ করুন"
 
-msgid "USB device sharing"
-msgstr "USB ডিভাইস শেয়ারিং"
-
-msgid "USB power role"
-msgstr "USB শক্তি ভূমিকা"
+msgid "Pen battery"
+msgstr "কলমের ব্যাটারি"
 
 msgid "USB-C"
 msgstr "USB-C"
 
-msgid "Unavailable or incompatible: %1"
-msgstr ""
+msgid " · SSH"
+msgstr "· SSH"
+
+msgid " · ADB"
+msgstr "· ADB"
+
+msgid "MTP%1 · Serial%2"
+msgstr "MTP%1 · সিরিয়াল%2"
+
+msgid "USB data role"
+msgstr "USB ডেটা ভূমিকা"
+
+msgid "Host mode"
+msgstr "হোস্ট মোড"
+
+msgid "Device mode"
+msgstr "ডিভাইস মোড"
 
 msgid "Use device"
 msgstr "ডিভাইস ব্যবহার করুন"
@@ -306,23 +633,17 @@ msgstr "ডিভাইস ব্যবহার করুন"
 msgid "Use host"
 msgstr "হোস্ট ব্যবহার করুন"
 
+msgid "Power source"
+msgstr ""
+
+msgid "Power sink"
+msgstr "পাওয়ার সিঙ্ক"
+
+msgid "Automatic"
+msgstr ""
+
 msgid "Use sink"
 msgstr "সিঙ্ক ব্যবহার করুন"
-
-msgid "Waiting for a fresh sample"
-msgstr ""
-
-msgid "Waiting for a physical event: %1"
-msgstr ""
-
-msgid "Waiting for sensor data"
-msgstr ""
-
-msgid "Waiting until held"
-msgstr ""
-
-msgid "Xiaomi Smart Pen"
-msgstr "Xiaomi Smart Pen"
 
 #~ msgid "Supplying power"
 #~ msgstr "শক্তি সরবরাহ"

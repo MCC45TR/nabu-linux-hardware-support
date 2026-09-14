@@ -1,0 +1,39 @@
+[Unit]
+Description=Xiaomi Pad 5 native wake gesture bridge
+After=dbus.service nabu-sar-service.service
+Wants=nabu-sar-service.service
+ConditionPathExists=/dev/uinput
+
+[Service]
+Type=dbus
+BusName=org.senemos.Nabu.Wake
+ExecStart=/usr/libexec/nabu-wake-service
+Restart=on-failure
+RestartSec=2
+StateDirectory=nabu-wake
+StateDirectoryMode=0700
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+DevicePolicy=closed
+DeviceAllow=/dev/uinput rw
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ProtectProc=invisible
+RestrictNamespaces=yes
+RestrictAddressFamilies=AF_UNIX
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+SystemCallArchitectures=native
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

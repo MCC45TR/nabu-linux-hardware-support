@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Nabu Tablet Settings
+Comment=Open Xiaomi Pad 5 hardware settings
+Icon=input-tablet
+Exec=systemsettings kcm_nabu
+NoDisplay=true
+Categories=Qt;KDE;Settings;HardwareSettings;
+X-KDE-TranslationDomain=plasma_applet_org.senemos.nabu.flashlight
