@@ -3,6 +3,7 @@
 
 import json
 import pathlib
+import subprocess
 
 
 root = pathlib.Path(__file__).resolve().parents[1]
@@ -47,5 +48,13 @@ description_locales = {key[12:-1] for key in plugin if key.startswith("Descripti
 assert name_locales == catalog_locales
 assert description_locales == catalog_locales
 assert plugin["Description[tr]"] == "Xiaomi Pad 5 donanım bütünleştirmesini yapılandır"
+
+untranslated_tr = subprocess.run(
+    ["msgattrib", "--untranslated", "--no-obsolete", str(root / "translations/tr.po")],
+    check=True,
+    capture_output=True,
+    text=True,
+).stdout
+assert not untranslated_tr.strip(), untranslated_tr
 
 print("KCM parity, event and safety contract: PASS")

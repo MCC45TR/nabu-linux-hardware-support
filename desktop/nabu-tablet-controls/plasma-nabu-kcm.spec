@@ -1,6 +1,6 @@
 Name:           plasma-nabu-kcm
 Version:        1.0.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Native Xiaomi Pad 5 settings module and Plasma widget
 License:        MIT AND GPL-3.0-or-later
 URL:            https://github.com/MCC45TR/nabu-linux-hardware-support
@@ -194,6 +194,9 @@ test "$(find translations -name '*.po' | wc -l)" = 27
 %license uMTP-Responder-umtprd-1.8.1/LICENSE
 
 %changelog
+* Mon Sep 14 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-6
+- Complete the Turkish KCM and widget catalog after on-device visual QA.
+
 * Mon Sep 14 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-5
 - Embed localized KPlugin metadata so System Settings translates the KCM list.
 
