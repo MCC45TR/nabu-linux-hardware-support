@@ -1,6 +1,6 @@
 Name:           plasma-nabu-kcm
 Version:        1.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Native Xiaomi Pad 5 settings module and Plasma widget
 License:        MIT AND GPL-3.0-or-later
 URL:            https://github.com/MCC45TR/nabu-linux-hardware-support
@@ -37,6 +37,7 @@ Requires:       /usr/bin/nabu-flashlightctl
 Requires:       /usr/bin/nabu-usb-role
 Requires:       /usr/libexec/nabu-sar-control
 Provides:       nabu-flashlight-integration-plasma = 3.0.0-107
+Obsoletes:      nabu-flashlight-integration-plasma < 9999999999-99
 
 %description
 A Qt 6/KF 6 System Settings module and Plasma 6 System Tray widget for the
@@ -188,6 +189,9 @@ test "$(find translations -name '*.po' | wc -l)" = 27
 %license uMTP-Responder-umtprd-1.8.1/LICENSE
 
 %changelog
+* Mon Sep 14 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-2
+- Replace the legacy standalone Plasma integration without file conflicts.
+
 * Sun Sep 13 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-1
 - Add a native Qt 6/KF 6 System Settings module for Nabu tablet controls.
 - Merge the Plasma widget and move sensor explanations to its Information page.
