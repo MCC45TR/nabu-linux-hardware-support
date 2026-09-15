@@ -30,6 +30,9 @@ assert "startSensorLive" in backend and "stopSensorLive" in backend
 assert "bus.disconnect" in backend
 assert "setSingleShot(true)" in backend
 assert "setInterval(20000)" in backend
+assert "kStatusCommandTimeoutMs = 5000" in backend
+assert "kActionCommandTimeoutMs = 120000" in backend
+assert "process->kill()" in backend
 assert "system(" not in backend and "popen(" not in backend
 assert "/dev/sd" not in backend and "/dev/mmc" not in backend
 
@@ -43,6 +46,7 @@ for label in (
     assert label in qml, label
 
 assert "kcm_colord" in qml and "kcm_tablet" in qml and "kcm_keyboard" in qml
+assert "Component.onCompleted: kcm.refresh()" in qml
 assert "plasma_applet_org.senemos.nabu.flashlight" in backend
 assert "nabu-sar-calibration" in spec
 assert "src/nabu-sar-calibration.cpp" in spec

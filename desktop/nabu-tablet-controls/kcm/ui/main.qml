@@ -10,6 +10,8 @@ import org.kde.kirigami as Kirigami
 KCM.ScrollViewKCM {
     id: page
 
+    Component.onCompleted: kcm.refresh()
+
     KCM.ConfigModule.buttons: KCM.ConfigModule.NoAdditionalButton
     implicitWidth: Kirigami.Units.gridUnit * 42
     implicitHeight: Kirigami.Units.gridUnit * 32

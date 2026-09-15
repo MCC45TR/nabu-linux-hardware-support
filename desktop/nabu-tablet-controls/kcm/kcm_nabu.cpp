@@ -31,6 +31,8 @@ constexpr auto kSarInterface = "org.senemos.Nabu.Sar1";
 constexpr auto kSensorsObject = "/org/senemos/Nabu/Sensors";
 constexpr auto kSensorsInterface = "org.senemos.Nabu.Sensors1";
 constexpr int kCalibrationSamples = 10;
+constexpr int kStatusCommandTimeoutMs = 5000;
+constexpr int kActionCommandTimeoutMs = 120000;
 
 QString numberList(const QList<double> &values)
 {
@@ -149,7 +151,6 @@ public:
             updateCalibrationProposal();
             Q_EMIT stateChanged();
         });
-        QTimer::singleShot(0, this, &NabuSettings::refresh);
     }
 
     ~NabuSettings() override { stopSensorLive(); }
@@ -526,27 +527,42 @@ private:
     void run(const QString &program, const QStringList &arguments, const QString &kind, bool refreshAfter = false)
     {
         auto *process = new QProcess(this);
+        auto *timeout = new QTimer(process);
+        timeout->setSingleShot(true);
+        timeout->setInterval(refreshAfter ? kActionCommandTimeoutMs : kStatusCommandTimeoutMs);
         process->setProgram(program);
         process->setArguments(arguments);
         ++m_pending;
         Q_EMIT stateChanged();
-        connect(process, &QProcess::errorOccurred, this, [this, process](QProcess::ProcessError) {
+        connect(timeout, &QTimer::timeout, process, [process] {
+            if (process->state() == QProcess::NotRunning)
+                return;
+            process->setProperty("timedOut", true);
+            process->kill();
+        });
+        connect(process, &QProcess::errorOccurred, this, [this, process, timeout](QProcess::ProcessError error) {
+            if (error != QProcess::FailedToStart)
+                return;
             if (process->property("finishedHandled").toBool())
                 return;
             process->setProperty("finishedHandled", true);
+            timeout->stop();
             m_errorText = i18n("Could not start %1", process->program());
             --m_pending;
             Q_EMIT stateChanged();
             process->deleteLater();
         });
         connect(process, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this,
-            [this, process, kind, refreshAfter](int exitCode, QProcess::ExitStatus status) {
+            [this, process, timeout, kind, refreshAfter](int exitCode, QProcess::ExitStatus status) {
                 if (process->property("finishedHandled").toBool())
                     return;
                 process->setProperty("finishedHandled", true);
+                timeout->stop();
                 const QString output = QString::fromUtf8(process->readAllStandardOutput());
                 const QString error = QString::fromUtf8(process->readAllStandardError()).trimmed();
-                if (status != QProcess::NormalExit || exitCode != 0)
+                if (process->property("timedOut").toBool())
+                    m_errorText = i18n("The requested operation failed.");
+                else if (status != QProcess::NormalExit || exitCode != 0)
                     m_errorText = error.isEmpty() ? i18n("The requested operation failed.") : error;
                 else
                     applyResult(kind, output);
@@ -557,6 +573,7 @@ private:
                     QTimer::singleShot(250, this, &NabuSettings::refresh);
             });
         process->start();
+        timeout->start();
     }
 
     void applyResult(const QString &kind, const QString &output)
