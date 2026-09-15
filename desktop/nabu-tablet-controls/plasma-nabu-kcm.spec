@@ -1,6 +1,6 @@
 Name:           plasma-nabu-kcm
 Version:        1.0.0
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Native Xiaomi Pad 5 settings module and Plasma widget
 License:        MIT AND GPL-3.0-or-later
 URL:            https://github.com/MCC45TR/nabu-linux-hardware-support
@@ -195,6 +195,9 @@ test "$(find translations -name '*.po' | wc -l)" = 27
 %license uMTP-Responder-umtprd-1.8.1/LICENSE
 
 %changelog
+* Tue Sep 15 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-9
+- Normalize ANSI-decorated KScreen Doctor output before KCM parsing.
+
 * Tue Sep 15 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-8
 - Start the hardware refresh only after the KCM QML page is ready.
 - Bound helper processes so a failed hardware query cannot keep the UI busy.

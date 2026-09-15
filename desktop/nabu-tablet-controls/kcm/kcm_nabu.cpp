@@ -60,6 +60,16 @@ QList<double> doubleList(const QVariant &value)
     argument.endArray();
     return result;
 }
+
+QString withoutAnsi(QString text)
+{
+    // KScreen Doctor currently emits SGR sequences even when stdout is a pipe.
+    // Normalize command output before parsing so availability is independent of
+    // terminal decoration.
+    static const QRegularExpression ansi(QStringLiteral("\\x1b\\[[0-?]*[ -/]*[@-~]"));
+    text.remove(ansi);
+    return text;
+}
 }
 
 class NabuSettings final : public KQuickConfigModule
@@ -578,11 +588,12 @@ private:
 
     void applyResult(const QString &kind, const QString &output)
     {
-        const auto values = keyValues(output);
+        const QString cleanOutput = withoutAnsi(output);
+        const auto values = keyValues(cleanOutput);
         if (kind == QLatin1String("flash-status")) {
             m_flashlightKnown = true;
             m_flashlightAvailable = true;
-            const QStringList fields = output.trimmed().split(QRegularExpression(QStringLiteral("\\s+")));
+            const QStringList fields = cleanOutput.trimmed().split(QRegularExpression(QStringLiteral("\\s+")));
             m_flashlightEnabled = fields.value(0) == QLatin1String("on");
             bool ok = false;
             const int brightness = fields.value(1).toInt(&ok);
@@ -597,8 +608,8 @@ private:
             m_tiltWakeEnabled = values.value(QStringLiteral("tilt_wake_enabled")) == QLatin1String("1");
             m_tiltWakeReports = values.value(QStringLiteral("tilt_wake_reports")).toULongLong();
         } else if (kind == QLatin1String("display-status")) {
-            const qsizetype start = output.indexOf(QRegularExpression(QStringLiteral("(?:^|\\n)Output:\\s+\\d+\\s+DSI-1\\b")));
-            const QString panel = start >= 0 ? output.mid(start) : QString();
+            const qsizetype start = cleanOutput.indexOf(QRegularExpression(QStringLiteral("(?:^|\\n)Output:\\s+\\d+\\s+DSI-1\\b")));
+            const QString panel = start >= 0 ? cleanOutput.mid(start) : QString();
             const auto rotate = QRegularExpression(QStringLiteral("Auto Rotate Policy:\\s*(\\S+)")).match(panel);
             const auto brightness = QRegularExpression(QStringLiteral("Automatic brightness:\\s*([^\\n]+)")).match(panel);
             m_autoRotateAvailable = rotate.hasMatch() && rotate.captured(1) != QLatin1String("unsupported");
@@ -606,8 +617,8 @@ private:
             m_autoBrightnessAvailable = brightness.hasMatch() && !brightness.captured(1).startsWith(QLatin1String("unsupported"));
             m_autoBrightnessEnabled = brightness.hasMatch() && brightness.captured(1).contains(QLatin1String("enabled"));
         } else if (kind == QLatin1String("usb-status")) {
-            m_usbMode = selectedValue(output, QStringLiteral("data"));
-            m_usbPowerRole = selectedValue(output, QStringLiteral("power"));
+            m_usbMode = selectedValue(cleanOutput, QStringLiteral("data"));
+            m_usbPowerRole = selectedValue(cleanOutput, QStringLiteral("power"));
         } else if (kind == QLatin1String("usb-gadget-status")) {
             m_usbGadgetState = values.value(QStringLiteral("gadget"), QStringLiteral("inactive"));
             QStringList services;

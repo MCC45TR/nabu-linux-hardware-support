@@ -33,6 +33,9 @@ assert "setInterval(20000)" in backend
 assert "kStatusCommandTimeoutMs = 5000" in backend
 assert "kActionCommandTimeoutMs = 120000" in backend
 assert "process->kill()" in backend
+assert "QString withoutAnsi(QString text)" in backend
+assert "const QString cleanOutput = withoutAnsi(output);" in backend
+assert 'QStringLiteral("\\\\x1b\\\\[[0-?]*[ -/]*[@-~]")' in backend
 assert "system(" not in backend and "popen(" not in backend
 assert "/dev/sd" not in backend and "/dev/mmc" not in backend
 
