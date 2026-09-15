@@ -1,6 +1,6 @@
 Name:           plasma-nabu-kcm
 Version:        1.0.0
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Native Xiaomi Pad 5 settings module and Plasma widget
 License:        MIT AND GPL-3.0-or-later
 URL:            https://github.com/MCC45TR/nabu-linux-hardware-support
@@ -48,6 +48,7 @@ allowlisted through polkit.
 
 %prep
 %autosetup -a 1
+cp -p uMTP-Responder-umtprd-1.8.1/LICENSE uMTP-Responder-LICENSE
 
 %build
 %{__cxx} -std=c++20 %{build_cxxflags} $(pkg-config --cflags Qt6Core Qt6DBus) \
@@ -83,7 +84,7 @@ install -Dpm0755 src/nabu-usb-gadget %{buildroot}%{_libexecdir}/nabu-usb-gadget
 install -Dpm0755 src/nabu-umtprd-start %{buildroot}%{_libexecdir}/nabu-umtprd-start
 install -Dpm0755 uMTP-Responder-umtprd-1.8.1/umtprd %{buildroot}%{_libexecdir}/nabu-umtprd
 install -d %{buildroot}%{_bindir}
-ln -s %{_libexecdir}/nabu-usb-gadget %{buildroot}%{_bindir}/nabu-usb-gadget
+ln -s ../libexec/nabu-usb-gadget %{buildroot}%{_bindir}/nabu-usb-gadget
 install -Dpm0755 nabu-wake-service %{buildroot}%{_libexecdir}/nabu-wake-service
 install -Dpm0644 systemd/nabu-wake-service.service \
     %{buildroot}%{_unitdir}/nabu-wake-service.service
@@ -192,9 +193,12 @@ test "$(find translations -name '*.po' | wc -l)" = 27
 %{_qt6_plugindir}/plasma/kcms/systemsettings/kcm_nabu.so
 %{_datadir}/applications/kcm_nabu.desktop
 %{_datadir}/applications/org.senemos.nabu.kcm.desktop
-%license uMTP-Responder-umtprd-1.8.1/LICENSE
+%license uMTP-Responder-LICENSE
 
 %changelog
+* Tue Sep 15 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-10
+- Keep third-party license payloads distinct and use a relative helper symlink.
+
 * Tue Sep 15 2026 mcc45tr <mcc45tr@gmail.com> - 1.0.0-9
 - Normalize ANSI-decorated KScreen Doctor output before KCM parsing.
 

@@ -54,6 +54,8 @@ assert "plasma_applet_org.senemos.nabu.flashlight" in backend
 assert "nabu-sar-calibration" in spec
 assert "src/nabu-sar-calibration.cpp" in spec
 assert "Requires:       nabu-sar-service >= 3.0.0-93" in spec
+assert "ln -s ../libexec/nabu-usb-gadget" in spec
+assert "%license uMTP-Responder-LICENSE" in spec
 
 plugin = metadata["KPlugin"]
 catalog_locales = {po.stem for po in (root / "translations").glob("*.po")}
